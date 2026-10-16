@@ -39,7 +39,7 @@ By the end of this lab, you will be able to:
 ---
 
 ## 🧩 Prerequisites
-- A working Git repository (can be your previous lab repo or a new one)
+- A working Git repository (i.e. DevOps_Lab3_Practice)
 - Visual Studio Code (or any text editor)
 - Git installed Ubuntu server
 - An active GitHub repository connected via SSH
