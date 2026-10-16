@@ -677,14 +677,19 @@ This task will guide you through forking a repository, running a full web applic
 1. **Fork the Gitea Repository**
    - Go to [Gitea](https://github.com/WaqasSaleem97/Gitea).
    - Click the **Fork** button at the top right and fork it into your own GitHub account.
+   - Uncheck **Copy the main branch only** so that the `codespace` branch is also included, then click **Create fork**.
    - Save a screenshot of your forked repository page as `forked_gitea.png`.
 
 2. **Open the Forked Repo in GitHub Codespaces**
    - On your forked repo, click **Code** > **Codespaces** > **Create codespace on main**.
    - Save a screenshot of the Codespace loading as `codespace_loading.png`.
 
-3. **Start Gitea with Docker Compose**
-   - In the Codespace terminal, run:
+3. **Switch to the codespace Branch and Start Gitea**
+   - Before running Gitea, switch to the **codespace** branch in the Codespace terminal:
+      ```bash
+     git checkout codespace
+     ```
+   - After switching successfully, start Gitea with Docker Compose
      ```bash
      docker compose up -d
      ```
