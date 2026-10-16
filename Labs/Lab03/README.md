@@ -80,7 +80,7 @@ This task demonstrates what happens when your local repository and remote reposi
    - Save a screenshot of your browser showing the change as `remote_edit.png`.
 
 2. On your **local machine**, open the same repository folder.  
-   - Edit the same `README.md` file locally, for example:  
+   - Edit the same `README.md` file locally, for example:  (Avoid merge conflict)
      ```
      This line was added locally.
      ```
