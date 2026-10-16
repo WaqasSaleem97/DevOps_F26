@@ -171,7 +171,7 @@ This task will help you understand how Git handles file conflicts when two peopl
    ```
    This line was updated locally at the same time.
    ```
-   - Save a screenshot of your edit in VS Code as `local_conflict_edit.png`.
+   - Save a screenshot of your edit in VS Code or nano or Vim as `local_conflict_edit.png`.
 
 3. Stage and commit your local change:
    ```bash
