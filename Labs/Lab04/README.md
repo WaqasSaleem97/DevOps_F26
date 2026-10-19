@@ -1,7 +1,7 @@
 # Lab 4: Simple Python Database Connections
 
 **Estimated duration:** 3 hours  
-**Starter repository:** [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases) — fork this repository first  
+**Starter repository:** [Databases](https://github.com/WaqasSaleem97/Databases) — fork this repository first  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab04`  
 **Screenshot directory:** `Labs/Lab04/screenshots`
@@ -154,7 +154,7 @@ Each check has equal weight. The three `Q*.png` exam-practice screenshots are re
 
 ## Task 1: Fork and Clone the Databases Repository
 
-1. Open [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases), select **Fork**, and keep the name `Databases`.
+1. Open [Databases](https://github.com/WaqasSaleem97/Databases), select **Fork**, and keep the name `Databases`.
 2. Confirm that the page shows `<your-username>/Databases` and the original repository as its source.
    - Take a split-screen screenshot as `databases_fork.png`.
 3. Clone your own fork:
