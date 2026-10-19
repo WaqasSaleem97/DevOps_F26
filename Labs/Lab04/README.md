@@ -115,7 +115,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 ### Required Automated-Grading Filenames
 
-These are the 22 required Lab 4 screenshot filenames:
+These are the 15 required Lab 4 screenshot filenames:
 
 ```text
 databases_fork.png
@@ -123,23 +123,16 @@ databases_clone.png
 docker_installation.png
 database_services.png
 database_ports.png
-mysql_hardcoded_settings.png
 mysql_hardcoded_connection.png
-mongo_hardcoded_settings.png
 mongo_hardcoded_connection.png
-mongo_env_settings.png
 mongo_env_dev.png
 mongo_env_test.png
 mongo_env_prod.png
-mongo_env_unchanged.png
 credential_files_created.png
-credential_file_settings.png
 credential_file_permissions.png
-mongo_file_settings.png
 mongo_file_dev.png
 mongo_file_test.png
 mongo_file_prod.png
-mongo_file_unchanged.png
 ```
 
 Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. Automated grading requires a configured Lab 4 grader.
@@ -316,15 +309,7 @@ connection.close()
 
    `user` and `password` supply the database credentials. `host` identifies the server, `port` identifies its MySQL service, and `database` selects the database. `mysql.connector.connect()` opens the connection.
 
-2. Display the code with the password hidden:
-
-   ```bash
-   sed -E 's/(password=).*/\1"<redacted>",/' db_connect.py
-   ```
-
-   - Screenshot as `mysql_hardcoded_settings.png`.
-
-3. Run the file:
+2. Run the file:
 
    ```bash
    python db_connect.py
@@ -338,7 +323,6 @@ The small SQL query reads the environment value stored in MySQL. `cursor.close()
 
 **Screenshot Required:**
 
-- `mysql_hardcoded_settings.png`
 - `mysql_hardcoded_connection.png`
 
 **Summary:** The connection works, and its settings are written directly in Python.
@@ -373,15 +357,7 @@ client.close()
 
    `username`, `password`, `endpoint` and `database_name` hold the settings separately. The `+` operator joins them into `uri`. The URI's database is also the authentication database in this lab.
 
-2. Show the code with the password hidden:
-
-   ```bash
-   sed -E 's/^(password[[:space:]]*=).*/\1 <redacted>/' db_connect.py
-   ```
-
-   - Screenshot as `mongo_hardcoded_settings.png`.
-
-3. Run the same command:
+2. Run the same command:
 
    ```bash
    python db_connect.py
@@ -395,7 +371,6 @@ client.close()
 
 **Screenshot Required:**
 
-- `mongo_hardcoded_settings.png`
 - `mongo_hardcoded_connection.png`
 
 **Summary:** You changed the database driver while keeping the same run command.
@@ -432,16 +407,7 @@ client.close()
 
    Add `import os` and read the username, password, endpoint and database name separately using `os.getenv()`. Keep the URI concatenation, MongoDB connection and output block unchanged. The short `if` statement tells you if a required variable is missing.
 
-2. Display the code and record its checksum:
-
-   ```bash
-   cat db_connect.py
-   sha256sum db_connect.py > /tmp/lab04-env-before.sha256
-   ```
-
-   - Screenshot as `mongo_env_settings.png`, showing `os.getenv()`.
-
-3. Set the dev values in the same Ubuntu shell and run:
+2. Set the dev values in the same Ubuntu shell and run:
 
    ```bash
    export MONGO_USERNAME=dev_user
@@ -454,7 +420,7 @@ client.close()
 
    - Screenshot as `mongo_env_dev.png`, showing `school_dev`, port `27017`, and environment `dev`.
 
-4. Set the test values and run:
+3. Set the test values and run:
 
    ```bash
    export MONGO_USERNAME=test_user
@@ -467,7 +433,7 @@ client.close()
 
    - Screenshot as `mongo_env_test.png`, showing `school_test`, port `27018`, and environment `test`.
 
-5. Set the simulated prod values and run:
+4. Set the simulated prod values and run:
 
    ```bash
    export MONGO_USERNAME=prod_user
@@ -480,14 +446,6 @@ client.close()
 
    - Screenshot as `mongo_env_prod.png`, showing `school_prod`, port `27019`, and environment `prod`.
 
-6. Confirm that changing the environment variables did not change the code:
-
-   ```bash
-   sha256sum -c /tmp/lab04-env-before.sha256
-   ```
-
-   - Screenshot as `mongo_env_unchanged.png`, showing `db_connect.py: OK`.
-
 These export commands contain the supplied public dummy credentials. `clear` removes them from the visible terminal before you capture the result. Do not print `MONGO_PASSWORD`, the assembled URI or capture the exports in a screenshot.
 
 Python inherits exported variables from the shell. `MONGO_USERNAME`, `MONGO_PASSWORD`, `MONGO_ENDPOINT` and `MONGO_DATABASE` supply separate values. Python joins them into the connection URI. Export all four matching values for each environment. This version does not read `APP_ENV`.
@@ -497,11 +455,9 @@ Complete **Exam Question 1** while this version is still in your file.
 
 **Screenshot Required:**
 
-- `mongo_env_settings.png`
 - `mongo_env_dev.png`
 - `mongo_env_test.png`
 - `mongo_env_prod.png`
-- `mongo_env_unchanged.png`
 
 **Summary:** One unchanged program connects to three databases using values from its process environment.
 
@@ -541,15 +497,7 @@ endpoint = 127.0.0.1:27019
 database = school_prod
 ```
 
-2. Show its settings with the passwords hidden:
-
-   ```bash
-   sed -E 's/^(password[[:space:]]*=).*/\1 <redacted>/' credentials.ini
-   ```
-
-   - Screenshot as `credential_file_settings.png`, showing all three sections, separate usernames and endpoints, database names and redacted passwords.
-
-3. Restrict the file to your account and check its mode:
+2. Restrict the file to your account and check its mode:
 
    ```bash
    chmod 600 credentials.ini
@@ -558,7 +506,7 @@ database = school_prod
 
    - Screenshot as `credential_file_permissions.png`, showing `600 credentials.ini`.
 
-4. Replace the contents of the same `db_connect.py` with:
+3. Replace the contents of the same `db_connect.py` with:
 
 <!-- stage: mongo_file -->
 ```python
@@ -589,16 +537,7 @@ client.close()
 
    The `username`, `password`, `endpoint` and `database_name` assignments read separate values from that section. Python builds `uri` with the same concatenation line used before. Keep the MongoDB connection and output block unchanged.
 
-5. Display the Python code and record its checksum:
-
-   ```bash
-   cat db_connect.py
-   sha256sum db_connect.py > /tmp/lab04-file-before.sha256
-   ```
-
-   - Screenshot as `mongo_file_settings.png`, showing the file-reading code.
-
-6. Choose dev and run:
+4. Choose dev and run:
 
    ```bash
    export APP_ENV=dev
@@ -607,7 +546,7 @@ client.close()
 
    - Screenshot as `mongo_file_dev.png`, showing the dev endpoint, database and environment.
 
-7. Choose test and run:
+5. Choose test and run:
 
    ```bash
    export APP_ENV=test
@@ -616,7 +555,7 @@ client.close()
 
    - Screenshot as `mongo_file_test.png`, showing the test endpoint, database and environment.
 
-8. Choose simulated prod and run:
+6. Choose simulated prod and run:
 
    ```bash
    export APP_ENV=prod
@@ -624,14 +563,6 @@ client.close()
    ```
 
    - Screenshot as `mongo_file_prod.png`, showing the prod endpoint, database and environment.
-
-9. Confirm that switching sections did not change the Python code:
-
-   ```bash
-   sha256sum -c /tmp/lab04-file-before.sha256
-   ```
-
-   - Screenshot as `mongo_file_unchanged.png`, showing `db_connect.py: OK`.
 
 The file version reads `APP_ENV` to choose a section and loads the four connection settings from that section. An INI file stores plaintext. `interpolation=None` makes the file reader treat values literally. The supplied dummy credentials are joined directly into the URI.
 
@@ -641,13 +572,10 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
 **Screenshot Required:**
 
 - `credential_files_created.png`
-- `credential_file_settings.png`
 - `credential_file_permissions.png`
-- `mongo_file_settings.png`
 - `mongo_file_dev.png`
 - `mongo_file_test.png`
 - `mongo_file_prod.png`
-- `mongo_file_unchanged.png`
 
 **Summary:** The same connection code now reads its settings from an external file.
 
@@ -655,7 +583,7 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
 
 ## Exam Evaluation Questions
 
-Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam-practice screenshots are not included in the 22 mandatory checks.
+Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam-practice screenshots are not included in the 15 mandatory checks.
 
 ### 1. A Missing Environment Variable
 
@@ -719,9 +647,8 @@ Complete this after Task 7.
 - [ ] I edited the same `db_connect.py` through all four stages.
 - [ ] I captured MySQL, hardcoded MongoDB, and dev/test/prod results for environment and file versions.
 - [ ] The MongoDB connection block stayed unchanged when I changed configuration sources.
-- [ ] My checksum screenshots show unchanged code while switching environments.
 - [ ] My final `db_connect.py` uses the credentials-file version.
-- [ ] All 22 required screenshots use the exact filenames in `screenshots/`.
+- [ ] All 15 required screenshots use the exact filenames in `screenshots/`.
 - [ ] I completed the three exam questions and restored the valid dummy settings.
 - [ ] No passwords, credential-bearing URIs, private keys or tokens appear in screenshots or answers.
 - [ ] `Lab4_Solution.pdf` contains my identity, connection results, fork URL, captions, evidence and exam answers.
