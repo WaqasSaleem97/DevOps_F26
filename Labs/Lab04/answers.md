@@ -26,8 +26,8 @@ Record the endpoint, database and actual server-side marker for MySQL, hardcoded
 ## Configuration comparison
 
 1. What values are hardcoded in stages 1 and 2, and what changes when deployment settings change?
-2. Why do container connections use service names instead of the app container's localhost?
-3. How does Compose pass the terminal variables into the app process?
+2. Why does host Python use 127.0.0.1 with a different published port for each database?
+3. How does the host Python process read variables exported in the Ubuntu shell?
 4. Why does changing only APP_ENV not select a different set of credentials?
 5. What is the role of auth_source in this lab?
 6. How did you prove that the database operation stayed unchanged across profiles?

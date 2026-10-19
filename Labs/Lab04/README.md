@@ -1,4 +1,4 @@
-# Lab 4: Database Connections, Environment Variables, and Credential Files with Docker
+# Lab 4: Database Connections, Environment Variables, and Credential Files with Python
 
 **Estimated duration:** 3 hours  
 **Starter repository:** [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases) — fork this repository first  
@@ -6,7 +6,7 @@
 **Submission directory:** `Labs/Lab04`  
 **Screenshot directory:** `Labs/Lab04/screenshots`
 
-Start by forking `Databases` into your own GitHub account. Run the application and databases from that fork on your Ubuntu server. Submit the screenshots, written answers and solution PDF to your separate GitHub repository named exactly `DevOps`.
+Start by forking `Databases` into your own GitHub account. Edit and run the Python application from that fork directly on your Ubuntu host. Use Docker Compose for the database services. Submit the screenshots, written answers and solution PDF to your separate GitHub repository named exactly `DevOps`.
 
 ```text
 DevOps/
@@ -23,7 +23,7 @@ DevOps/
             └── ...
 
 Databases/                       # Your separate fork and working directory
-├── Dockerfile
+├── requirements.txt
 ├── compose.yaml
 ├── 01_mysql_hardcoded.py
 ├── 02_mongo_hardcoded.py
@@ -52,7 +52,7 @@ By the end of this lab, you will be able to:
 - Distinguish configuration externalization from secure secret storage.
 - Keep credential files out of Git while committing your code and evidence correctly.
 
-The `prod` database is a disposable local simulation. Use only the supplied dummy accounts. Python runs inside the `app` container, so no Python packages need to be installed on the Ubuntu host.
+The `prod` database is a disposable local simulation. Use only the supplied dummy accounts. Python runs directly on the Ubuntu host, and Docker Compose starts the database services.
 
 ## Prerequisites
 
@@ -71,7 +71,7 @@ Use the Ubuntu server prepared in Lab 1. Keep the Ubuntu terminal visible when c
 
 - [Getting Started](#getting-started)
 - [Task 1: Fork and Clone the Databases Repository](#task-1-fork-and-clone-the-databases-repository)
-- [Task 2: Install Docker and Docker Compose on Ubuntu](#task-2-install-docker-and-docker-compose-on-ubuntu)
+- [Task 2: Install Docker, Docker Compose, and Python on Ubuntu](#task-2-install-docker-docker-compose-and-python-on-ubuntu)
 - [Task 3: Start and Inspect the Database Services](#task-3-start-and-inspect-the-database-services)
 - [Task 4: Connect to MySQL with Hardcoded Settings](#task-4-connect-to-mysql-with-hardcoded-settings)
 - [Task 5: Connect to MongoDB with Hardcoded Settings](#task-5-connect-to-mongodb-with-hardcoded-settings)
@@ -102,7 +102,7 @@ Follow the same evidence rules used in Lab 2. Each of the 33 mandatory screensho
 
    Spelling must match your Student Marks Portal `user_name`; identity comparison is case-insensitive. A virtual-environment prefix or a current directory after the hostname is acceptable.
 
-2. Every screenshot must clearly show your `YourGitHubUsername@ubuntu` terminal identity, the required command or operation, and the relevant result. Keep the Ubuntu host prompt visible around Docker commands; the Python container does not need to use your GitHub username internally.
+2. Every screenshot must clearly show your `YourGitHubUsername@ubuntu` terminal identity, the required command or operation, and the relevant result.
 3. For GitHub browser tasks, use split-screen so the GitHub page and the Ubuntu terminal identity appear in the same screenshot. Apply the same rule to the document title page and exported PDF.
 4. Save original screenshots only under `DevOps/Labs/Lab04/screenshots/`, even when you execute commands inside your separate `Databases` fork.
 5. Use the exact filenames and capitalization below. Do not append numbers, change extensions, or submit only images embedded in a PDF.
@@ -189,15 +189,26 @@ Exam-practice screenshots `Q1_source_selection.png`, `Q2_literal_password.png` a
 
 ---
 
-## Task 2: Install Docker and Docker Compose on Ubuntu
+## Task 2: Install Docker, Docker Compose, and Python on Ubuntu
 
 ```bash
 sudo apt update
-sudo apt install -y docker.io docker-compose-v2 docker-buildx
+sudo apt install -y docker.io docker-compose-v2 python3 python3-venv python3-pip
 sudo systemctl enable --now docker
 sudo usermod -aG docker "$USER"
 newgrp docker
 ```
+
+Prepare the Python environment on the host:
+
+```bash
+cd ~/Databases
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+Edit the Python files directly in `~/Databases` using your editor. Run every `python` command below from this directory with the virtual environment active. If you open a new terminal, return to `~/Databases` and activate `.venv` again.
 
 ---
 
@@ -211,7 +222,7 @@ newgrp docker
    ```
 
    - Screenshot as `database_services.png`.
-     Show all four databases healthy. The application is an on-demand tools service, so it does not need to appear as a background service.
+     Show all four databases healthy.
 
 2. Inspect the loopback-only published ports:
 
@@ -224,14 +235,14 @@ newgrp docker
 
    - Screenshot as `database_ports.png`.
 
-| Environment | Endpoint from the app container | Host endpoint | Database / MongoDB auth source | Username | Disposable dummy password |
-| --- | --- | --- | --- | --- | --- |
-| MySQL dev | `mysql:3306` | `127.0.0.1:3307` | `school_mysql` | `mysql_student` | `MysqlDemoOnly123!` |
-| MongoDB dev | `mongo-dev:27017` | `127.0.0.1:27017` | `school_dev` | `dev_user` | `DevDemoOnly123!` |
-| MongoDB test | `mongo-test:27017` | `127.0.0.1:27018` | `school_test` | `test_user` | `TestDemoOnly123!` |
-| MongoDB simulated prod | `mongo-prod:27017` | `127.0.0.1:27019` | `school_prod` | `prod_user` | `ProdDemoOnly123!` |
+| Environment | Endpoint used by host Python | Database / MongoDB auth source | Username | Disposable dummy password |
+| --- | --- | --- | --- | --- |
+| MySQL dev | `127.0.0.1:3307` | `school_mysql` | `mysql_student` | `MysqlDemoOnly123!` |
+| MongoDB dev | `127.0.0.1:27017` | `school_dev` | `dev_user` | `DevDemoOnly123!` |
+| MongoDB test | `127.0.0.1:27018` | `school_test` | `test_user` | `TestDemoOnly123!` |
+| MongoDB simulated prod | `127.0.0.1:27019` | `school_prod` | `prod_user` | `ProdDemoOnly123!` |
 
-Use Docker service names inside the application container. The application's own `localhost` is not the MySQL or MongoDB container. Keep this password reference outside the captured evidence area.
+The host Python programs connect through the published loopback ports listed above. Keep this password reference outside the captured evidence area.
 
 If `--wait` is unavailable, update the Compose plugin or start with `docker compose up -d` and check `docker compose ps` until all services are healthy. Read `docker compose logs <service>` when troubleshooting. Initialization scripts run when database data volumes are first created.
 
@@ -251,11 +262,11 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 2. Run the program:
 
    ```bash
-   docker compose run --rm --build app python 01_mysql_hardcoded.py
+   python 01_mysql_hardcoded.py
    ```
 
    - Screenshot as `mysql_hardcoded_connection.png`.
-     Show `mysql:3306`, `school_mysql`, the dev marker, saved/read student records and the PASS message.
+     Show `127.0.0.1:3307`, `school_mysql`, the dev marker, saved/read student records and the PASS message.
 
 3. In `answers.md`, identify the hardcoded settings and explain what must change if the endpoint or credentials change.
 
@@ -276,11 +287,11 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 2. Run the program:
 
    ```bash
-   docker compose run --rm app python 02_mongo_hardcoded.py
+   python 02_mongo_hardcoded.py
    ```
 
    - Screenshot as `mongo_hardcoded_connection.png`.
-     Show `mongo-dev:27017`, `school_dev`, marker `dev`, student records and PASS.
+     Show `127.0.0.1:27017`, `school_dev`, marker `dev`, student records and PASS.
 
 3. Open `mongo_demo.py` and `settings.py` in your editor. Notice that stages 2–4 all call the same `run_demo()` function. Explain why switching to MongoDB did not remove the hardcoded-configuration problem.
 
@@ -298,7 +309,7 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 
    ```bash
    export APP_ENV=dev
-   export MONGO_HOST=mongo-dev
+   export MONGO_HOST=127.0.0.1
    export MONGO_PORT=27017
    export MONGO_DATABASE=school_dev
    export MONGO_USERNAME=dev_user
@@ -306,25 +317,25 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
    read -r -s -p "Dev database password: " MONGO_PASSWORD
    echo
    export MONGO_PASSWORD
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_env_dev.png`.
-     Show the relevant command, `mongo-dev:27017`, `school_dev`, marker `dev`, and PASS.
+     Show the relevant command, `127.0.0.1:27017`, `school_dev`, marker `dev`, and PASS.
 
 3. Change the deployment variables to test and enter its password:
 
    ```bash
    export APP_ENV=test
-   export MONGO_HOST=mongo-test
-   export MONGO_PORT=27017
+   export MONGO_HOST=127.0.0.1
+   export MONGO_PORT=27018
    export MONGO_DATABASE=school_test
    export MONGO_USERNAME=test_user
    export MONGO_AUTH_SOURCE=school_test
    read -r -s -p "Test database password: " MONGO_PASSWORD
    echo
    export MONGO_PASSWORD
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_env_test.png`.
@@ -334,15 +345,15 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 
    ```bash
    export APP_ENV=prod
-   export MONGO_HOST=mongo-prod
-   export MONGO_PORT=27017
+   export MONGO_HOST=127.0.0.1
+   export MONGO_PORT=27019
    export MONGO_DATABASE=school_prod
    export MONGO_USERNAME=prod_user
    export MONGO_AUTH_SOURCE=school_prod
    read -r -s -p "Simulated prod database password: " MONGO_PASSWORD
    echo
    export MONGO_PASSWORD
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_env_prod.png`.
@@ -357,7 +368,7 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
    - Screenshot as `mongo_env_unchanged.png`.
      Show `03_mongo_env.py: OK`.
 
-`APP_ENV` is a label and consistency check. It does not contain an automatic credentials map. Compose passes the named terminal variables through its `app.environment` configuration, and the Python process reads those values. Supply the complete matching profile. Do not print `env`, `printenv`, a credential-bearing URI or the password itself for evidence.
+`APP_ENV` is a label and consistency check. It does not contain an automatic credentials map. The host Python process reads the values exported in your Ubuntu shell. Supply the complete matching profile. Do not print `env`, `printenv`, a credential-bearing URI or the password itself for evidence.
 
 **Summary:** Deployment variables change the target database without edits to the application.
 
@@ -386,7 +397,7 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
    Return to the host and run:
 
    ```bash
-   docker compose run --rm app python 02_mongo_hardcoded.py
+   python 02_mongo_hardcoded.py
    ```
 
    - Screenshot as `mongo_dev_only_record.png`.
@@ -411,7 +422,7 @@ Begin with the complete valid prod profile from Task 6.
    read -r -s -p "Enter an intentionally wrong password: " MONGO_PASSWORD
    echo
    export MONGO_PASSWORD
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_wrong_password.png`.
@@ -421,7 +432,7 @@ Begin with the complete valid prod profile from Task 6.
 
    ```bash
    unset MONGO_PASSWORD
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_missing_password.png`.
@@ -434,7 +445,7 @@ Begin with the complete valid prod profile from Task 6.
    echo
    export MONGO_PASSWORD
    export APP_ENV=dev
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
    - Screenshot as `mongo_environment_mismatch.png`.
@@ -444,7 +455,7 @@ Begin with the complete valid prod profile from Task 6.
 
    ```bash
    export APP_ENV=prod
-   docker compose run --rm app python 03_mongo_env.py
+   python 03_mongo_env.py
    ```
 
 ---
@@ -454,7 +465,7 @@ Begin with the complete valid prod profile from Task 6.
 1. Create the editable local credential files:
 
    ```bash
-   docker compose run --rm app python prepare_config.py
+   python prepare_config.py
    ls config
    ```
 
@@ -486,7 +497,7 @@ Begin with the complete valid prod profile from Task 6.
 4. Run file mode against dev:
 
    ```bash
-   docker compose run --rm app python 04_mongo_file.py --env dev
+   python 04_mongo_file.py --env dev
    ```
 
    - Screenshot as `mongo_file_dev.png`.
@@ -495,7 +506,7 @@ Begin with the complete valid prod profile from Task 6.
 5. Run file mode against test:
 
    ```bash
-   docker compose run --rm app python 04_mongo_file.py --env test
+   python 04_mongo_file.py --env test
    ```
 
    - Screenshot as `mongo_file_test.png`.
@@ -504,7 +515,7 @@ Begin with the complete valid prod profile from Task 6.
 6. Run file mode against simulated prod:
 
    ```bash
-   docker compose run --rm app python 04_mongo_file.py --env prod
+   python 04_mongo_file.py --env prod
    ```
 
    - Screenshot as `mongo_file_prod.png`.
@@ -514,7 +525,7 @@ Begin with the complete valid prod profile from Task 6.
 
    ```bash
    printf 'Shell profile: %s | %s | %s\n' "$APP_ENV" "$MONGO_HOST" "$MONGO_DATABASE"
-   docker compose run --rm app python 04_mongo_file.py --env dev
+   python 04_mongo_file.py --env dev
    ```
 
    - Screenshot as `mongo_file_source_selection.png`.
@@ -526,10 +537,10 @@ Python uses INI files through its standard-library `configparser`; Java commonly
 
 ## Task 10: Run Configuration and Live Database Checks
 
-1. Run the offline tests inside the Python image:
+1. Run the offline tests from your active host Python environment:
 
    ```bash
-   docker compose run --rm app python -m unittest discover -s tests -v
+   python -m unittest discover -s tests -v
    ```
 
    - Screenshot as `lab04_tests.png`.
@@ -538,7 +549,7 @@ Python uses INI files through its standard-library `configparser`; Java commonly
 2. With all four databases healthy and credential files prepared, run the live smoke test:
 
    ```bash
-   docker compose run --rm app python smoke_test.py
+   python smoke_test.py
    ```
 
    - Screenshot as `lab04_live_checks.png`.
@@ -644,7 +655,7 @@ Complete these practical questions and write explanations in `answers.md` and th
 1. Run the file-reader tests without changing any database account:
 
    ```bash
-   docker compose run --rm app python -m unittest discover -s tests -p test_config.py -v
+   python -m unittest discover -s tests -p test_config.py -v
    ```
 
 2. Locate the passing `test_percent_password_is_read_literally_from_file` test.
@@ -653,17 +664,17 @@ Complete these practical questions and write explanations in `answers.md` and th
 
 ### 3. Cross-Environment Credentials
 
-1. Use the complete valid **test** profile from Task 6, then change only `MONGO_HOST` to `mongo-dev`.
+1. Use the complete valid **test** profile from Task 6, then change only `MONGO_PORT` to `27017` (the dev database's published port).
 2. Run `03_mongo_env.py` and observe the authentication failure.
    - Screenshot as `Q3_cross_environment_auth.png`.
 3. Explain why the test account does not authenticate against the separate dev deployment.
-4. Restore `MONGO_HOST=mongo-test`, confirm the test run succeeds, and record your restoration steps.
+4. Restore `MONGO_PORT=27018`, confirm the test run succeeds, and record your restoration steps.
 
 ---
 
 ## Summary
 
-- You forked and ran a Docker-based Python database application.
+- You forked and ran a Python application directly on Ubuntu against Docker database services.
 - You compared hardcoded MySQL and MongoDB connection settings.
 - You used one unchanged MongoDB operation with three environment-variable profiles.
 - You used separate credential files for the same three simulated environments.
@@ -676,7 +687,7 @@ Complete these practical questions and write explanations in `answers.md` and th
 - [ ] My GitHub username matches my registered portal identity and Ubuntu username.
 - [ ] The hostname is `ubuntu`, and my required prompt is readable in every screenshot.
 - [ ] My `Databases` repository is a fork of `WaqasSaleem97/Databases`.
-- [ ] The application and databases were run through Docker Compose.
+- [ ] The Python application was run directly on Ubuntu, and the databases were run through Docker Compose.
 - [ ] MySQL and hardcoded MongoDB saved and read the demonstration student.
 - [ ] Environment mode reached dev, test and simulated prod without editing the program.
 - [ ] File mode reached dev, test and simulated prod using the selected file.
@@ -708,7 +719,6 @@ For a fresh local lab only, `docker compose down -v` deletes this project's disp
 
 - [Ubuntu: docker.io package](https://packages.ubuntu.com/noble/docker.io)
 - [Ubuntu: Docker Compose v2 package](https://packages.ubuntu.com/noble/docker-compose-v2)
-- [Ubuntu: Docker Buildx package](https://packages.ubuntu.com/noble-updates/docker-buildx)
 - [Docker: Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
 - [MySQL Connector/Python: Connecting to MySQL](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
 - [MongoDB PyMongo: Create a MongoClient](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/mongoclient/)
@@ -717,6 +727,8 @@ For a fresh local lab only, `docker compose down -v` deletes this project's disp
 - [Docker Compose profiles](https://docs.docker.com/reference/compose-file/profiles/)
 - [Docker Official Image: MongoDB initialization](https://github.com/docker-library/docs/blob/master/mongo/README.md)
 - [Docker Official Image: MySQL initialization](https://github.com/docker-library/docs/blob/master/mysql/README.md)
+- [Python: virtual environments](https://docs.python.org/3/library/venv.html)
+- [Python: os.environ](https://docs.python.org/3/library/os.html#os.environ)
 - [Python: configparser](https://docs.python.org/3/library/configparser.html)
 - [OWASP: Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
 - [Git: gitignore](https://git-scm.com/docs/gitignore)
