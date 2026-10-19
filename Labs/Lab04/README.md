@@ -44,7 +44,7 @@ By the end of this lab, you will be able to:
 - Use `os.getenv()` to run unchanged Python code against dev, test and simulated prod.
 - Use `configparser` to read those settings from an INI credentials file.
 - Read the actual server's environment value to confirm the target.
-- Keep local credentials out of Git and submit the required evidence.
+- Capture readable evidence of the database connections.
 
 ## Prerequisites
 
@@ -68,8 +68,6 @@ Keep your Ubuntu terminal visible when capturing evidence from Windows over SSH.
 - [Task 5: MongoDB with Values in the Code](#task-5-mongodb-with-values-in-the-code)
 - [Task 6: MongoDB with os.getenv](#task-6-mongodb-with-osgetenv)
 - [Task 7: MongoDB with a Credentials File](#task-7-mongodb-with-a-credentials-file)
-- [Task 8: Compare the Approaches and Check Git Exclusions](#task-8-compare-the-approaches-and-check-git-exclusions)
-- [Task 9: Prepare the Solution PDF and Push Both Submissions](#task-9-prepare-the-solution-pdf-and-push-both-submissions)
 - [Exam Evaluation Questions](#exam-evaluation-questions)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
@@ -117,7 +115,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 ### Required Automated-Grading Filenames
 
-These are the 29 required Lab 4 screenshot filenames:
+These are the 22 required Lab 4 screenshot filenames:
 
 ```text
 databases_fork.png
@@ -142,13 +140,6 @@ mongo_file_dev.png
 mongo_file_test.png
 mongo_file_prod.png
 mongo_file_unchanged.png
-credentials_gitignore.png
-approach_comparison.png
-lab04_code_push.png
-solution_title_page.png
-lab4_solution_pdf.png
-lab04_git_push.png
-lab04_github_submission.png
 ```
 
 Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. Automated grading requires a configured Lab 4 grader.
@@ -360,7 +351,6 @@ The small SQL query reads the environment value stored in MySQL. `cursor.close()
 
 <!-- stage: mongo_hardcoded -->
 ```python
-from urllib.parse import quote_plus
 from pymongo import MongoClient
 
 username = "dev_user"
@@ -368,7 +358,7 @@ password = "DevDemoOnly123!"
 endpoint = "127.0.0.1:27017"
 database_name = "school_dev"
 
-uri = "mongodb://" + quote_plus(username) + ":" + quote_plus(password) + "@" + endpoint + "/" + database_name
+uri = "mongodb://" + username + ":" + password + "@" + endpoint + "/" + database_name
 
 client = MongoClient(uri, serverSelectionTimeoutMS=5000)
 database = client[database_name]
@@ -381,7 +371,7 @@ client.close()
 
    `MongoClient(uri)` creates the MongoDB client, and `client[database_name]` selects the database.
 
-   `username`, `password`, `endpoint` and `database_name` hold the settings separately. The `+` operator joins them into `uri`. `quote_plus()` encodes the username and password so that characters such as `@` work inside a URI. The URI's database is also the authentication database in this lab.
+   `username`, `password`, `endpoint` and `database_name` hold the settings separately. The `+` operator joins them into `uri`. The URI's database is also the authentication database in this lab.
 
 2. Show the code with the password hidden:
 
@@ -419,7 +409,6 @@ client.close()
 <!-- stage: mongo_env -->
 ```python
 import os
-from urllib.parse import quote_plus
 from pymongo import MongoClient
 
 username = os.getenv("MONGO_USERNAME")
@@ -430,7 +419,7 @@ database_name = os.getenv("MONGO_DATABASE")
 if not username or not password or not endpoint or not database_name:
     raise SystemExit("Set all four MongoDB environment variables first.")
 
-uri = "mongodb://" + quote_plus(username) + ":" + quote_plus(password) + "@" + endpoint + "/" + database_name
+uri = "mongodb://" + username + ":" + password + "@" + endpoint + "/" + database_name
 
 client = MongoClient(uri, serverSelectionTimeoutMS=5000)
 database = client[database_name]
@@ -575,7 +564,6 @@ database = school_prod
 ```python
 import os
 import configparser
-from urllib.parse import quote_plus
 from pymongo import MongoClient
 
 config = configparser.ConfigParser(interpolation=None)
@@ -586,7 +574,7 @@ password = config[environment]["password"]
 endpoint = config[environment]["endpoint"]
 database_name = config[environment]["database"]
 
-uri = "mongodb://" + quote_plus(username) + ":" + quote_plus(password) + "@" + endpoint + "/" + database_name
+uri = "mongodb://" + username + ":" + password + "@" + endpoint + "/" + database_name
 
 client = MongoClient(uri, serverSelectionTimeoutMS=5000)
 database = client[database_name]
@@ -645,7 +633,7 @@ client.close()
 
    - Screenshot as `mongo_file_unchanged.png`, showing `db_connect.py: OK`.
 
-The file version reads `APP_ENV` to choose a section and loads the four connection settings from that section. An INI file stores plaintext. `interpolation=None` preserves literal `%` characters in file values, and `quote_plus()` encodes the username and password when building the URI.
+The file version reads `APP_ENV` to choose a section and loads the four connection settings from that section. An INI file stores plaintext. `interpolation=None` makes the file reader treat values literally. The supplied dummy credentials are joined directly into the URI.
 
 Complete **Exam Questions 2 and 3** after this task. Keep the file version as your final `db_connect.py`.
 
@@ -665,127 +653,9 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
 
 ---
 
-## Task 8: Compare the Approaches and Check Git Exclusions
-
-1. Confirm that the local credentials file is ignored and untracked:
-
-   ```bash
-   git check-ignore -v credentials.ini
-   git ls-files credentials.ini
-   git status --short
-   ```
-
-   `git ls-files credentials.ini` must print nothing.
-   - Screenshot as `credentials_gitignore.png`.
-
-2. Prepare the observation table and comparison answers below for your solution PDF. Include your identity and fork URL. Do not record passwords or credential-bearing URIs.
-3. Display your short comparison with the required terminal identity visible.
-   - Screenshot as `approach_comparison.png`.
-
-| Stage | Where values come from | What changes for another environment |
-| --- | --- | --- |
-| MySQL hardcoded | Python connection arguments | Edit Python |
-| MongoDB hardcoded | Username, password, endpoint and database in Python | Edit Python |
-| MongoDB environment | Four separate values from `os.getenv()` | Export another matching profile |
-| MongoDB file | Four separate values from an INI section | Select another section with `APP_ENV` |
-
-### Connection Observations
-
-Record the actual output for each connection in your solution PDF.
-
-| Stage / environment | Host endpoint | Database name | Environment read from server | Result |
-| --- | --- | --- | --- | --- |
-| MySQL hardcoded | | | | |
-| MongoDB hardcoded | | | | |
-| Environment dev | | | | |
-| Environment test | | | | |
-| Environment simulated prod | | | | |
-| File dev | | | | |
-| File test | | | | |
-| File simulated prod | | | | |
-
-### Comparison Questions
-
-1. What do the MySQL `host`, `port`, `user`, `password` and `database` arguments specify?
-2. What do `MongoClient(uri)`, `client[database_name]` and `database.command("ping")` do?
-3. Which four assignments changed when moving from hardcoded MongoDB values to `os.getenv()`?
-4. How does Python concatenate `MONGO_USERNAME`, `MONGO_PASSWORD`, `MONGO_ENDPOINT` and `MONGO_DATABASE` into a URI, and why must their values match one environment?
-5. What does `os.getenv("APP_ENV", "dev")` select in the file version?
-6. Which MongoDB connection lines stayed the same across stages 2–4?
-7. What does the environment value read from the database prove?
-8. Which approach would you choose for this lab, and why?
-9. Do an INI file, mode `600` and `.gitignore` encrypt credentials? What would you need to consider for real production secrets?
-
-Do not force-add `credentials.ini`. A Git ignore rule does not remove files that were already tracked. Plaintext files and environment variables do not encrypt credentials.
-
-
-**Screenshot Required:**
-
-- `credentials_gitignore.png`
-- `approach_comparison.png`
-
----
-
-## Task 9: Prepare the Solution PDF and Push Both Submissions
-
-1. Review and push the final file version to your own fork:
-
-   ```bash
-   cd ~/Databases
-   git status
-   git add db_connect.py
-   git commit -m "Complete Lab 4 Python database connection stages"
-   git push origin main
-   git log -1 --oneline
-   ```
-
-   - Screenshot as `lab04_code_push.png`, showing the successful push.
-   - Add the fork's final commit URL to your solution PDF. Keep `credentials.ini` untracked.
-
-2. Create a document title page with the lab number/title, complete actual name, registration number, course code, section and GitHub username.
-   - Take a split-screen screenshot as `solution_title_page.png`.
-3. Add task headings, your own screenshots in task order, short captions, the observation table, comparisons and exam answers. Include evidence of each version of `db_connect.py`.
-4. Export exactly `Lab4_Solution.pdf` to `~/DevOps/Labs/Lab04/`. Open the PDF and verify its pages are readable.
-   - Take a split-screen screenshot as `lab4_solution_pdf.png`.
-5. Keep the original images in `screenshots/`, then push the evidence repository:
-
-   ```bash
-   cd ~/DevOps
-   git status
-   git add Labs/Lab04
-   git commit -m "Submit Lab 04 Python database connections"
-   git push origin main
-   ```
-
-   - Screenshot as `lab04_git_push.png`.
-6. Open `<your-username>/DevOps/tree/main/Labs/Lab04` on GitHub. Confirm that `README.md`, `Lab4_Solution.pdf` and your `screenshots/` directory are present.
-   - Take a split-screen screenshot as `lab04_github_submission.png`.
-7. Add the final push/GitHub screenshots and their PDF captions, then synchronize them:
-
-   ```bash
-   cd ~/DevOps
-   git add Labs/Lab04
-   git commit -m "Add Lab 04 final submission evidence"
-   git push origin main
-   git status
-   ```
-
-   Confirm the complete submission is visible on GitHub. No additional screenshot is required for this last synchronization.
-
-
-**Screenshot Required:**
-
-- `lab04_code_push.png`
-- `solution_title_page.png`
-- `lab4_solution_pdf.png`
-- `lab04_git_push.png`
-- `lab04_github_submission.png`
-
----
-
 ## Exam Evaluation Questions
 
-Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam screenshots are reviewed separately from the 29 mandatory checks.
+Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam-practice screenshots are not included in the 22 mandatory checks.
 
 ### 1. A Missing Environment Variable
 
@@ -840,7 +710,6 @@ Complete this after Task 7.
 - You used `os.getenv()` to connect to three MongoDB deployments without changing the program.
 - You selected three sections in a credentials file using the same connection block.
 - You verified each target using the database name, endpoint and stored environment value.
-- You kept local credentials out of Git and pushed your code and evidence to the correct repositories.
 
 ## Final Submission Checklist
 
@@ -851,18 +720,17 @@ Complete this after Task 7.
 - [ ] I captured MySQL, hardcoded MongoDB, and dev/test/prod results for environment and file versions.
 - [ ] The MongoDB connection block stayed unchanged when I changed configuration sources.
 - [ ] My checksum screenshots show unchanged code while switching environments.
-- [ ] My final `db_connect.py` uses the credentials-file version and is pushed to my fork.
-- [ ] The local `credentials.ini` is ignored and untracked.
-- [ ] All 29 required screenshots use the exact filenames in `screenshots/`.
+- [ ] My final `db_connect.py` uses the credentials-file version.
+- [ ] All 22 required screenshots use the exact filenames in `screenshots/`.
 - [ ] I completed the three exam questions and restored the valid dummy settings.
 - [ ] No passwords, credential-bearing URIs, private keys or tokens appear in screenshots or answers.
-- [ ] `Lab4_Solution.pdf` contains my title page, observations, comparisons, fork commit URL, captions, evidence and exam answers.
-- [ ] My final screenshots and updated PDF are committed and pushed.
+- [ ] `Lab4_Solution.pdf` contains my identity, connection results, fork URL, captions, evidence and exam answers.
+- [ ] My screenshots and solution PDF are submitted in my `DevOps` repository.
 - [ ] My complete `DevOps/Labs/Lab04` directory is visible on GitHub.
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab04` directory. Include your `Databases` fork URL and final code commit URL in `Lab4_Solution.pdf`.
+Submit the URL of your own `DevOps/Labs/Lab04` directory. Include your `Databases` fork URL in `Lab4_Solution.pdf`.
 
 After capturing evidence, stop the databases:
 
@@ -877,7 +745,6 @@ Initialization scripts run on empty database volumes. `docker compose down -v` i
 
 - [MySQL Connector/Python: Connecting to MySQL](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
 - [MongoDB: Connect to MongoDB with PyMongo](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/)
-- [MongoDB: Authentication and URI credential encoding](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/authentication/scram/)
 - [Python: os.getenv](https://docs.python.org/3/library/os.html#os.getenv)
 - [Python: configparser](https://docs.python.org/3/library/configparser.html)
 - [Python: virtual environments](https://docs.python.org/3/library/venv.html)
