@@ -20,9 +20,6 @@ DevOps/
 └── Labs/
     └── Lab04/
         ├── README.md
-        ├── .gitignore
-        ├── answers.md
-        ├── evidence.json
         ├── Lab4_Solution.pdf
         └── screenshots/
 
@@ -35,7 +32,7 @@ Databases/                     # Your separate fork
 └── db-init/                   # Supplied database initialization
 ```
 
-The instructor supplies the instructions and starter. Create your own screenshots, written answers and solution PDF. The `prod` environment is a disposable local simulation.
+The instructor supplies this README and the starter repository. Create your own `screenshots/` directory in your `DevOps/Labs/Lab04` submission and include your written answers in `Lab4_Solution.pdf`. The `prod` environment is a disposable local simulation.
 
 ## Lab Objective
 
@@ -154,7 +151,7 @@ lab04_git_push.png
 lab04_github_submission.png
 ```
 
-Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. The same filenames are recorded in `evidence.json`; automated grading requires a configured Lab 4 grader.
+Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. Automated grading requires a configured Lab 4 grader.
 
 ---
 
@@ -167,7 +164,7 @@ Each check has equal weight. The three `Q*.png` exam-practice screenshots are re
    mkdir -p Labs/Lab04/screenshots
    ```
 
-2. Do the programming work in your `Databases` fork. Save evidence and answers in `DevOps/Labs/Lab04`.
+2. Do the programming work in your `Databases` fork. Save screenshots in `DevOps/Labs/Lab04/screenshots/` and include your observations and answers in `Lab4_Solution.pdf`.
 
 ---
 
@@ -345,7 +342,7 @@ connection.close()
    - Screenshot as `mysql_hardcoded_connection.png`.
      Show `Connected to MySQL: school_mysql`, server `127.0.0.1 3307`, and `Environment: dev`.
 
-The small SQL query reads the environment value stored in MySQL. `cursor.close()` and `connection.close()` release the resources. Record the result in `answers.md`.
+The small SQL query reads the environment value stored in MySQL. `cursor.close()` and `connection.close()` release the resources. Record the result in your solution PDF.
 
 
 **Screenshot Required:**
@@ -654,7 +651,7 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
    `git ls-files credentials.ini` must print nothing.
    - Screenshot as `credentials_gitignore.png`.
 
-2. Complete `~/DevOps/Labs/Lab04/answers.md` with your identity, fork URL, eight connection observations and the comparison questions. Do not record passwords or credential-bearing URIs.
+2. Prepare the observation table and comparison answers below for your solution PDF. Include your identity and fork URL. Do not record passwords or credential-bearing URIs.
 3. Display your short comparison with the required terminal identity visible.
    - Screenshot as `approach_comparison.png`.
 
@@ -664,6 +661,33 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
 | MongoDB hardcoded | URI and database name in Python | Edit Python |
 | MongoDB environment | `os.getenv()` | Export a different URI and database name |
 | MongoDB file | An INI section | Select another section with `APP_ENV` |
+
+### Connection Observations
+
+Record the actual output for each connection in your solution PDF.
+
+| Stage / environment | Host endpoint | Database name | Environment read from server | Result |
+| --- | --- | --- | --- | --- |
+| MySQL hardcoded | | | | |
+| MongoDB hardcoded | | | | |
+| Environment dev | | | | |
+| Environment test | | | | |
+| Environment simulated prod | | | | |
+| File dev | | | | |
+| File test | | | | |
+| File simulated prod | | | | |
+
+### Comparison Questions
+
+1. How do the MySQL host, port, username, password and database arguments correspond to the Java example?
+2. What do `MongoClient(uri)`, `client[database_name]` and `database.command("ping")` do?
+3. Which two assignments changed when moving from hardcoded MongoDB values to `os.getenv()`?
+4. Why must `MONGO_URI` and `MONGO_DATABASE` describe the same lab environment?
+5. What does `os.getenv("APP_ENV", "dev")` select in the file version?
+6. Which MongoDB connection lines stayed the same across stages 2–4?
+7. What does the environment value read from the database prove?
+8. Which approach would you choose for this lab, and why?
+9. Do an INI file, mode `600` and `.gitignore` encrypt credentials? What would you need to consider for real production secrets?
 
 Do not force-add `credentials.ini`. A Git ignore rule does not remove files that were already tracked. Plaintext files and environment variables do not encrypt credentials.
 
@@ -689,7 +713,7 @@ Do not force-add `credentials.ini`. A Git ignore rule does not remove files that
    ```
 
    - Screenshot as `lab04_code_push.png`, showing the successful push.
-   - Add the fork's final commit URL to `answers.md`. Keep `credentials.ini` untracked.
+   - Add the fork's final commit URL to your solution PDF. Keep `credentials.ini` untracked.
 
 2. Create a document title page with the lab number/title, complete actual name, registration number, course code, section and GitHub username.
    - Take a split-screen screenshot as `solution_title_page.png`.
@@ -707,7 +731,7 @@ Do not force-add `credentials.ini`. A Git ignore rule does not remove files that
    ```
 
    - Screenshot as `lab04_git_push.png`.
-6. Open `<your-username>/DevOps/tree/main/Labs/Lab04` on GitHub. Confirm that the instructions, answers, PDF and screenshots are present.
+6. Open `<your-username>/DevOps/tree/main/Labs/Lab04` on GitHub. Confirm that `README.md`, `Lab4_Solution.pdf` and your `screenshots/` directory are present.
    - Take a split-screen screenshot as `lab04_github_submission.png`.
 7. Add the final push/GitHub screenshots and their PDF captions, then synchronize them:
 
@@ -734,7 +758,7 @@ Do not force-add `credentials.ini`. A Git ignore rule does not remove files that
 
 ## Exam Evaluation Questions
 
-Write your predictions, results and explanations in `answers.md` and the PDF. The three exam screenshots are reviewed separately from the 29 mandatory checks.
+Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam screenshots are reviewed separately from the 29 mandatory checks.
 
 ### 1. A Missing Environment Variable
 
@@ -805,14 +829,13 @@ Complete this after Task 7.
 - [ ] All 29 required screenshots use the exact filenames in `screenshots/`.
 - [ ] I completed the three exam questions and restored the valid dummy settings.
 - [ ] No passwords, credential-bearing URIs, private keys or tokens appear in screenshots or answers.
-- [ ] `answers.md` contains my identity, observations, comparisons and fork commit URL.
-- [ ] `Lab4_Solution.pdf` contains my title page, captions, evidence and answers.
+- [ ] `Lab4_Solution.pdf` contains my title page, observations, comparisons, fork commit URL, captions, evidence and exam answers.
 - [ ] My final screenshots and updated PDF are committed and pushed.
 - [ ] My complete `DevOps/Labs/Lab04` directory is visible on GitHub.
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab04` directory. Include your `Databases` fork URL and final code commit URL in the answers and PDF.
+Submit the URL of your own `DevOps/Labs/Lab04` directory. Include your `Databases` fork URL and final code commit URL in `Lab4_Solution.pdf`.
 
 After capturing evidence, stop the databases:
 
