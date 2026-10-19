@@ -1,6 +1,6 @@
 # Lab 4: Simple Python Database Connections
 
-**Estimated duration:** 2–3 hours  
+**Estimated duration:** 3 hours  
 **Starter repository:** [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases) — fork this repository first  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab04`  
