@@ -92,33 +92,49 @@ Use the Ubuntu server prepared in Lab 1. Keep the Ubuntu terminal visible when c
 
 ## Mandatory Screenshot and Autograding Rules
 
-Follow the same evidence rules used in Lab 2. Each of the 33 mandatory screenshots represents one equally weighted evidence check. `evidence.json` records these filenames for consistent manual or automated evaluation; a Lab 4 grader must be configured separately before automatic marking is available.
+Read these rules before starting. Each required screenshot is evaluated separately.
 
-1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+1. Before doing this lab, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
    YourGitHubUsername@ubuntu:~$
    ```
 
-   Spelling must match your Student Marks Portal `user_name`; identity comparison is case-insensitive. A virtual-environment prefix or a current directory after the hostname is acceptable.
+   The comparison is case-insensitive, but spelling must match the `user_name` registered in the Student Marks Portal.
 
-2. Every screenshot must clearly show your `YourGitHubUsername@ubuntu` terminal identity, the required command or operation, and the relevant result.
-3. For GitHub browser tasks, use split-screen so the GitHub page and the Ubuntu terminal identity appear in the same screenshot. Apply the same rule to the document title page and exported PDF.
-4. Save original screenshots only under `DevOps/Labs/Lab04/screenshots/`, even when you execute commands inside your separate `Databases` fork.
-5. Use the exact filenames and capitalization below. Do not append numbers, change extensions, or submit only images embedded in a PDF.
-6. Screenshots must be clear and readable by OCR. Missing, unclear, cropped, misplaced or unreadable evidence receives zero for the affected check.
-7. Show both the command and relevant output. A command alone or unrelated output is insufficient.
-8. Exact and visually near-duplicate screenshots may be compared across students for the same task. Copied or slightly modified shared evidence receives zero for the affected task for both students.
-9. Do not display passwords, private SSH keys, access tokens, recovery codes or secrets. Enter passwords using the hidden prompts. Use the supplied redaction commands before capturing source/configuration; do not edit screenshots afterwards to conceal or replace evidence. Public-key entries or fingerprints are acceptable when no private key is exposed.
-10. Commit and push your code/practice notes to your `Databases` fork and the complete `Labs/Lab04` evidence directory to `DevOps` before the instructor's deadline. Local-only files cannot be graded.
+2. Every screenshot must clearly show:
+   - `YourGitHubUsername@ubuntu` in the terminal prompt;
+   - the command or GitHub operation required by that task; and
+   - the relevant result or output.
+
+3. For GitHub web-interface tasks, use a split-screen view so the GitHub page and a terminal showing `YourGitHubUsername@ubuntu` are visible in the same screenshot.
+
+4. Save every screenshot inside:
+
+   ```text
+   Labs/Lab04/screenshots/
+   ```
+
+5. Use the exact filename and capitalization given in this document. Do not rename files, add numbers, or use alternative spellings.
+
+6. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
+
+7. The required command and its relevant output must be visible. A screenshot containing only the command or only unrelated output may receive zero.
+
+8. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
+
+9. Do not expose passwords, private SSH keys, access tokens, recovery codes, or other secrets. It is acceptable to show a public-key entry or fingerprint without revealing private key contents.
+
+10. Commit and push the complete `Labs/Lab04` directory to `DevOps` before the deadline. Files remaining only on your computer cannot be graded.
 
 ### Required Automated-Grading Filenames
 
-These are the 33 mandatory Lab 4 filenames. They define Lab 4 evidence; the Lab 2 Git screenshot filenames are not reused.
+These are the 34 required Lab 4 screenshot filenames:
 
 ```text
 databases_fork.png
 databases_clone.png
+docker_installation.png
 database_services.png
 database_ports.png
 mysql_hardcoded_settings.png
@@ -152,7 +168,7 @@ lab04_git_push.png
 lab04_github_submission.png
 ```
 
-Exam-practice screenshots `Q1_source_selection.png`, `Q2_literal_password.png` and `Q3_cross_environment_auth.png` are additional evidence reviewed separately. They are not included in the 33 equally weighted checks.
+Each of these 34 checks has equal weight. Exam-practice screenshots `Q1_source_selection.png`, `Q2_literal_password.png` and `Q3_cross_environment_auth.png` are reviewed separately and are not included in these 34 checks. The filenames are also recorded in `evidence.json`; automatic grading requires a configured Lab 4 grader.
 
 ---
 
@@ -185,23 +201,61 @@ Exam-practice screenshots `Q1_source_selection.png`, `Q2_literal_password.png` a
    Replace `<your-username>` with your actual GitHub username. If you already cloned your fork, reuse it.
    - Screenshot as `databases_clone.png`.
 
+**Screenshot Required:**
+
+- `databases_fork.png`
+- `databases_clone.png`
+
 **Summary:** You have an independent code fork and a separate `DevOps` evidence repository.
 
 ---
 
 ## Task 2: Install Docker, Docker Compose, and Python on Ubuntu
 
-```bash
-sudo apt update
-sudo apt install -y docker.io docker-compose-v2 python3 python3-venv python3-pip
-sudo systemctl enable --now docker
-sudo usermod -aG docker "$USER"
-newgrp docker
-```
+1. Connect to your assigned Ubuntu server.
 
-Prepare the Python environment on the host:
+2. Update the Ubuntu package index and install Docker Engine and `curl`. On Ubuntu, the required package name is `docker.io`:
+
+   ```bash
+   sudo apt update -y
+   sudo apt install -y docker.io curl
+   ```
+
+3. Create the system-wide Docker CLI plug-in directory and download the Docker Compose plug-in for an `x86_64` Ubuntu server:
+
+   ```bash
+   sudo mkdir -p /usr/local/lib/docker/cli-plugins
+   sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose
+   sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+   ```
+
+4. Start the Docker service and add your current Ubuntu account to the `docker` group:
+
+   ```bash
+   sudo systemctl start docker
+   sudo usermod -aG docker $USER
+   exit
+   ```
+
+   Completely sign out of the Ubuntu server and reconnect so that the new group membership takes effect. Opening only a new terminal tab is not sufficient.
+
+5. Reconnect and verify the Git, Docker, and Docker Compose installations:
+
+   ```bash
+   ssh <github-username>@<ubuntu-server-ip>
+   git --version
+   docker --version
+   docker compose version
+   ```
+
+   Do not continue until all three version commands display their installed versions.
+
+   - Save a screenshot showing the three commands and their installed versions as `docker_installation.png`.
+
+### Install Python and Prepare the Host Environment
 
 ```bash
+sudo apt install -y python3 python3-venv python3-pip
 cd ~/Databases
 python3 -m venv .venv
 source .venv/bin/activate
@@ -209,6 +263,10 @@ python -m pip install -r requirements.txt
 ```
 
 Edit the Python files directly in `~/Databases` using your editor. Run every `python` command below from this directory with the virtual environment active. If you open a new terminal, return to `~/Databases` and activate `.venv` again.
+
+**Screenshot Required:**
+
+- `docker_installation.png`
 
 ---
 
@@ -246,6 +304,11 @@ The host Python programs connect through the published loopback ports listed abo
 
 If `--wait` is unavailable, update the Compose plugin or start with `docker compose up -d` and check `docker compose ps` until all services are healthy. Read `docker compose logs <service>` when troubleshooting. Initialization scripts run when database data volumes are first created.
 
+**Screenshot Required:**
+
+- `database_services.png`
+- `database_ports.png`
+
 ---
 
 ## Task 4: Connect to MySQL with Hardcoded Settings
@@ -269,6 +332,11 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
      Show `127.0.0.1:3307`, `school_mysql`, the dev marker, saved/read student records and the PASS message.
 
 3. In `answers.md`, identify the hardcoded settings and explain what must change if the endpoint or credentials change.
+
+**Screenshot Required:**
+
+- `mysql_hardcoded_settings.png`
+- `mysql_hardcoded_connection.png`
 
 **Summary:** The connection works, but deployment settings are embedded in application code.
 
@@ -294,6 +362,11 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
      Show `127.0.0.1:27017`, `school_dev`, marker `dev`, student records and PASS.
 
 3. Open `mongo_demo.py` and `settings.py` in your editor. Notice that stages 2–4 all call the same `run_demo()` function. Explain why switching to MongoDB did not remove the hardcoded-configuration problem.
+
+**Screenshot Required:**
+
+- `mongo_hardcoded_settings.png`
+- `mongo_hardcoded_connection.png`
 
 ---
 
@@ -370,6 +443,13 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 
 `APP_ENV` is a label and consistency check. It does not contain an automatic credentials map. The host Python process reads the values exported in your Ubuntu shell. Supply the complete matching profile. Do not print `env`, `printenv`, a credential-bearing URI or the password itself for evidence.
 
+**Screenshot Required:**
+
+- `mongo_env_dev.png`
+- `mongo_env_test.png`
+- `mongo_env_prod.png`
+- `mongo_env_unchanged.png`
+
 **Summary:** Deployment variables change the target database without edits to the application.
 
 ---
@@ -407,6 +487,11 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
    - Screenshot as `mongo_test_isolation.png`.
      Show the test marker, the seeded test student and absence of `DEV-ONLY` from the complete short student list.
 4. Restore Task 6's complete **prod** profile before Task 8.
+
+**Screenshot Required:**
+
+- `mongo_dev_only_record.png`
+- `mongo_test_isolation.png`
 
 **Summary:** A record created in dev is absent from the separate test database.
 
@@ -457,6 +542,12 @@ Begin with the complete valid prod profile from Task 6.
    export APP_ENV=prod
    python 03_mongo_env.py
    ```
+
+**Screenshot Required:**
+
+- `mongo_wrong_password.png`
+- `mongo_missing_password.png`
+- `mongo_environment_mismatch.png`
 
 ---
 
@@ -533,6 +624,16 @@ Begin with the complete valid prod profile from Task 6.
 
 Python uses INI files through its standard-library `configparser`; Java commonly uses a properties file for an equivalent lesson. These INI files are plaintext. Disabling interpolation preserves literal `%` characters in passwords. Moving a secret to a file does not encrypt it. Do not commit the generated credential files.
 
+**Screenshot Required:**
+
+- `credential_files_created.png`
+- `credential_file_settings.png`
+- `credential_file_permissions.png`
+- `mongo_file_dev.png`
+- `mongo_file_test.png`
+- `mongo_file_prod.png`
+- `mongo_file_source_selection.png`
+
 ---
 
 ## Task 10: Run Configuration and Live Database Checks
@@ -557,6 +658,11 @@ Python uses INI files through its standard-library `configparser`; Java commonly
 
 If a check fails, correct the actual configuration and rerun it. Keep the original dummy credentials in place for the supplied smoke test.
 
+**Screenshot Required:**
+
+- `lab04_tests.png`
+- `lab04_live_checks.png`
+
 ---
 
 ## Task 11: Verify Git Exclusions and Compare the Approaches
@@ -578,6 +684,11 @@ If a check fails, correct the actual configuration and rerun it. Keep the origin
 3. Display your short comparison with the Ubuntu terminal identity visible. Keep answers concise enough to read, and never include passwords.
    - Screenshot as `approach_comparison.png`.
 4. In the `Databases` fork, create your own `LAB_NOTES.md` containing your name, GitHub username, a short description of the four stages, and the observed environment markers. Record no passwords or credential-bearing connection strings.
+
+**Screenshot Required:**
+
+- `credentials_gitignore.png`
+- `approach_comparison.png`
 
 **Summary:** External configuration makes deployments easier to change. Real secret handling also needs controlled access and rotation; neither variables nor plaintext files automatically provide that.
 
@@ -635,11 +746,19 @@ If a check fails, correct the actual configuration and rerun it. Keep the origin
 
    Add Task 12 evidence/captions to the PDF and push the updated PDF after capturing these steps. Finally, confirm the complete submission is visible on GitHub. No additional screenshot is required for that last synchronization; it prevents the final evidence files or PDF from remaining local only.
 
+**Screenshot Required:**
+
+- `lab04_code_push.png`
+- `solution_title_page.png`
+- `lab4_solution_pdf.png`
+- `lab04_git_push.png`
+- `lab04_github_submission.png`
+
 ---
 
 ## Exam Evaluation Questions
 
-Complete these practical questions and write explanations in `answers.md` and the solution PDF. The three `Q*.png` images are reviewed separately from the 33 mandatory evidence checks.
+Complete these practical questions and write explanations in `answers.md` and the solution PDF. The three `Q*.png` images are reviewed separately from the 34 mandatory evidence checks.
 
 ### 1. Configuration Source Selection
 
@@ -695,7 +814,7 @@ Complete these practical questions and write explanations in `answers.md` and th
 - [ ] All 15 offline tests and all 11 live scenarios passed on my machine.
 - [ ] Generated credential files remain local and are excluded from Git.
 - [ ] `LAB_NOTES.md` and intentional code changes are pushed to my `Databases` fork.
-- [ ] All 33 mandatory screenshots use their exact filenames under `Labs/Lab04/screenshots/`.
+- [ ] All 34 mandatory screenshots use their exact filenames under `Labs/Lab04/screenshots/`.
 - [ ] GitHub and document/PDF screenshots use split-screen identity evidence.
 - [ ] No passwords, private keys or access tokens appear in my screenshots or answers.
 - [ ] `answers.md` contains my observations, comparison, fork commit link and exam answers.
@@ -718,7 +837,7 @@ For a fresh local lab only, `docker compose down -v` deletes this project's disp
 ## Official References
 
 - [Ubuntu: docker.io package](https://packages.ubuntu.com/noble/docker.io)
-- [Ubuntu: Docker Compose v2 package](https://packages.ubuntu.com/noble/docker-compose-v2)
+- [Docker: Install the Compose plug-in manually](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
 - [Docker: Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
 - [MySQL Connector/Python: Connecting to MySQL](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
 - [MongoDB PyMongo: Create a MongoClient](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/mongoclient/)

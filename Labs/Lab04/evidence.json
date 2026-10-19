@@ -3,7 +3,7 @@
   "submission_repository": "DevOps",
   "submission_directory": "Labs/Lab04",
   "screenshot_directory": "Labs/Lab04/screenshots",
-  "required_count": 33,
+  "required_count": 34,
   "identity": {
     "username": "Student Marks Portal user_name",
     "hostname": "ubuntu",
@@ -17,6 +17,10 @@
     },
     {
       "filename": "databases_clone.png",
+      "weight": 1
+    },
+    {
+      "filename": "docker_installation.png",
       "weight": 1
     },
     {
