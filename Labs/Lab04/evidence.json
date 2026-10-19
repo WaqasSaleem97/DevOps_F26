@@ -3,7 +3,7 @@
   "submission_repository": "DevOps",
   "submission_directory": "Labs/Lab04",
   "screenshot_directory": "Labs/Lab04/screenshots",
-  "required_count": 37,
+  "required_count": 33,
   "identity": {
     "username": "Student Marks Portal user_name",
     "hostname": "ubuntu",
@@ -12,27 +12,11 @@
   },
   "required_screenshots": [
     {
-      "filename": "lab04_folder_structure.png",
-      "weight": 1
-    },
-    {
-      "filename": "ubuntu_identity.png",
-      "weight": 1
-    },
-    {
       "filename": "databases_fork.png",
       "weight": 1
     },
     {
       "filename": "databases_clone.png",
-      "weight": 1
-    },
-    {
-      "filename": "lab04_prerequisites.png",
-      "weight": 1
-    },
-    {
-      "filename": "python_container.png",
       "weight": 1
     },
     {
