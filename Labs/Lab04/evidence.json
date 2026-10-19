@@ -3,7 +3,7 @@
   "submission_repository": "DevOps",
   "submission_directory": "Labs/Lab04",
   "screenshot_directory": "Labs/Lab04/screenshots",
-  "required_count": 34,
+  "required_count": 29,
   "identity": {
     "username": "Student Marks Portal user_name",
     "hostname": "ubuntu",
@@ -48,6 +48,10 @@
       "weight": 1
     },
     {
+      "filename": "mongo_env_settings.png",
+      "weight": 1
+    },
+    {
       "filename": "mongo_env_dev.png",
       "weight": 1
     },
@@ -64,26 +68,6 @@
       "weight": 1
     },
     {
-      "filename": "mongo_dev_only_record.png",
-      "weight": 1
-    },
-    {
-      "filename": "mongo_test_isolation.png",
-      "weight": 1
-    },
-    {
-      "filename": "mongo_wrong_password.png",
-      "weight": 1
-    },
-    {
-      "filename": "mongo_missing_password.png",
-      "weight": 1
-    },
-    {
-      "filename": "mongo_environment_mismatch.png",
-      "weight": 1
-    },
-    {
       "filename": "credential_files_created.png",
       "weight": 1
     },
@@ -93,6 +77,10 @@
     },
     {
       "filename": "credential_file_permissions.png",
+      "weight": 1
+    },
+    {
+      "filename": "mongo_file_settings.png",
       "weight": 1
     },
     {
@@ -108,15 +96,7 @@
       "weight": 1
     },
     {
-      "filename": "mongo_file_source_selection.png",
-      "weight": 1
-    },
-    {
-      "filename": "lab04_tests.png",
-      "weight": 1
-    },
-    {
-      "filename": "lab04_live_checks.png",
+      "filename": "mongo_file_unchanged.png",
       "weight": 1
     },
     {
@@ -149,9 +129,9 @@
     }
   ],
   "exam_screenshots": [
-    "Q1_source_selection.png",
-    "Q2_literal_password.png",
-    "Q3_cross_environment_auth.png"
+    "Q1_missing_environment.png",
+    "Q2_file_source_selection.png",
+    "Q3_wrong_file_password.png"
   ],
   "exam_in_main_score": false,
   "grader_status": "Evidence contract only; configure a Lab 4 grader separately.",

@@ -1,12 +1,19 @@
-# Lab 4: Database Connections, Environment Variables, and Credential Files with Python
+# Lab 4: Simple Python Database Connections
 
-**Estimated duration:** 3 hours  
+**Estimated duration:** 2–3 hours  
 **Starter repository:** [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases) — fork this repository first  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab04`  
 **Screenshot directory:** `Labs/Lab04/screenshots`
 
-Start by forking `Databases` into your own GitHub account. Edit and run the Python application from that fork directly on your Ubuntu host. Use Docker Compose for the database services. Submit the screenshots, written answers and solution PDF to your separate GitHub repository named exactly `DevOps`.
+Write and run Python directly on your assigned Ubuntu server. Docker runs the databases. Work in your own `Databases` fork and **edit the same file, `db_connect.py`, through all four stages**:
+
+1. MySQL with the username, password and endpoint in the code.
+2. MongoDB with the username, password and endpoint in the code.
+3. MongoDB with values read using `os.getenv()`.
+4. MongoDB with values read from a credentials file.
+
+Each example only connects, sends a request and prints which database answered. In the MongoDB stages, the connection block stays the same; the source of two settings changes.
 
 ```text
 DevOps/
@@ -18,70 +25,54 @@ DevOps/
         ├── evidence.json
         ├── Lab4_Solution.pdf
         └── screenshots/
-            ├── databases_fork.png
-            ├── databases_clone.png
-            └── ...
 
-Databases/                       # Your separate fork and working directory
+Databases/                     # Your separate fork
+├── db_connect.py              # The only Python file you edit
+├── credentials.ini.example   # Public dummy values supplied by the instructor
+├── credentials.ini           # Local copy; ignored by Git
 ├── requirements.txt
 ├── compose.yaml
-├── 01_mysql_hardcoded.py
-├── 02_mongo_hardcoded.py
-├── 03_mongo_env.py
-├── 04_mongo_file.py
-├── config-examples/
-├── config/                      # Created locally; credential files stay ignored
-├── db-init/
-├── tests/
-└── LAB_NOTES.md                  # Your own short practice record
+└── db-init/                   # Supplied database initialization
 ```
 
-The instructor supplies this README and the starter code. Create your own evidence and `Lab4_Solution.pdf`; the screenshots and completed solution are not supplied.
-
----
+The instructor supplies the instructions and starter. Create your own screenshots, written answers and solution PDF. The `prod` environment is a disposable local simulation.
 
 ## Lab Objective
 
 By the end of this lab, you will be able to:
 
-- Connect a Python application to MySQL using hardcoded endpoint and credentials.
-- Connect the application to MongoDB using hardcoded endpoint and credentials.
-- Run unchanged MongoDB operations against dev, test and simulated prod using process environment variables.
-- Run the same operations using external credential files selected for each environment.
-- Verify the actual database target using a server-side environment marker.
-- Distinguish configuration externalization from secure secret storage.
-- Keep credential files out of Git while committing your code and evidence correctly.
-
-The `prod` database is a disposable local simulation. Use only the supplied dummy accounts. Python runs directly on the Ubuntu host, and Docker Compose starts the database services.
+- Recognize the Python equivalents of Java's MySQL and MongoDB connection code.
+- Connect to MySQL and MongoDB using a short Python program.
+- Explain the settings embedded in a MongoDB URI.
+- Use `os.getenv()` to run unchanged Python code against dev, test and simulated prod.
+- Use `configparser` to read those settings from an INI credentials file.
+- Read the actual server's environment value to confirm the target.
+- Keep local credentials out of Git and submit the required evidence.
 
 ## Prerequisites
 
-- Complete the Ubuntu identity setup from Lab 1 and the Git/SSH setup from Lab 2.
-- Your Ubuntu username matches the `user_name` registered in the Student Marks Portal, and the hostname is `ubuntu`.
-- Git and SSH access to GitHub are configured on your Ubuntu server.
-- Your own GitHub repositories `DevOps` and a fork of `Databases` are accessible through SSH.
+- Use the Ubuntu account and Git/SSH access prepared in Labs 1 and 2.
+- Your Ubuntu username matches your Student Marks Portal `user_name`, and the hostname is `ubuntu`.
+- Your GitHub `DevOps` repository and your `Databases` fork are accessible through SSH.
 - A browser, screenshot tool and document editor are available on your computer.
-- Internet access is available for the first Docker image/package downloads.
+- Internet access is available for package and database image downloads.
 
-Use the Ubuntu server prepared in Lab 1. Keep the Ubuntu terminal visible when capturing evidence from Windows over SSH.
+Keep your Ubuntu terminal visible when capturing evidence from Windows over SSH.
 
-**Navigation:** Click any task below to jump to its instructions.
+**Navigation:** Click a task below to jump to its instructions.
 
 ## Task List
 
 - [Getting Started](#getting-started)
 - [Task 1: Fork and Clone the Databases Repository](#task-1-fork-and-clone-the-databases-repository)
 - [Task 2: Install Docker, Docker Compose, and Python on Ubuntu](#task-2-install-docker-docker-compose-and-python-on-ubuntu)
-- [Task 3: Start and Inspect the Database Services](#task-3-start-and-inspect-the-database-services)
-- [Task 4: Connect to MySQL with Hardcoded Settings](#task-4-connect-to-mysql-with-hardcoded-settings)
-- [Task 5: Connect to MongoDB with Hardcoded Settings](#task-5-connect-to-mongodb-with-hardcoded-settings)
-- [Task 6: Select Dev, Test, and Prod with Environment Variables](#task-6-select-dev-test-and-prod-with-environment-variables)
-- [Task 7: Prove Database Isolation](#task-7-prove-database-isolation)
-- [Task 8: Diagnose Authentication and Configuration Failures](#task-8-diagnose-authentication-and-configuration-failures)
-- [Task 9: Select Dev, Test, and Prod with Credential Files](#task-9-select-dev-test-and-prod-with-credential-files)
-- [Task 10: Run Configuration and Live Database Checks](#task-10-run-configuration-and-live-database-checks)
-- [Task 11: Verify Git Exclusions and Compare the Approaches](#task-11-verify-git-exclusions-and-compare-the-approaches)
-- [Task 12: Prepare the Solution PDF and Push Both Submissions](#task-12-prepare-the-solution-pdf-and-push-both-submissions)
+- [Task 3: Start the Database Services](#task-3-start-the-database-services)
+- [Task 4: MySQL with Values in the Code](#task-4-mysql-with-values-in-the-code)
+- [Task 5: MongoDB with Values in the Code](#task-5-mongodb-with-values-in-the-code)
+- [Task 6: MongoDB with os.getenv](#task-6-mongodb-with-osgetenv)
+- [Task 7: MongoDB with a Credentials File](#task-7-mongodb-with-a-credentials-file)
+- [Task 8: Compare the Approaches and Check Git Exclusions](#task-8-compare-the-approaches-and-check-git-exclusions)
+- [Task 9: Prepare the Solution PDF and Push Both Submissions](#task-9-prepare-the-solution-pdf-and-push-both-submissions)
 - [Exam Evaluation Questions](#exam-evaluation-questions)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
@@ -129,7 +120,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 ### Required Automated-Grading Filenames
 
-These are the 34 required Lab 4 screenshot filenames:
+These are the 29 required Lab 4 screenshot filenames:
 
 ```text
 databases_fork.png
@@ -141,24 +132,19 @@ mysql_hardcoded_settings.png
 mysql_hardcoded_connection.png
 mongo_hardcoded_settings.png
 mongo_hardcoded_connection.png
+mongo_env_settings.png
 mongo_env_dev.png
 mongo_env_test.png
 mongo_env_prod.png
 mongo_env_unchanged.png
-mongo_dev_only_record.png
-mongo_test_isolation.png
-mongo_wrong_password.png
-mongo_missing_password.png
-mongo_environment_mismatch.png
 credential_files_created.png
 credential_file_settings.png
 credential_file_permissions.png
+mongo_file_settings.png
 mongo_file_dev.png
 mongo_file_test.png
 mongo_file_prod.png
-mongo_file_source_selection.png
-lab04_tests.png
-lab04_live_checks.png
+mongo_file_unchanged.png
 credentials_gitignore.png
 approach_comparison.png
 lab04_code_push.png
@@ -168,27 +154,27 @@ lab04_git_push.png
 lab04_github_submission.png
 ```
 
-Each of these 34 checks has equal weight. Exam-practice screenshots `Q1_source_selection.png`, `Q2_literal_password.png` and `Q3_cross_environment_auth.png` are reviewed separately and are not included in these 34 checks. The filenames are also recorded in `evidence.json`; automatic grading requires a configured Lab 4 grader.
+Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. The same filenames are recorded in `evidence.json`; automated grading requires a configured Lab 4 grader.
 
 ---
 
 ## Getting Started
 
-1. Open your existing `DevOps` repository and create the screenshot directory:
+1. Create the evidence directory in your existing `DevOps` repository:
 
    ```bash
    cd ~/DevOps
    mkdir -p Labs/Lab04/screenshots
    ```
 
-2. Complete the practical work in your own `Databases` fork and save all evidence under `Labs/Lab04/screenshots/` in `DevOps`.
+2. Do the programming work in your `Databases` fork. Save evidence and answers in `DevOps/Labs/Lab04`.
 
 ---
 
 ## Task 1: Fork and Clone the Databases Repository
 
-1. Open [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases) and select **Fork**. Use your own GitHub account and keep the repository name `Databases`.
-2. Confirm that the fork page shows `<your-username>/Databases` and identifies `WaqasSaleem97/Databases` as its source.
+1. Open [WaqasSaleem97/Databases](https://github.com/WaqasSaleem97/Databases), select **Fork**, and keep the name `Databases`.
+2. Confirm that the page shows `<your-username>/Databases` and the original repository as its source.
    - Take a split-screen screenshot as `databases_fork.png`.
 3. Clone your own fork:
 
@@ -198,7 +184,7 @@ Each of these 34 checks has equal weight. Exam-practice screenshots `Q1_source_s
    cd Databases
    ```
 
-   Replace `<your-username>` with your actual GitHub username. If you already cloned your fork, reuse it.
+   Replace `<your-username>` with your GitHub username. Reuse an existing clone if you already have one.
    - Screenshot as `databases_clone.png`.
 
 **Screenshot Required:**
@@ -206,7 +192,7 @@ Each of these 34 checks has equal weight. Exam-practice screenshots `Q1_source_s
 - `databases_fork.png`
 - `databases_clone.png`
 
-**Summary:** You have an independent code fork and a separate `DevOps` evidence repository.
+**Summary:** Your fork contains the code you will edit. Your separate `DevOps` repository holds the evidence.
 
 ---
 
@@ -262,7 +248,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-Edit the Python files directly in `~/Databases` using your editor. Run every `python` command below from this directory with the virtual environment active. If you open a new terminal, return to `~/Databases` and activate `.venv` again.
+Edit `db_connect.py` directly in `~/Databases` using your editor. Run every `python` command below from this directory with the virtual environment active. If you open a new terminal, return to `~/Databases` and activate `.venv` again.
 
 **Screenshot Required:**
 
@@ -270,19 +256,18 @@ Edit the Python files directly in `~/Databases` using your editor. Run every `py
 
 ---
 
-## Task 3: Start and Inspect the Database Services
+## Task 3: Start the Database Services
 
-1. Start all four database containers and wait for healthy services:
+1. Start the four supplied databases:
 
    ```bash
    docker compose up -d --wait mysql mongo-dev mongo-test mongo-prod
    docker compose ps
    ```
 
-   - Screenshot as `database_services.png`.
-     Show all four databases healthy.
+   - Screenshot as `database_services.png`, showing all four services healthy.
 
-2. Inspect the loopback-only published ports:
+2. Inspect the ports used by Python on the Ubuntu host:
 
    ```bash
    docker compose port mysql 3306
@@ -293,16 +278,15 @@ Edit the Python files directly in `~/Databases` using your editor. Run every `py
 
    - Screenshot as `database_ports.png`.
 
-| Environment | Endpoint used by host Python | Database / MongoDB auth source | Username | Disposable dummy password |
+| Database | Host endpoint | Database name | Dummy username | Dummy password |
 | --- | --- | --- | --- | --- |
-| MySQL dev | `127.0.0.1:3307` | `school_mysql` | `mysql_student` | `MysqlDemoOnly123!` |
+| MySQL | `127.0.0.1:3307` | `school_mysql` | `mysql_student` | `MysqlDemoOnly123!` |
 | MongoDB dev | `127.0.0.1:27017` | `school_dev` | `dev_user` | `DevDemoOnly123!` |
 | MongoDB test | `127.0.0.1:27018` | `school_test` | `test_user` | `TestDemoOnly123!` |
 | MongoDB simulated prod | `127.0.0.1:27019` | `school_prod` | `prod_user` | `ProdDemoOnly123!` |
 
-The host Python programs connect through the published loopback ports listed above. Keep this password reference outside the captured evidence area.
+These public dummy values are supplied for the local lab. Keep this table outside screenshots. The initialization scripts create a small `environment_info` table/collection containing the actual environment name.
 
-If `--wait` is unavailable, update the Compose plugin or start with `docker compose up -d` and check `docker compose ps` until all services are healthy. Read `docker compose logs <service>` when troubleshooting. Initialization scripts run when database data volumes are first created.
 
 **Screenshot Required:**
 
@@ -311,440 +295,432 @@ If `--wait` is unavailable, update the Compose plugin or start with `docker comp
 
 ---
 
-## Task 4: Connect to MySQL with Hardcoded Settings
+## Task 4: MySQL with Values in the Code
 
-1. Display the MySQL connection block with the password removed from the output before taking a screenshot:
+1. Open `db_connect.py` in your editor:
 
    ```bash
-   sed -E 's/(password[[:space:]]*=[[:space:]]*).*/\1"<redacted>",/' 01_mysql_hardcoded.py | sed -n '/mysql.connector.connect(/,/connection_timeout/p'
+   nano db_connect.py
+   ```
+
+   The starter contains this short Python equivalent of the Java MySQL connection:
+
+<!-- stage: mysql -->
+```python
+import mysql.connector
+
+connection = mysql.connector.connect(
+    host="127.0.0.1",
+    port=3307,
+    user="mysql_student",
+    password="MysqlDemoOnly123!",
+    database="school_mysql",
+)
+
+print("Connected to MySQL:", connection.database)
+print("Server:", connection.server_host, connection.server_port)
+cursor = connection.cursor()
+cursor.execute("SELECT environment FROM environment_info")
+print("Environment:", cursor.fetchone()[0])
+cursor.close()
+connection.close()
+```
+
+   `user` and `password` correspond to Java's `setUser()` and `setPassword()`. `host`, `port` and `database` correspond to the parts of the JDBC URL. `mysql.connector.connect()` opens the connection.
+
+2. Display the code with the password hidden:
+
+   ```bash
+   sed -E 's/(password=).*/\1"<redacted>",/' db_connect.py
    ```
 
    - Screenshot as `mysql_hardcoded_settings.png`.
-     The file itself must keep the supplied dummy password so the example works.
 
-2. Run the program:
+3. Run the file:
 
    ```bash
-   python 01_mysql_hardcoded.py
+   python db_connect.py
    ```
 
    - Screenshot as `mysql_hardcoded_connection.png`.
-     Show `127.0.0.1:3307`, `school_mysql`, the dev marker, saved/read student records and the PASS message.
+     Show `Connected to MySQL: school_mysql`, server `127.0.0.1 3307`, and `Environment: dev`.
 
-3. In `answers.md`, identify the hardcoded settings and explain what must change if the endpoint or credentials change.
+The small SQL query reads the environment value stored in MySQL. `cursor.close()` and `connection.close()` release the resources. Record the result in `answers.md`.
+
 
 **Screenshot Required:**
 
 - `mysql_hardcoded_settings.png`
 - `mysql_hardcoded_connection.png`
 
-**Summary:** The connection works, but deployment settings are embedded in application code.
+**Summary:** The connection works, and its settings are written directly in Python.
 
 ---
 
-## Task 5: Connect to MongoDB with Hardcoded Settings
+## Task 5: MongoDB with Values in the Code
 
-1. Display the MongoDB settings without revealing the password:
+1. Replace the contents of **the same `db_connect.py`** with:
+
+<!-- stage: mongo_hardcoded -->
+```python
+from pymongo import MongoClient
+
+uri = "mongodb://dev_user:DevDemoOnly123!@127.0.0.1:27017/school_dev"
+database_name = "school_dev"
+
+client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+database = client[database_name]
+database.command("ping")
+print("Connected to MongoDB:", database.name)
+print("Server:", client.address)
+print("Environment:", database.environment_info.find_one()["name"])
+client.close()
+```
+
+   `MongoClient(uri)` is the Python equivalent of creating the Java client from a MongoDB URI. `client[database_name]` selects the database, like `getDB(...)` in the Java example.
+
+   In the URI, `dev_user` is the username, the value after `:` is the password, `127.0.0.1:27017` is the endpoint, and `school_dev` is the authentication database. This lab selects that same database for the request.
+
+2. Show the code with the URI credentials hidden:
 
    ```bash
-   sed -E 's/(password[[:space:]]*=[[:space:]]*).*/\1"<redacted>",/' 02_mongo_hardcoded.py | sed -n '/settings = MongoSettings(/,/^    )/p'
+   sed -E 's#mongodb://[^@]*@#mongodb://<redacted>@#g' db_connect.py
    ```
 
    - Screenshot as `mongo_hardcoded_settings.png`.
 
-2. Run the program:
+3. Run the same command:
 
    ```bash
-   python 02_mongo_hardcoded.py
+   python db_connect.py
    ```
 
    - Screenshot as `mongo_hardcoded_connection.png`.
-     Show `127.0.0.1:27017`, `school_dev`, marker `dev`, student records and PASS.
+     Show database `school_dev`, port `27017`, and environment `dev`.
 
-3. Open `mongo_demo.py` and `settings.py` in your editor. Notice that stages 2–4 all call the same `run_demo()` function. Explain why switching to MongoDB did not remove the hardcoded-configuration problem.
+`database.command("ping")` sends a real request; creating a client or selecting a database alone does not verify connectivity. The final query reads the environment from the selected database. `serverSelectionTimeoutMS=5000` limits server selection to five seconds.
+
 
 **Screenshot Required:**
 
 - `mongo_hardcoded_settings.png`
 - `mongo_hardcoded_connection.png`
 
+**Summary:** You changed the database driver while keeping the same run command.
+
 ---
 
-## Task 6: Select Dev, Test, and Prod with Environment Variables
+## Task 6: MongoDB with os.getenv()
 
-1. Record the application file's checksum before changing any deployment variables:
+1. Replace the same file with the environment-variable version:
+
+<!-- stage: mongo_env -->
+```python
+import os
+from pymongo import MongoClient
+
+uri = os.getenv("MONGO_URI")
+database_name = os.getenv("MONGO_DATABASE")
+
+if not uri or not database_name:
+    raise SystemExit("Set MONGO_URI and MONGO_DATABASE first.")
+
+client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+database = client[database_name]
+database.command("ping")
+print("Connected to MongoDB:", database.name)
+print("Server:", client.address)
+print("Environment:", database.environment_info.find_one()["name"])
+client.close()
+```
+
+   Add `import os` and read the two settings using `os.getenv()`. Keep the MongoDB connection and output block unchanged. The short `if` statement tells you if a required variable is missing.
+
+2. Display the code and record its checksum:
 
    ```bash
-   sha256sum 03_mongo_env.py > /tmp/lab04-env-before.sha256
+   cat db_connect.py
+   sha256sum db_connect.py > /tmp/lab04-env-before.sha256
    ```
 
-2. Export the complete dev profile. At the hidden prompt enter the dev dummy password from Task 3:
+   - Screenshot as `mongo_env_settings.png`, showing `os.getenv()`.
+
+3. Set the dev values in the same Ubuntu shell and run:
 
    ```bash
-   export APP_ENV=dev
-   export MONGO_HOST=127.0.0.1
-   export MONGO_PORT=27017
+   export MONGO_URI='mongodb://dev_user:DevDemoOnly123!@127.0.0.1:27017/school_dev'
    export MONGO_DATABASE=school_dev
-   export MONGO_USERNAME=dev_user
-   export MONGO_AUTH_SOURCE=school_dev
-   read -r -s -p "Dev database password: " MONGO_PASSWORD
-   echo
-   export MONGO_PASSWORD
-   python 03_mongo_env.py
+   clear
+   python db_connect.py
    ```
 
-   - Screenshot as `mongo_env_dev.png`.
-     Show the relevant command, `127.0.0.1:27017`, `school_dev`, marker `dev`, and PASS.
+   - Screenshot as `mongo_env_dev.png`, showing `school_dev`, port `27017`, and environment `dev`.
 
-3. Change the deployment variables to test and enter its password:
+4. Set the test values and run:
 
    ```bash
-   export APP_ENV=test
-   export MONGO_HOST=127.0.0.1
-   export MONGO_PORT=27018
+   export MONGO_URI='mongodb://test_user:TestDemoOnly123!@127.0.0.1:27018/school_test'
    export MONGO_DATABASE=school_test
-   export MONGO_USERNAME=test_user
-   export MONGO_AUTH_SOURCE=school_test
-   read -r -s -p "Test database password: " MONGO_PASSWORD
-   echo
-   export MONGO_PASSWORD
-   python 03_mongo_env.py
+   clear
+   python db_connect.py
    ```
 
-   - Screenshot as `mongo_env_test.png`.
-     Show the test endpoint, database, marker and PASS.
+   - Screenshot as `mongo_env_test.png`, showing `school_test`, port `27018`, and environment `test`.
 
-4. Change the complete profile to simulated prod:
+5. Set the simulated prod values and run:
 
    ```bash
-   export APP_ENV=prod
-   export MONGO_HOST=127.0.0.1
-   export MONGO_PORT=27019
+   export MONGO_URI='mongodb://prod_user:ProdDemoOnly123!@127.0.0.1:27019/school_prod'
    export MONGO_DATABASE=school_prod
-   export MONGO_USERNAME=prod_user
-   export MONGO_AUTH_SOURCE=school_prod
-   read -r -s -p "Simulated prod database password: " MONGO_PASSWORD
-   echo
-   export MONGO_PASSWORD
-   python 03_mongo_env.py
+   clear
+   python db_connect.py
    ```
 
-   - Screenshot as `mongo_env_prod.png`.
-     Show the simulated prod endpoint, database, marker and PASS.
+   - Screenshot as `mongo_env_prod.png`, showing `school_prod`, port `27019`, and environment `prod`.
 
-5. Verify that the program stayed unchanged:
+6. Confirm that changing the environment variables did not change the code:
 
    ```bash
    sha256sum -c /tmp/lab04-env-before.sha256
    ```
 
-   - Screenshot as `mongo_env_unchanged.png`.
-     Show `03_mongo_env.py: OK`.
+   - Screenshot as `mongo_env_unchanged.png`, showing `db_connect.py: OK`.
 
-`APP_ENV` is a label and consistency check. It does not contain an automatic credentials map. The host Python process reads the values exported in your Ubuntu shell. Supply the complete matching profile. Do not print `env`, `printenv`, a credential-bearing URI or the password itself for evidence.
+These export commands contain the supplied public dummy credentials. `clear` removes them from the visible terminal before you capture the result. Do not print `MONGO_URI` or capture the exports in a screenshot.
+
+Python inherits exported variables from the shell. The URI supplies the username, password and endpoint together; `MONGO_DATABASE` selects the database. Export both values for each environment. This version does not read `APP_ENV`.
+
+Complete **Exam Question 1** while this version is still in your file.
+
 
 **Screenshot Required:**
 
+- `mongo_env_settings.png`
 - `mongo_env_dev.png`
 - `mongo_env_test.png`
 - `mongo_env_prod.png`
 - `mongo_env_unchanged.png`
 
-**Summary:** Deployment variables change the target database without edits to the application.
+**Summary:** One unchanged program connects to three databases using values from its process environment.
 
 ---
 
-## Task 7: Prove Database Isolation
+## Task 7: MongoDB with a Credentials File
 
-1. From the host, open an interactive shell in the dev MongoDB service. Enter its dummy password at the hidden prompt:
-
-   ```bash
-   docker compose exec mongo-dev mongosh school_dev --username dev_user --authenticationDatabase school_dev
-   ```
-
-2. Run these commands in `mongosh`:
-
-   ```javascript
-   db.students.updateOne(
-     { roll_no: "DEV-ONLY" },
-     { $set: { name: "Dev Only Student", environment: "dev" } },
-     { upsert: true }
-   )
-   db.students.find({ roll_no: "DEV-ONLY" }, { _id: 0 }).toArray()
-   exit
-   ```
-
-   Return to the host and run:
+1. Create one local file containing the three environment sections:
 
    ```bash
-   python 02_mongo_hardcoded.py
-   ```
-
-   - Screenshot as `mongo_dev_only_record.png`.
-     Show the host identity and `DEV-ONLY` in the dev program's output.
-
-3. Repeat Task 6's complete **test** export block and run `03_mongo_env.py`.
-   - Screenshot as `mongo_test_isolation.png`.
-     Show the test marker, the seeded test student and absence of `DEV-ONLY` from the complete short student list.
-4. Restore Task 6's complete **prod** profile before Task 8.
-
-**Screenshot Required:**
-
-- `mongo_dev_only_record.png`
-- `mongo_test_isolation.png`
-
-**Summary:** A record created in dev is absent from the separate test database.
-
----
-
-## Task 8: Diagnose Authentication and Configuration Failures
-
-Begin with the complete valid prod profile from Task 6.
-
-1. At the hidden prompt below enter an intentionally incorrect password, then run the same program:
-
-   ```bash
-   read -r -s -p "Enter an intentionally wrong password: " MONGO_PASSWORD
-   echo
-   export MONGO_PASSWORD
-   python 03_mongo_env.py
-   ```
-
-   - Screenshot as `mongo_wrong_password.png`.
-     Show `Authentication failed`. The endpoint still points to the same database; the credentials are rejected.
-
-2. Remove the password variable:
-
-   ```bash
-   unset MONGO_PASSWORD
-   python 03_mongo_env.py
-   ```
-
-   - Screenshot as `mongo_missing_password.png`.
-     Show `Missing MongoDB settings: password`. The application must not use a fallback password or switch to dev.
-
-3. Restore the valid prod password and deliberately change only the environment label:
-
-   ```bash
-   read -r -s -p "Restore the simulated prod password: " MONGO_PASSWORD
-   echo
-   export MONGO_PASSWORD
-   export APP_ENV=dev
-   python 03_mongo_env.py
-   ```
-
-   - Screenshot as `mongo_environment_mismatch.png`.
-     Show the database-marker error and `no student was written`. The endpoint and valid credentials still identify prod; the dev label does not reroute the connection.
-
-4. Restore the label and confirm that the prod run succeeds:
-
-   ```bash
-   export APP_ENV=prod
-   python 03_mongo_env.py
-   ```
-
-**Screenshot Required:**
-
-- `mongo_wrong_password.png`
-- `mongo_missing_password.png`
-- `mongo_environment_mismatch.png`
-
----
-
-## Task 9: Select Dev, Test, and Prod with Credential Files
-
-1. Create the editable local credential files:
-
-   ```bash
-   python prepare_config.py
-   ls config
+   cp -n credentials.ini.example credentials.ini
+   ls credentials.ini
    ```
 
    - Screenshot as `credential_files_created.png`.
-     Show `dev.ini`, `test.ini` and `prod.ini`. Existing files are kept rather than overwritten.
 
-2. Display each file's settings with its password removed from the terminal output:
+   The file contains:
 
-   ```bash
-   for profile in dev test prod
-   do
-     echo "--- ${profile}.ini ---"
-     sed -E 's/^(password[[:space:]]*=).*/\1 <redacted>/' "config/${profile}.ini"
-   done
-   ```
+```ini
+# Public dummy values for the disposable classroom databases only.
+[dev]
+uri = mongodb://dev_user:DevDemoOnly123!@127.0.0.1:27017/school_dev
+database = school_dev
 
-   - Screenshot as `credential_file_settings.png`.
-     Show the three selected profiles, endpoints, database names, usernames and redacted password fields. Make the terminal tall enough to keep the output and identity readable.
+[test]
+uri = mongodb://test_user:TestDemoOnly123!@127.0.0.1:27018/school_test
+database = school_test
 
-3. Check permissions:
+[prod]
+uri = mongodb://prod_user:ProdDemoOnly123!@127.0.0.1:27019/school_prod
+database = school_prod
+```
 
-   ```bash
-   stat -c '%a %n' config/dev.ini config/test.ini config/prod.ini
-   ```
-
-   - Screenshot as `credential_file_permissions.png`.
-     Newly prepared files should show Unix mode `600`.
-
-4. Run file mode against dev:
+2. Show its settings with the URI credentials hidden:
 
    ```bash
-   python 04_mongo_file.py --env dev
+   sed -E 's#mongodb://[^@]*@#mongodb://<redacted>@#g' credentials.ini
    ```
 
-   - Screenshot as `mongo_file_dev.png`.
-     Show the external-file source and actual dev marker.
+   - Screenshot as `credential_file_settings.png`, showing all three sections and their endpoints.
 
-5. Run file mode against test:
+3. Restrict the file to your account and check its mode:
 
    ```bash
-   python 04_mongo_file.py --env test
+   chmod 600 credentials.ini
+   stat -c '%a %n' credentials.ini
    ```
 
-   - Screenshot as `mongo_file_test.png`.
-     Show the test file and actual test marker.
+   - Screenshot as `credential_file_permissions.png`, showing `600 credentials.ini`.
 
-6. Run file mode against simulated prod:
+4. Replace the contents of the same `db_connect.py` with:
+
+<!-- stage: mongo_file -->
+```python
+import os
+import configparser
+from pymongo import MongoClient
+
+config = configparser.ConfigParser(interpolation=None)
+config.read("credentials.ini")
+environment = os.getenv("APP_ENV", "dev")
+uri = config[environment]["uri"]
+database_name = config[environment]["database"]
+
+client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+database = client[database_name]
+database.command("ping")
+print("Connected to MongoDB:", database.name)
+print("Server:", client.address)
+print("Environment:", database.environment_info.find_one()["name"])
+client.close()
+```
+
+   The `configparser` module is included with Python. `config.read()` reads the file, and `config[environment]` chooses a section. `os.getenv("APP_ENV", "dev")` uses the selected section name, with `dev` as its default.
+
+   The `uri` and `database_name` assignments read from that section. Keep the MongoDB connection and output block unchanged.
+
+5. Display the Python code and record its checksum:
 
    ```bash
-   python 04_mongo_file.py --env prod
+   cat db_connect.py
+   sha256sum db_connect.py > /tmp/lab04-file-before.sha256
    ```
 
-   - Screenshot as `mongo_file_prod.png`.
-     Show the prod file and actual prod marker.
+   - Screenshot as `mongo_file_settings.png`, showing the file-reading code.
 
-7. The shell should still hold the prod profile from Task 8. Display only non-secret identifiers and select the dev file:
+6. Choose dev and run:
 
    ```bash
-   printf 'Shell profile: %s | %s | %s\n' "$APP_ENV" "$MONGO_HOST" "$MONGO_DATABASE"
-   python 04_mongo_file.py --env dev
+   export APP_ENV=dev
+   python db_connect.py
    ```
 
-   - Screenshot as `mongo_file_source_selection.png`.
-     Show that the selected file connects to dev even though the shell describes prod. File mode deliberately ignores those shell credentials.
+   - Screenshot as `mongo_file_dev.png`, showing the dev endpoint, database and environment.
 
-Python uses INI files through its standard-library `configparser`; Java commonly uses a properties file for an equivalent lesson. These INI files are plaintext. Disabling interpolation preserves literal `%` characters in passwords. Moving a secret to a file does not encrypt it. Do not commit the generated credential files.
+7. Choose test and run:
+
+   ```bash
+   export APP_ENV=test
+   python db_connect.py
+   ```
+
+   - Screenshot as `mongo_file_test.png`, showing the test endpoint, database and environment.
+
+8. Choose simulated prod and run:
+
+   ```bash
+   export APP_ENV=prod
+   python db_connect.py
+   ```
+
+   - Screenshot as `mongo_file_prod.png`, showing the prod endpoint, database and environment.
+
+9. Confirm that switching sections did not change the Python code:
+
+   ```bash
+   sha256sum -c /tmp/lab04-file-before.sha256
+   ```
+
+   - Screenshot as `mongo_file_unchanged.png`, showing `db_connect.py: OK`.
+
+The file version reads `APP_ENV` to choose a section; it does not read `MONGO_URI` or `MONGO_DATABASE`. An INI file stores plaintext. `interpolation=None` preserves literal `%` characters in file values; credentials within a URI must still use valid URI encoding.
+
+Complete **Exam Questions 2 and 3** after this task. Keep the file version as your final `db_connect.py`.
+
 
 **Screenshot Required:**
 
 - `credential_files_created.png`
 - `credential_file_settings.png`
 - `credential_file_permissions.png`
+- `mongo_file_settings.png`
 - `mongo_file_dev.png`
 - `mongo_file_test.png`
 - `mongo_file_prod.png`
-- `mongo_file_source_selection.png`
+- `mongo_file_unchanged.png`
+
+**Summary:** The same connection code now reads its settings from an external file.
 
 ---
 
-## Task 10: Run Configuration and Live Database Checks
+## Task 8: Compare the Approaches and Check Git Exclusions
 
-1. Run the offline tests from your active host Python environment:
-
-   ```bash
-   python -m unittest discover -s tests -v
-   ```
-
-   - Screenshot as `lab04_tests.png`.
-     Show all 15 tests passing. These tests check configuration selection and mocked database boundaries; they do not replace live connections.
-
-2. With all four databases healthy and credential files prepared, run the live smoke test:
+1. Confirm that the local credentials file is ignored and untracked:
 
    ```bash
-   python smoke_test.py
-   ```
-
-   - Screenshot as `lab04_live_checks.png`.
-     Show all 11 live scenarios passing. It exercises the eight successful stage/environment combinations and three expected failures.
-
-If a check fails, correct the actual configuration and rerun it. Keep the original dummy credentials in place for the supplied smoke test.
-
-**Screenshot Required:**
-
-- `lab04_tests.png`
-- `lab04_live_checks.png`
-
----
-
-## Task 11: Verify Git Exclusions and Compare the Approaches
-
-1. From the `Databases` root, check that credential copies are ignored and untracked:
-
-   ```bash
-   git check-ignore -v config/dev.ini config/test.ini config/prod.ini .env
-   git ls-files config
+   git check-ignore -v credentials.ini
+   git ls-files credentials.ini
    git status --short
    ```
 
-   `git ls-files config` must print no credential-file paths.
+   `git ls-files credentials.ini` must print nothing.
    - Screenshot as `credentials_gitignore.png`.
 
-   Do not use `git add -f` for credential files. A `.gitignore` rule does not remove previously tracked files; if you accidentally tracked a local credential file, untrack it with `git rm --cached <path>` and handle any real exposed secret through rotation.
-
-2. Complete `~/DevOps/Labs/Lab04/answers.md` with your identity, fork link, observed endpoints/markers, and the configuration comparison. Explain hardcoded values, environment injection, external files and production secret management. Include the results of the failure experiments.
-3. Display your short comparison with the Ubuntu terminal identity visible. Keep answers concise enough to read, and never include passwords.
+2. Complete `~/DevOps/Labs/Lab04/answers.md` with your identity, fork URL, eight connection observations and the comparison questions. Do not record passwords or credential-bearing URIs.
+3. Display your short comparison with the required terminal identity visible.
    - Screenshot as `approach_comparison.png`.
-4. In the `Databases` fork, create your own `LAB_NOTES.md` containing your name, GitHub username, a short description of the four stages, and the observed environment markers. Record no passwords or credential-bearing connection strings.
+
+| Stage | Where values come from | What changes for another environment |
+| --- | --- | --- |
+| MySQL hardcoded | Python connection arguments | Edit Python |
+| MongoDB hardcoded | URI and database name in Python | Edit Python |
+| MongoDB environment | `os.getenv()` | Export a different URI and database name |
+| MongoDB file | An INI section | Select another section with `APP_ENV` |
+
+Do not force-add `credentials.ini`. A Git ignore rule does not remove files that were already tracked. Plaintext files and environment variables do not encrypt credentials.
+
 
 **Screenshot Required:**
 
 - `credentials_gitignore.png`
 - `approach_comparison.png`
 
-**Summary:** External configuration makes deployments easier to change. Real secret handling also needs controlled access and rotation; neither variables nor plaintext files automatically provide that.
-
 ---
 
-## Task 12: Prepare the Solution PDF and Push Both Submissions
+## Task 9: Prepare the Solution PDF and Push Both Submissions
 
-1. Commit your practice record and any intentional code changes to your own `Databases` fork:
+1. Review and push the final file version to your own fork:
 
    ```bash
    cd ~/Databases
    git status
-   git add LAB_NOTES.md
-   git commit -m "Document Lab 4 database configuration practice"
+   git add db_connect.py
+   git commit -m "Complete Lab 4 Python database connection stages"
    git push origin main
    git log -1 --oneline
    ```
 
-   If you changed starter code, review and stage the intended non-secret files as well.
-   - Screenshot as `lab04_code_push.png`.
-     Show a successful push to your fork.
+   - Screenshot as `lab04_code_push.png`, showing the successful push.
+   - Add the fork's final commit URL to `answers.md`. Keep `credentials.ini` untracked.
 
-   Add the fork's commit URL to `answers.md` in `DevOps`.
-
-2. Create a document title page containing the lab number/title, your complete actual name, registration number, course code, section and GitHub username.
+2. Create a document title page with the lab number/title, complete actual name, registration number, course code, section and GitHub username.
    - Take a split-screen screenshot as `solution_title_page.png`.
-3. Add headings for Tasks 1–11, then insert your own evidence screenshots in task order with a short caption for each. Include the observation table, your written comparisons and the exam-practice answers.
-4. Export the document as exactly `Lab4_Solution.pdf` and place it at `~/DevOps/Labs/Lab04/Lab4_Solution.pdf`. Open the exported PDF and verify that all pages are readable.
+3. Add task headings, your own screenshots in task order, short captions, the observation table, comparisons and exam answers. Include evidence of each version of `db_connect.py`.
+4. Export exactly `Lab4_Solution.pdf` to `~/DevOps/Labs/Lab04/`. Open the PDF and verify its pages are readable.
    - Take a split-screen screenshot as `lab4_solution_pdf.png`.
-
-   Keep all original images in `screenshots/`. An editable Word copy may also be included; it does not replace the required PDF and `answers.md`.
-5. Push the main evidence submission:
+5. Keep the original images in `screenshots/`, then push the evidence repository:
 
    ```bash
    cd ~/DevOps
    git status
    git add Labs/Lab04
-   git commit -m "Submit Lab 04 database configuration evidence"
+   git commit -m "Submit Lab 04 Python database connections"
    git push origin main
    ```
 
    - Screenshot as `lab04_git_push.png`.
-     Show the successful push to your own `DevOps` repository.
-6. Open `<your-username>/DevOps/tree/main/Labs/Lab04` on GitHub. Check that `README.md`, `answers.md`, `Lab4_Solution.pdf` and the `screenshots` directory are present.
+6. Open `<your-username>/DevOps/tree/main/Labs/Lab04` on GitHub. Confirm that the instructions, answers, PDF and screenshots are present.
    - Take a split-screen screenshot as `lab04_github_submission.png`.
-7. Copy the final two screenshot files into `screenshots/`, then commit and push them too:
+7. Add the final push/GitHub screenshots and their PDF captions, then synchronize them:
 
    ```bash
    cd ~/DevOps
-   git add Labs/Lab04/screenshots
-   git commit -m "Add Lab 04 final push and GitHub verification evidence"
+   git add Labs/Lab04
+   git commit -m "Add Lab 04 final submission evidence"
    git push origin main
    git status
    ```
 
-   Add Task 12 evidence/captions to the PDF and push the updated PDF after capturing these steps. Finally, confirm the complete submission is visible on GitHub. No additional screenshot is required for that last synchronization; it prevents the final evidence files or PDF from remaining local only.
+   Confirm the complete submission is visible on GitHub. No additional screenshot is required for this last synchronization.
+
 
 **Screenshot Required:**
 
@@ -758,96 +734,103 @@ If a check fails, correct the actual configuration and rerun it. Keep the origin
 
 ## Exam Evaluation Questions
 
-Complete these practical questions and write explanations in `answers.md` and the solution PDF. The three `Q*.png` images are reviewed separately from the 34 mandatory evidence checks.
+Write your predictions, results and explanations in `answers.md` and the PDF. The three exam screenshots are reviewed separately from the 29 mandatory checks.
 
-### 1. Configuration Source Selection
+### 1. A Missing Environment Variable
 
-1. Restore the complete valid test environment-variable profile from Task 6.
-2. Predict the endpoints and markers for `03_mongo_env.py` and `04_mongo_file.py --env prod`.
-3. Run both commands without changing the shell variables between them.
-4. Show both configuration sources and observed targets.
-   - Screenshot as `Q1_source_selection.png`.
-5. Explain which source each entry point reads and why the results differ.
+Complete this during Task 6, before replacing the environment-variable code.
 
-### 2. Special Characters in File Credentials
-
-1. Run the file-reader tests without changing any database account:
+1. With the valid prod profile exported, remove only the database-name variable:
 
    ```bash
-   python -m unittest discover -s tests -p test_config.py -v
+   unset MONGO_DATABASE
+   python db_connect.py
    ```
 
-2. Locate the passing `test_percent_password_is_read_literally_from_file` test.
-   - Screenshot as `Q2_literal_password.png`.
-3. Explain the effect of `ConfigParser(interpolation=None)` and why URI construction would require separate attention to credential encoding. Do not expose the test password in the screenshot.
+   - Screenshot as `Q1_missing_environment.png`, showing `Set MONGO_URI and MONGO_DATABASE first.`.
+2. Explain which `os.getenv()` call returned no value and why the `if` statement stopped the program.
+3. Restore `export MONGO_DATABASE=school_prod` and confirm that the program connects again.
 
-### 3. Cross-Environment Credentials
+### 2. Which Source Does the File Version Read?
 
-1. Use the complete valid **test** profile from Task 6, then change only `MONGO_PORT` to `27017` (the dev database's published port).
-2. Run `03_mongo_env.py` and observe the authentication failure.
-   - Screenshot as `Q3_cross_environment_auth.png`.
-3. Explain why the test account does not authenticate against the separate dev deployment.
-4. Restore `MONGO_PORT=27018`, confirm the test run succeeds, and record your restoration steps.
+Complete this after Task 7.
+
+1. Leave Task 6's prod values in `MONGO_URI` and `MONGO_DATABASE`. Remove only the section selector:
+
+   ```bash
+   unset APP_ENV
+   python db_connect.py
+   ```
+
+   - Screenshot as `Q2_file_source_selection.png`, showing the dev connection.
+2. Explain why this version connects to dev even though the shell still contains the prod MongoDB URI.
+3. Select `APP_ENV=test` and verify the test connection.
+
+### 3. A Wrong Password in the File
+
+1. Open the local `credentials.ini`. In the `[test]` URI only, temporarily replace its dummy password with `wrong`. Keep the endpoint and database name unchanged.
+2. Run:
+
+   ```bash
+   export APP_ENV=test
+   python db_connect.py
+   ```
+
+   - Screenshot as `Q3_wrong_file_password.png`, showing the authentication error without displaying the file.
+3. Explain why selecting the right endpoint does not make an incorrect password valid.
+4. Restore the supplied test dummy password, run again successfully, then restore `APP_ENV=prod`. Do not commit the credential file.
 
 ---
 
 ## Summary
 
-- You forked and ran a Python application directly on Ubuntu against Docker database services.
-- You compared hardcoded MySQL and MongoDB connection settings.
-- You used one unchanged MongoDB operation with three environment-variable profiles.
-- You used separate credential files for the same three simulated environments.
-- You verified the actual database using server-side markers and data isolation.
-- You distinguished authentication, missing configuration and target mismatch errors.
-- You excluded local credentials from Git and submitted your code fork and evidence repository correctly.
+- You edited one Python file through four short connection examples.
+- You connected to MySQL and MongoDB with values written in code.
+- You used `os.getenv()` to connect to three MongoDB deployments without changing the program.
+- You selected three sections in a credentials file using the same connection block.
+- You verified each target using the database name, endpoint and stored environment value.
+- You kept local credentials out of Git and pushed your code and evidence to the correct repositories.
 
 ## Final Submission Checklist
 
-- [ ] My GitHub username matches my registered portal identity and Ubuntu username.
-- [ ] The hostname is `ubuntu`, and my required prompt is readable in every screenshot.
-- [ ] My `Databases` repository is a fork of `WaqasSaleem97/Databases`.
-- [ ] The Python application was run directly on Ubuntu, and the databases were run through Docker Compose.
-- [ ] MySQL and hardcoded MongoDB saved and read the demonstration student.
-- [ ] Environment mode reached dev, test and simulated prod without editing the program.
-- [ ] File mode reached dev, test and simulated prod using the selected file.
-- [ ] I captured actual database markers and the isolation/failure experiments.
-- [ ] All 15 offline tests and all 11 live scenarios passed on my machine.
-- [ ] Generated credential files remain local and are excluded from Git.
-- [ ] `LAB_NOTES.md` and intentional code changes are pushed to my `Databases` fork.
-- [ ] All 34 mandatory screenshots use their exact filenames under `Labs/Lab04/screenshots/`.
-- [ ] GitHub and document/PDF screenshots use split-screen identity evidence.
-- [ ] No passwords, private keys or access tokens appear in my screenshots or answers.
-- [ ] `answers.md` contains my observations, comparison, fork commit link and exam answers.
-- [ ] I created `Lab4_Solution.pdf` with my title page, captions and evidence in task order.
-- [ ] The final push/GitHub screenshots and updated PDF were committed and pushed too.
-- [ ] The complete `Labs/Lab04` directory is visible on my own `DevOps` repository.
+- [ ] My required Ubuntu terminal identity is readable in every screenshot.
+- [ ] My `Databases` repository is my own fork.
+- [ ] Python ran directly on Ubuntu; Docker ran only the databases.
+- [ ] I edited the same `db_connect.py` through all four stages.
+- [ ] I captured MySQL, hardcoded MongoDB, and dev/test/prod results for environment and file versions.
+- [ ] The MongoDB connection block stayed unchanged when I changed configuration sources.
+- [ ] My checksum screenshots show unchanged code while switching environments.
+- [ ] My final `db_connect.py` uses the credentials-file version and is pushed to my fork.
+- [ ] The local `credentials.ini` is ignored and untracked.
+- [ ] All 29 required screenshots use the exact filenames in `screenshots/`.
+- [ ] I completed the three exam questions and restored the valid dummy settings.
+- [ ] No passwords, credential-bearing URIs, private keys or tokens appear in screenshots or answers.
+- [ ] `answers.md` contains my identity, observations, comparisons and fork commit URL.
+- [ ] `Lab4_Solution.pdf` contains my title page, captions, evidence and answers.
+- [ ] My final screenshots and updated PDF are committed and pushed.
+- [ ] My complete `DevOps/Labs/Lab04` directory is visible on GitHub.
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab04` directory as instructed by the instructor. Include your `Databases` fork URL and its final code/practice commit URL in `answers.md` and the PDF. The instructor repositories `DevOps_F26` and `WaqasSaleem97/Databases` are reference sources, not your personal submission destinations.
+Submit the URL of your own `DevOps/Labs/Lab04` directory. Include your `Databases` fork URL and final code commit URL in the answers and PDF.
 
-After grading evidence is saved, stop the database services from `~/Databases`:
+After capturing evidence, stop the databases:
 
 ```bash
+cd ~/Databases
 docker compose down
 ```
 
-For a fresh local lab only, `docker compose down -v` deletes this project's disposable database volumes. Do not use it if you intend to keep the lab data. Changing initialization passwords in Compose does not rotate existing database users; initialization runs on an empty data directory.
+Initialization scripts run on empty database volumes. `docker compose down -v` intentionally deletes this project's disposable data; use it only for a fresh reset.
 
 ## Official References
 
-- [Ubuntu: docker.io package](https://packages.ubuntu.com/noble/docker.io)
-- [Docker: Install the Compose plug-in manually](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
-- [Docker: Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
 - [MySQL Connector/Python: Connecting to MySQL](https://dev.mysql.com/doc/connector-python/en/connector-python-example-connecting.html)
-- [MongoDB PyMongo: Create a MongoClient](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/mongoclient/)
-- [MongoDB: SCRAM authentication and authSource](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/security/authentication/scram/)
-- [Docker: Set container environment variables](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)
-- [Docker Compose profiles](https://docs.docker.com/reference/compose-file/profiles/)
-- [Docker Official Image: MongoDB initialization](https://github.com/docker-library/docs/blob/master/mongo/README.md)
-- [Docker Official Image: MySQL initialization](https://github.com/docker-library/docs/blob/master/mysql/README.md)
-- [Python: virtual environments](https://docs.python.org/3/library/venv.html)
-- [Python: os.environ](https://docs.python.org/3/library/os.html#os.environ)
+- [MongoDB: Connect to MongoDB with PyMongo](https://www.mongodb.com/docs/languages/python/pymongo-driver/current/connect/)
+- [Python: os.getenv](https://docs.python.org/3/library/os.html#os.getenv)
 - [Python: configparser](https://docs.python.org/3/library/configparser.html)
-- [OWASP: Secrets Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
+- [Python: virtual environments](https://docs.python.org/3/library/venv.html)
+- [Ubuntu: docker.io package](https://packages.ubuntu.com/noble/docker.io)
+- [Docker: Install the Compose plugin manually](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually)
+- [Docker: Linux post-installation steps](https://docs.docker.com/engine/install/linux-postinstall/)
 - [Git: gitignore](https://git-scm.com/docs/gitignore)

@@ -1,48 +1,48 @@
-# Lab 4 — Student observations and exam answers
+# Lab 4 — Student Observations and Exam Answers
 
 - Complete actual name:
 - Registration number:
 - Course code and section:
 - GitHub username:
 - Databases fork URL:
-- Databases fork submission commit URL:
+- Databases final code commit URL:
 - DevOps evidence repository URL:
 
-## Connection observations
+## Connection Observations
 
-Record the endpoint, database and actual server-side marker for MySQL, hardcoded MongoDB, environment-mode dev/test/prod, and file-mode dev/test/prod. Do not record passwords.
+Record what the program actually printed. Do not include passwords or credential-bearing URIs.
 
-| Stage / environment | Endpoint | Database | Marker read from database | Result |
+| Stage / environment | Host endpoint | Database name | Environment read from server | Result |
 | --- | --- | --- | --- | --- |
 | MySQL hardcoded | | | | |
 | MongoDB hardcoded | | | | |
 | Environment dev | | | | |
 | Environment test | | | | |
-| Environment prod | | | | |
+| Environment simulated prod | | | | |
 | File dev | | | | |
 | File test | | | | |
-| File prod | | | | |
+| File simulated prod | | | | |
 
-## Configuration comparison
+## Compare the Four Stages
 
-1. What values are hardcoded in stages 1 and 2, and what changes when deployment settings change?
-2. Why does host Python use 127.0.0.1 with a different published port for each database?
-3. How does the host Python process read variables exported in the Ubuntu shell?
-4. Why does changing only APP_ENV not select a different set of credentials?
-5. What is the role of auth_source in this lab?
-6. How did you prove that the database operation stayed unchanged across profiles?
-7. What happened for the wrong password, missing password and wrong environment marker?
-8. Are plaintext configuration files encrypted? Does .gitignore secure an already committed credential?
-9. Which configuration approach would you select for this lab and for a production deployment, and why?
+1. How do the MySQL host, port, username, password and database arguments correspond to the Java example?
+2. What do `MongoClient(uri)`, `client[database_name]` and `database.command("ping")` do?
+3. Which two assignments changed when moving from hardcoded MongoDB values to `os.getenv()`?
+4. Why must `MONGO_URI` and `MONGO_DATABASE` describe the same lab environment?
+5. What does `os.getenv("APP_ENV", "dev")` select in the file version?
+6. Which MongoDB connection lines stayed the same across stages 2–4?
+7. What does the environment value read from the database prove?
+8. Which approach would you choose for this lab, and why?
+9. Do an INI file, mode `600` and `.gitignore` encrypt credentials? What would you need to consider for real production secrets?
 
-## Exam Question 1 — Configuration source selection
+## Exam Question 1 — A Missing Environment Variable
 
-Prediction, commands used, observed endpoints/markers, and explanation:
+Prediction, command, observed result, explanation and restoration:
 
-## Exam Question 2 — Special characters in file credentials
+## Exam Question 2 — Which Source Does the File Version Read?
 
-Test result and explanation of why interpolation is disabled:
+Prediction, observed database/endpoint/environment, explanation of the default section, and test selection:
 
-## Exam Question 3 — Cross-environment credentials
+## Exam Question 3 — A Wrong Password in the File
 
-Prediction, observed error, restoration steps, and explanation:
+Prediction, authentication error, explanation and successful restoration:
