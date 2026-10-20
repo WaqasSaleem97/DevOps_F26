@@ -496,7 +496,7 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
    ```bash
    git commit -m "Second Test commit"
    ```
-   - Save a screenshot as `file_after_hard_reset.png`.
+   - Save a screenshot as `file_before_hard_reset.png`.
 
 10. **Perform a hard reset (discards changes completely):**
    ```bash
@@ -530,7 +530,7 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
 - `soft_reset.png`
 - `log_after_soft_reset.png`
 - `file_after_soft_reset.png`
-- `file_after_hard_reset.png`
+- `file_before_hard_reset.png`
 - `hard_reset.png`
 - `log_after_hard_reset.png`
 - `file_after_hard_reset.png`
