@@ -908,7 +908,7 @@ You now have hands-on experience with advanced Git commands, conflict resolution
 ---
 
 ## Submission
-- Upload a **Word file and PDF or .md file** containing:
+- Upload `Lab3_Solution.pdf` containing:
   - Step outputs or terminal screenshots for each task  
   - Your answers to the hands-on practical exam questions  
   - Your GitHub repository link showing relevant commits
