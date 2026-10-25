@@ -6,7 +6,7 @@
 **Submission directory:** `Labs/Lab05`  
 **Screenshot directory:** `Labs/Lab05/screenshots`
 
-Clone the IntelliJ Docker repository on your assigned Ubuntu server and launch its browser desktop. Use IntelliJ's **Clone Repository / Get from Version Control** action to download three projects, one at a time. Install and run the build tools from the **terminal inside IntelliJ IDEA**.
+Clone the IntelliJ Docker repository on your local Ubuntu computer and launch its browser desktop. Use IntelliJ's **Clone Repository / Get from Version Control** action to download three projects, one at a time. Install and run the build tools from the **terminal inside IntelliJ IDEA**.
 
 ```text
 DevOps/
@@ -32,11 +32,11 @@ By the end of this lab, you will be able to:
 
 ## Prerequisites
 
-- Use the assigned Ubuntu account and Git/SSH access prepared in the earlier labs.
-- Docker Engine and Docker Compose are already installed on that server.
+- Use the Ubuntu account and Git access prepared in the earlier labs.
+- Docker Engine and Docker Compose are already installed on your local computer.
 - Your host Ubuntu username matches your registered GitHub username, and the hostname is `ubuntu`.
-- Your computer has a browser, an SSH client and a screenshot tool.
-- Allow time and disk space for the first Docker image, IDE, JDK and dependency downloads.
+- Your computer has a browser and a screenshot tool.
+- Allow time and disk space for the first Docker image, IDE and dependency downloads.
 - Use your normal Ubuntu login account to start the Docker environment.
 
 The repository configures the IDE terminal prompt to display the host user's name with `@ubuntu`. The desktop's internal account is `abc`; use the supplied setup and your registered host login for the required prompt.
@@ -45,8 +45,7 @@ The repository configures the IDE terminal prompt to display the host user's nam
 
 | Location | Commands used there |
 | --- | --- |
-| Ubuntu server's SSH terminal | Clone the IntelliJ Docker repository, edit Compose and run `setup.sh` |
-| A second terminal on your own computer | Keep the SSH port-forwarding connection open |
+| Ubuntu host terminal | Clone the IntelliJ Docker repository and run `setup.sh` |
 | IntelliJ's Terminal tool window | Install Maven/Node.js, build the projects, run the JARs and use npm |
 
 ## Task List
@@ -81,7 +80,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
    - the command or GitHub operation required by that task; and
    - the relevant result or output.
 
-3. For IntelliJ dialogs, Welcome screens and browser pages, use a split-screen view with your original Ubuntu SSH terminal showing `YourGitHubUsername@ubuntu`. For build and run commands, show IntelliJ's own Terminal tool window with that prompt and the relevant output.
+3. For IntelliJ dialogs, Welcome screens and browser pages, keep a host Ubuntu terminal or IntelliJ terminal showing `YourGitHubUsername@ubuntu` visible in the same screenshot. For build and run commands, show IntelliJ's own Terminal tool window with that prompt and the relevant output.
 
 4. Save every screenshot inside:
 
@@ -148,7 +147,7 @@ Save the images there and include them in `Lab5_Solution.pdf` in task order.
 
 ## Task 1: Clone and Launch IntelliJ IDEA
 
-1. In your **Ubuntu server's SSH terminal**, clone the supplied repository:
+1. In your **Ubuntu host terminal**, clone the supplied repository:
 
    ```bash
    cd ~
@@ -158,17 +157,7 @@ Save the images there and include them in `Lab5_Solution.pdf` in task order.
 
    - Screenshot as `intellij_repo_clone.png`, showing the clone command and successful download.
 
-2. Open `compose.yaml` in your editor. Under `services` → `intellij`, replace the existing `ports` block with:
-
-   ```yaml
-    ports:
-      - "127.0.0.1:3001:3001"
-      - "127.0.0.1:4000:4000"
-   ```
-
-   Port 3001 provides the desktop. Port 4000 will provide access to the Node.js application later. Configure this before installing tools inside the container.
-
-3. Build and launch the environment:
+2. Build and launch the environment:
 
    ```bash
    bash setup.sh
@@ -177,19 +166,11 @@ Save the images there and include them in `Lab5_Solution.pdf` in task order.
 
    Enter and confirm the browser password when prompted. The script builds the image and starts it with Docker Compose. The first build downloads the desktop and IDE.
 
-   - Screenshot as `intellij_running.png`, showing the running `intellij` service and the published ports. Keep passwords outside the screenshot.
+   - Screenshot as `intellij_running.png`, showing the running `intellij` service and desktop port 3001. Keep passwords outside the screenshot.
 
-4. On **your own computer**, open a second terminal and create the SSH tunnel. Replace both placeholders with your assigned login and server address:
+3. Open **https://localhost:3001** in your host computer's browser. Acknowledge the self-signed certificate notice for this local desktop address and sign in with browser username **`admin`** and the password you chose during setup.
 
-   ```powershell
-   ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:3001:127.0.0.1:3001 -L 127.0.0.1:4000:127.0.0.1:4000 <github-username>@<ubuntu-server-ip>
-   ```
-
-   Add your usual SSH key option if your server requires it. Keep this terminal open; no output is normal.
-
-5. Open **https://localhost:3001** in your computer's browser. Acknowledge the self-signed certificate notice for this local SSH-tunnel address and sign in using the username printed by `setup.sh` and your chosen password. Fresh setups use browser username `waqas`.
-
-6. Launch **IntelliJ IDEA** from the browser desktop's applications menu. If needed, open the terminal in that browser desktop and run:
+4. Launch **IntelliJ IDEA** from the browser desktop's applications menu. If needed, open the terminal in that browser desktop and run:
 
    ```bash
    idea
@@ -197,7 +178,7 @@ Save the images there and include them in `Lab5_Solution.pdf` in task order.
 
    Complete the first-run screens and reach the IntelliJ Welcome screen.
 
-   - Screenshot as `intellij_desktop.png`, showing IntelliJ in the browser desktop and your original Ubuntu SSH terminal beside it.
+   - Screenshot as `intellij_desktop.png`, showing IntelliJ in the browser desktop and your Ubuntu host terminal beside it.
 
 Create all three projects under **`/config/IdeaProjects`**. This directory is stored in the container's persistent `/config` volume.
 
@@ -221,29 +202,17 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    Click **Clone**, open/trust the course sample and wait for it to load. Use the Maven project configuration when asked. The project contains `pom.xml`.
 
-2. Configure **JDK 11** for these sample Java projects:
-
-   - Open **File → Project Structure → SDKs → + → Download JDK**.
-   - Select **version 11**, choose a vendor such as **Eclipse Temurin**, and set the installation location to `/config/jdks/jdk-11`.
-   - After the download, select that JDK under **Project → SDK** and apply the setting.
-
-   Reuse it in the Gradle task. The sample's Gradle Wrapper is version 7.0, which supports JDK 11 and cannot run on the image's JDK 21. If IntelliJ shows a different installation directory, use its actual JDK home in the terminal commands below.
-
-3. Open **View → Tool Windows → Terminal** inside IntelliJ. Work from the Maven project's root directory. Run:
+2. Open **View → Tool Windows → Terminal** inside IntelliJ. Work from the Maven project's root directory. Run:
 
    ```bash
    sudo apt update
    sudo apt install -y maven
-   export JAVA_HOME=/config/jdks/jdk-11
-   export PATH="$JAVA_HOME/bin:$PATH"
    mvn --version
    ```
 
-   - Screenshot as `maven_installed.png`, showing the installed Maven version and Java version 11 in IntelliJ's terminal.
+   - Screenshot as `maven_installed.png`, showing the installed Maven version in IntelliJ's terminal.
 
-   The SDK selection configures the project in the IDE; the exports select the JDK for commands in this terminal.
-
-4. Package the application:
+3. Package the application:
 
    ```bash
    mvn package
@@ -253,7 +222,7 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `maven_package.png`, showing the command and successful build.
 
-5. In IntelliJ's Project pane, refresh the project if needed and expand **`target`**. Locate:
+4. In IntelliJ's Project pane, refresh the project if needed and expand **`target`**. Locate:
 
    ```text
    target/java-maven-app-1.1.0-SNAPSHOT.jar
@@ -261,24 +230,23 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `maven_jar.png`, showing the `target` directory and the exact JAR filename.
 
-6. In the same IntelliJ terminal, enter the output directory and run the JAR:
+5. In the same IntelliJ terminal, run the JAR from the project root:
 
    ```bash
-   cd target
-   java -jar java-maven-app-1.1.0-SNAPSHOT.jar
+   java -jar target/java-maven-app-1.1.0-SNAPSHOT.jar
    ```
 
    Wait for the Spring Boot/Tomcat startup output. The sample runs as a web application on port 8080.
 
    - Screenshot as `maven_running.png`, showing the JAR command and successful application startup.
 
-7. Press **Ctrl+C** in that terminal to stop the application. Wait for the shell prompt to return.
+6. Press **Ctrl+C** in that terminal to stop the application. Wait for the shell prompt to return.
 
    - Screenshot as `maven_stopped.png`, showing `^C`/shutdown output and the returned prompt.
 
-8. Select **File → Close Project** and return to IntelliJ's Welcome screen.
+7. Select **File → Close Project** and return to IntelliJ's Welcome screen.
 
-   - Screenshot as `maven_project_closed.png`. Use your original Ubuntu SSH terminal beside the browser for identity evidence.
+   - Screenshot as `maven_project_closed.png`. Use your Ubuntu host terminal beside the browser for identity evidence.
 
 
 **Screenshot Required:**
@@ -306,13 +274,11 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    Click **Clone**, open/trust the sample and load it as a Gradle project. It contains `build.gradle`, `settings.gradle` and `gradlew`.
 
-2. Select the downloaded **JDK 11** as the Project SDK. In **Settings → Build, Execution, Deployment → Build Tools → Gradle**, select the project's **Gradle Wrapper** and set **Gradle JVM** to that JDK 11. Reload the Gradle project if the initial import reported a Java-version error.
+2. Select the project's **Gradle Wrapper** when IntelliJ asks which Gradle installation to use.
 
 3. Open **View → Tool Windows → Terminal**. From the Gradle project root, run:
 
    ```bash
-   export JAVA_HOME=/config/jdks/jdk-11
-   export PATH="$JAVA_HOME/bin:$PATH"
    ./gradlew build
    ```
 
@@ -330,11 +296,10 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `gradle_jar.png`, showing the output directory and exact JAR filename.
 
-5. Run the generated JAR from its directory:
+5. Run the generated JAR from the project root:
 
    ```bash
-   cd build/libs
-   java -jar java-app-1.0-SNAPSHOT.jar
+   java -jar build/libs/java-app-1.0-SNAPSHOT.jar
    ```
 
    Wait for successful application startup.
@@ -347,7 +312,7 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
 7. Select **File → Close Project**.
 
-   - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu SSH terminal.
+   - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu host terminal.
 
 
 **Screenshot Required:**
@@ -412,13 +377,13 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
    });
    ```
 
-   Save the file and run `npm start` again from the `app` directory. Use port **4000** for the final browser check through the mapping configured in Task 1. Keep Webtop running while changing the application port.
+   Save the file and run `npm start` again from the `app` directory. Use port **4000** for the final browser check inside the container desktop. Keep Webtop running while changing the application port.
 
    - Screenshot as `node_running.png`, showing `npm start` and `app listening on port 4000!`.
 
-6. Keep the application and SSH tunnel running. Open **http://localhost:4000** in a new browser tab/window on your own computer. Verify that the Node.js project page and its profile images are visible.
+6. Keep the application running. Open a browser **inside the container's desktop** from its applications menu and visit **http://localhost:4000**. Verify that the Node.js project page and its profile images are visible.
 
-   - Screenshot as `node_browser.png`, showing the page, its URL and your Ubuntu SSH terminal in a split-screen view.
+   - Screenshot as `node_browser.png`, showing the page, its URL and your IntelliJ terminal in a split-screen view inside the container desktop.
 
 7. After saving the evidence, stop the Node.js application with **Ctrl+C** in IntelliJ's terminal.
 
@@ -441,7 +406,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 
 1. Maven built `java-maven-app-1.1.0-SNAPSHOT.jar`. Which values in `pom.xml` determine this name, and what does the `package` phase do?
 2. Why can `./gradlew build` work without a separate system-wide Gradle installation? Which JDK settings would you check if this sample reports an unsupported Java version?
-3. Why does `EADDRINUSE` occur on port 3000 in this environment? Explain how the application listener, Docker port mapping and SSH tunnel work together when the application uses port 4000.
+3. Why does `EADDRINUSE` occur on port 3000 in this environment, and how does changing the application listener to port 4000 let the container's browser open it?
 
 ## Summary
 
@@ -451,7 +416,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 - You used the Gradle Wrapper to create an executable JAR under `build/libs`.
 - You ran both JARs with `java -jar`, stopped them with Ctrl+C and closed each project.
 - You installed Node.js/npm, downloaded dependencies and started the Node.js application.
-- You resolved the application-port conflict and viewed the Node.js page through the SSH tunnel.
+- You resolved the application-port conflict and viewed the Node.js page in the container's browser.
 
 ## Final Submission Checklist
 
@@ -460,7 +425,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 - [ ] I showed both exact JAR filenames in their generated output directories.
 - [ ] I ran and stopped both JARs, then closed each Java project.
 - [ ] I installed Node.js and npm and completed `npm install` in `node-project/app`.
-- [ ] The Node.js application ran on port 4000 and its page opened in my browser.
+- [ ] The Node.js application ran on port 4000 and its page opened in the container's browser.
 - [ ] All 21 required screenshots use the exact filenames and show the required identity.
 - [ ] No browser password, private SSH key or access token appears in my evidence.
 - [ ] `Lab5_Solution.pdf` contains my name, registration number, course/section, GitHub username, task screenshots, captions and practice answers.
@@ -470,7 +435,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 
 Upload **`Lab5_Solution.pdf`** and the original screenshots to your own `DevOps/Labs/Lab05` directory. Submit that directory's GitHub URL. Include task headings and a short caption explaining each result in the PDF.
 
-After finishing the lab, you can stop the desktop from the **Ubuntu host's SSH terminal**:
+After finishing the lab, you can stop the desktop from the **Ubuntu host terminal**:
 
 ```bash
 cd ~/Intellij-Idea-docker
