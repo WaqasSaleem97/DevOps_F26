@@ -1,12 +1,12 @@
-# Lab 5: Build and Run Maven, Gradle, and Node.js Projects in IntelliJ IDEA
+# Lab 5: Build, Test, and Package Applications with IntelliJ IDEA and Docker
 
-**Estimated duration:** 3 hours  
+**Estimated duration:** 4 hours  
 **IntelliJ setup repository:** [WaqasSaleem97/Intellij-Idea-docker](https://github.com/WaqasSaleem97/Intellij-Idea-docker)  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab05`  
 **Screenshot directory:** `Labs/Lab05/screenshots`
 
-Clone the IntelliJ Docker repository on your local Ubuntu computer and launch its browser desktop. Use IntelliJ's **Clone Repository / Get from Version Control** action to download three projects, one at a time. Install and run the build tools from the **terminal inside IntelliJ IDEA**.
+Clone the IntelliJ Docker repository on your local Ubuntu computer and launch its browser desktop. Use IntelliJ's **Clone Repository / Get from Version Control** action to download four projects, one at a time. Install and run the build tools from the **terminal inside IntelliJ IDEA**.
 
 ```text
 DevOps/
@@ -25,10 +25,12 @@ By the end of this lab, you will be able to:
 
 - Launch IntelliJ IDEA through the supplied Docker environment.
 - Clone and open existing projects through IntelliJ.
-- Install Maven, package a Java application and run its generated JAR.
-- Use a project's Gradle Wrapper to build and run another Java application.
-- Install Node.js and npm, download dependencies and start a Node.js application.
+- Install Maven, add an Elasticsearch dependency, test the project, package it and run its generated JAR.
+- Add an Elasticsearch dependency to a Gradle project, sync it and rebuild it with the Gradle Wrapper.
+- Install Node.js and npm, download dependencies, run tests, create a package with `npm pack` and start a Node.js application.
 - Resolve a port conflict by changing the application port to 4000.
+- Build and inspect a bundled Node.js API artifact with webpack.
+- Build a Docker image from an existing Dockerfile and identify its image tag.
 
 ## Prerequisites
 
@@ -46,7 +48,7 @@ The repository configures the IDE terminal prompt to display the host user's nam
 | Location | Commands used there |
 | --- | --- |
 | Ubuntu host terminal | Clone the IntelliJ Docker repository and run `setup.sh` |
-| IntelliJ's Terminal tool window | Install Maven/Node.js, build the projects, run the JARs and use npm |
+| IntelliJ's Terminal tool window | Install Maven/Node.js, build and test projects, run the JARs, use npm and run Docker commands |
 
 ## Task List
 
@@ -55,6 +57,8 @@ The repository configures the IDE terminal prompt to display the host user's nam
 - [Task 2: Build and Run the Maven Project](#task-2-build-and-run-the-maven-project)
 - [Task 3: Build and Run the Gradle Project](#task-3-build-and-run-the-gradle-project)
 - [Task 4: Install and Run the Node.js Project](#task-4-install-and-run-the-nodejs-project)
+- [Task 5: Build the React and Node.js API Artifact](#task-5-build-the-react-and-nodejs-api-artifact)
+- [Task 6: Build a Docker Image for the Node.js Project](#task-6-build-a-docker-image-for-the-nodejs-project)
 - [Exam Evaluation Questions](#exam-evaluation-questions)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
@@ -102,7 +106,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 ### Required Screenshot Filenames
 
-These are the 21 required Lab 5 screenshot filenames:
+These are the 37 required Lab 5 screenshot filenames:
 
 ```text
 intellij_repo_clone.png
@@ -111,12 +115,17 @@ intellij_desktop.png
 maven_project_clone.png
 maven_installed.png
 maven_package.png
+maven_elasticsearch_dependency.png
+maven_repackage.png
+maven_test.png
 maven_jar.png
 maven_running.png
 maven_stopped.png
 maven_project_closed.png
 gradle_project_clone.png
 gradle_build.png
+gradle_elasticsearch_dependency.png
+gradle_rebuild.png
 gradle_jar.png
 gradle_running.png
 gradle_stopped.png
@@ -126,6 +135,17 @@ nodejs_installed.png
 npm_install.png
 node_running.png
 node_browser.png
+npm_test.png
+npm_pack.png
+react_node_project_clone.png
+react_api_dependencies.png
+react_api_build.png
+react_api_bundle.png
+docker_installed.png
+dockerfile_exists.png
+docker_images_before.png
+docker_build.png
+docker_images_after.png
 ```
 
 Each required screenshot has equal weight. Exam-practice questions are not included in lab marks. Automated grading requires a configured Lab 5 grader.
@@ -180,7 +200,7 @@ Save the images there and include them in `Lab5_Solution.pdf` in task order.
 
    - Screenshot as `intellij_desktop.png`, showing IntelliJ in the browser desktop and your Ubuntu host terminal beside it.
 
-Create all three projects under **`/config/IdeaProjects`**. This directory is stored in the container's persistent `/config` volume.
+Create all four projects under **`/config/IdeaProjects`**. This directory is stored in the container's persistent `/config` volume.
 
 
 **Screenshot Required:**
@@ -222,7 +242,42 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `maven_package.png`, showing the command and successful build.
 
-4. In IntelliJ's Project pane, refresh the project if needed and expand **`target`**. Locate:
+4. Open **`pom.xml`** in IntelliJ. Add this dependency inside the existing **`<dependencies>`** section, alongside the other project dependencies:
+
+   ```xml
+   <dependency>
+       <groupId>org.elasticsearch</groupId>
+       <artifactId>elasticsearch</artifactId>
+       <version>7.0.0</version>
+       <scope>compile</scope>
+   </dependency>
+   ```
+
+   Save the file. Click **Sync Maven Changes** in the editor, or open the **Maven** tool window and choose **Reload All Maven Projects**. Wait for synchronization and dependency downloads to finish. Expand **Dependencies** in the Maven tool window and locate `org.elasticsearch:elasticsearch:7.0.0`.
+
+   - Screenshot as `maven_elasticsearch_dependency.png`, showing the dependency in `pom.xml` and the synchronized Elasticsearch 7.0.0 entry. Keep your required terminal prompt visible.
+
+5. Package the project again after adding the dependency:
+
+   ```bash
+   mvn package
+   ```
+
+   Wait for **`BUILD SUCCESS`**.
+
+   - Screenshot as `maven_repackage.png`, showing the command and the successful second package build.
+
+6. Run Maven's test phase:
+
+   ```bash
+   mvn test
+   ```
+
+   - Screenshot as `maven_test.png`, showing the command, test output and build result.
+
+   The current sample has no test source files, so Maven may report **`No tests to run`** with **`BUILD SUCCESS`**. Record that actual output; it means the test phase ran without finding tests.
+
+7. In IntelliJ's Project pane, refresh the project if needed and expand **`target`**. Locate:
 
    ```text
    target/java-maven-app-1.1.0-SNAPSHOT.jar
@@ -230,7 +285,7 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `maven_jar.png`, showing the `target` directory and the exact JAR filename.
 
-5. In the same IntelliJ terminal, run the JAR from the project root:
+8. In the same IntelliJ terminal, run the JAR from the project root:
 
    ```bash
    java -jar target/java-maven-app-1.1.0-SNAPSHOT.jar
@@ -240,13 +295,13 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `maven_running.png`, showing the JAR command and successful application startup.
 
-6. Press **Ctrl+C** in that terminal to stop the application. Wait for the shell prompt to return.
+9. Press **Ctrl+C** in that terminal to stop the application. Wait for the shell prompt to return.
 
    - Screenshot as `maven_stopped.png`, showing `^C`/shutdown output and the returned prompt.
 
-7. Select **File → Close Project** and return to IntelliJ's Welcome screen.
+10. Select **File → Close Project** and return to IntelliJ's Welcome screen.
 
-   - Screenshot as `maven_project_closed.png`. Use your Ubuntu host terminal beside the browser for identity evidence.
+    - Screenshot as `maven_project_closed.png`. Use your Ubuntu host terminal beside the browser for identity evidence.
 
 
 **Screenshot Required:**
@@ -254,12 +309,15 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 - `maven_project_clone.png`
 - `maven_installed.png`
 - `maven_package.png`
+- `maven_elasticsearch_dependency.png`
+- `maven_repackage.png`
+- `maven_test.png`
 - `maven_jar.png`
 - `maven_running.png`
 - `maven_stopped.png`
 - `maven_project_closed.png`
 
-**Summary:** Maven used `pom.xml` to build an executable JAR in `target`, and Java ran that JAR.
+**Summary:** You added Elasticsearch 7.0.0 to `pom.xml`, synchronized the Maven project, packaged it again and ran the test phase. Maven created the executable JAR in `target`, and Java ran it.
 
 ---
 
@@ -288,7 +346,27 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    If the wrapper reports `Permission denied`, run `chmod +x gradlew` and retry `./gradlew build`.
 
-4. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
+4. Open **`build.gradle`** and add this line inside the existing **`dependencies { ... }`** block:
+
+   ```groovy
+   implementation("org.elasticsearch:elasticsearch:7.0.0")
+   ```
+
+   Keep the other dependencies. Save the file and click **Sync Gradle Changes**, or open the **Gradle** tool window and choose **Sync All Gradle Projects**. Wait for synchronization to finish, then locate Elasticsearch 7.0.0 under the project's **External Libraries**.
+
+   - Screenshot as `gradle_elasticsearch_dependency.png`, showing the dependency in `build.gradle` and the synchronized Elasticsearch library. Keep your required terminal prompt visible.
+
+5. Build the project again after the dependency change:
+
+   ```bash
+   ./gradlew build
+   ```
+
+   Wait for **`BUILD SUCCESSFUL`**.
+
+   - Screenshot as `gradle_rebuild.png`, showing the command and successful rebuild.
+
+6. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
 
    ```text
    build/libs/java-app-1.0-SNAPSHOT.jar
@@ -296,7 +374,7 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `gradle_jar.png`, showing the output directory and exact JAR filename.
 
-5. Run the generated JAR from the project root:
+7. Run the generated JAR from the project root:
 
    ```bash
    java -jar build/libs/java-app-1.0-SNAPSHOT.jar
@@ -306,11 +384,11 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
    - Screenshot as `gradle_running.png`, showing the command and startup output.
 
-6. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
+8. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
 
    - Screenshot as `gradle_stopped.png`, showing the shutdown and returned prompt.
 
-7. Select **File → Close Project**.
+9. Select **File → Close Project**.
 
    - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu host terminal.
 
@@ -319,12 +397,14 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
 - `gradle_project_clone.png`
 - `gradle_build.png`
+- `gradle_elasticsearch_dependency.png`
+- `gradle_rebuild.png`
 - `gradle_jar.png`
 - `gradle_running.png`
 - `gradle_stopped.png`
 - `gradle_project_closed.png`
 
-**Summary:** The Gradle Wrapper built the executable JAR in `build/libs`, and Java ran it.
+**Summary:** You added Elasticsearch 7.0.0 to `build.gradle`, synchronized the project and rebuilt it. The Gradle Wrapper created the executable JAR in `build/libs`, and Java ran it.
 
 ---
 
@@ -387,6 +467,27 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 
 7. After saving the evidence, stop the Node.js application with **Ctrl+C** in IntelliJ's terminal.
 
+8. Stay in the **`app`** directory and run the application's tests:
+
+   ```bash
+   npm test
+   ```
+
+   The project's test script runs Jest. The supplied test checks that `index.html` exists. Wait for the test result.
+
+   - Screenshot as `npm_test.png`, showing the command and passing test summary.
+
+9. Create the application's package artifact:
+
+   ```bash
+   npm pack
+   ```
+
+   npm uses the name and version in `package.json` to create **`bootcamp-node-project-1.0.0.tgz`** in the `app` directory. This tarball packages the application's files for distribution.
+
+   - Screenshot as `npm_pack.png`, showing the command and generated `.tgz` filename.
+
+10. Select **File → Close Project** to return to the Welcome screen. Keep this clone for Task 6.
 
 **Screenshot Required:**
 
@@ -395,8 +496,143 @@ Create all three projects under **`/config/IdeaProjects`**. This directory is st
 - `npm_install.png`
 - `node_running.png`
 - `node_browser.png`
+- `npm_test.png`
+- `npm_pack.png`
 
-**Summary:** npm installed the Node.js dependencies and used the start script to launch the application on the working port.
+**Summary:** npm installed dependencies, started the application, ran its Jest test and packaged the application as a `.tgz` artifact.
+
+---
+
+## Task 5: Build the React and Node.js API Artifact
+
+1. From IntelliJ's Welcome screen, use **Clone Repository / Get from Version Control**:
+
+   - **URL:** `https://github.com/bbachi/react-nodejs-example.git`
+   - **Directory:** `/config/IdeaProjects/react-nodejs-example`
+
+   - Screenshot as `react_node_project_clone.png`, showing the repository URL and destination.
+
+   Clone and open the project. This task builds the Node.js API in its `api` directory.
+
+2. Open the terminal **inside IntelliJ**. From the project root, run:
+
+   ```bash
+   cd api
+   npm install
+   ```
+
+   After installation, refresh the Project pane if needed and expand **`api`**. Locate **`node_modules`**, which contains the installed dependencies.
+
+   - Screenshot as `react_api_dependencies.png`, showing the completed `npm install` and the `api/node_modules` directory.
+
+3. In the same `api` directory, build the API artifact:
+
+   ```bash
+   npm run build
+   ```
+
+   The build script runs webpack. Its configuration writes the bundled application to **`api/server.bundle.js`**, replacing the existing bundle if one is already present.
+
+   If this older webpack sample reports **`ERR_OSSL_EVP_UNSUPPORTED`** on your Node.js version, retry this build with the compatibility option for that command:
+
+   ```bash
+   NODE_OPTIONS=--openssl-legacy-provider npm run build
+   ```
+
+   - Screenshot as `react_api_build.png`, showing the successful build command/output and `server.bundle.js` in the `api` directory.
+
+4. View the generated bundle:
+
+   ```bash
+   cat server.bundle.js | more
+   ```
+
+   Press **Space** to move through its contents.
+
+   - Screenshot as `react_api_bundle.png`, showing the viewing command and bundled JavaScript. Use a split terminal view to keep your required identity visible while the pager is open.
+
+5. Press **q** to quit the viewer and return to the terminal. Select **File → Close Project**.
+
+**Screenshot Required:**
+
+- `react_node_project_clone.png`
+- `react_api_dependencies.png`
+- `react_api_build.png`
+- `react_api_bundle.png`
+
+**Summary:** You installed the API dependencies, used webpack to generate `server.bundle.js` and inspected the bundled artifact.
+
+---
+
+## Task 6: Build a Docker Image for the Node.js Project
+
+1. In IntelliJ, choose **Open** from the Welcome screen, or **File → Open**, and reopen the existing **`/config/IdeaProjects/node-project`** clone from Task 4:
+
+   - **Repository:** `https://gitlab.com/devopsbootcamp3/node-project.git`
+
+   Open IntelliJ's terminal and move to the **repository root**:
+
+   ```bash
+   cd /config/IdeaProjects/node-project
+   ```
+
+   The Dockerfile is in this directory, alongside the `app` folder. Run all commands in this task from this root directory.
+
+2. Check that the Docker command is installed:
+
+   ```bash
+   docker --version
+   ```
+
+   - Screenshot as `docker_installed.png`, showing the command and installed version.
+
+   The current IntelliJ setup repository shares the Ubuntu host's Docker socket with the desktop container. The following `sudo docker` commands use that host's Docker Engine. If you are using an older environment and see a missing `/var/run/docker.sock` error, apply the existing-installation update in the [IntelliJ repository instructions](https://github.com/WaqasSaleem97/Intellij-Idea-docker#run-docker-commands-from-intellij) from your Ubuntu host before continuing.
+
+3. List the repository files and locate **`Dockerfile`**:
+
+   ```bash
+   ls
+   ```
+
+   - Screenshot as `dockerfile_exists.png`, showing the command and `Dockerfile` in the output.
+
+4. View the existing Docker images before building:
+
+   ```bash
+   sudo docker images
+   ```
+
+   - Screenshot as `docker_images_before.png`, showing the command and current image list.
+
+5. Build the application image:
+
+   ```bash
+   sudo docker build -t lab5:1.0 .
+   ```
+
+   The final **`.`** uses the current repository root as the build context. Docker reads its Dockerfile, copies the `app` directory, installs dependencies and runs the supplied npm test during the image build. Wait for the build to finish successfully.
+
+   - Screenshot as `docker_build.png`, showing the build command and successful image build/tag output.
+
+6. List the images again:
+
+   ```bash
+   sudo docker images
+   ```
+
+   Find **`lab5`** in the **REPOSITORY** column and **`1.0`** in the **TAG** column. Together they identify **`lab5:1.0`**.
+
+   - Screenshot as `docker_images_after.png`, showing the command, image repository, tag and image ID.
+
+**Screenshot Required:**
+
+- `docker_installed.png`
+- `dockerfile_exists.png`
+- `docker_images_before.png`
+- `docker_build.png`
+- `docker_images_after.png`
+
+**Summary:** You built the existing Node.js project into the Docker image `lab5:1.0` and verified it in the host's image list.
 
 ---
 
@@ -411,22 +647,31 @@ These questions are **practice only and are not graded**. Put your answers in th
 ## Summary
 
 - You cloned and launched the supplied IntelliJ Docker environment.
-- You used IntelliJ to clone three existing projects.
-- You installed Maven and created an executable JAR under `target`.
+- You used IntelliJ to clone four existing projects.
+- You added Elasticsearch 7.0.0 to the Maven and Gradle builds, synchronized both projects and rebuilt them.
+- You ran `mvn test` and created the Maven executable JAR under `target`.
 - You used the Gradle Wrapper to create an executable JAR under `build/libs`.
 - You ran both JARs with `java -jar`, stopped them with Ctrl+C and closed each project.
 - You installed Node.js/npm, downloaded dependencies and started the Node.js application.
+- You ran `npm test` and used `npm pack` to create `bootcamp-node-project-1.0.0.tgz`.
 - You resolved the application-port conflict and viewed the Node.js page in the container's browser.
+- You built `api/server.bundle.js` with webpack and viewed it with `more`.
+- You built and verified the Docker image `lab5:1.0`.
 
 ## Final Submission Checklist
 
 - [ ] I used IntelliJ's integrated terminal for the build-tool and application commands.
-- [ ] Maven reported `BUILD SUCCESS`, and Gradle reported `BUILD SUCCESSFUL`.
+- [ ] Maven reported `BUILD SUCCESS`, and Gradle reported `BUILD SUCCESSFUL` before and after the dependency changes.
+- [ ] I added Elasticsearch 7.0.0 to `pom.xml` and `build.gradle` and synchronized both projects.
+- [ ] I ran `mvn test` and captured its actual test-phase result.
 - [ ] I showed both exact JAR filenames in their generated output directories.
 - [ ] I ran and stopped both JARs, then closed each Java project.
 - [ ] I installed Node.js and npm and completed `npm install` in `node-project/app`.
 - [ ] The Node.js application ran on port 4000 and its page opened in the container's browser.
-- [ ] All 21 required screenshots use the exact filenames and show the required identity.
+- [ ] I ran `npm test` and created `bootcamp-node-project-1.0.0.tgz` with `npm pack`.
+- [ ] I installed the React/Node.js API dependencies, built `server.bundle.js`, viewed it with `more` and pressed `q` to quit.
+- [ ] I built the Node.js Docker image and found repository `lab5` with tag `1.0` in `sudo docker images`.
+- [ ] All 37 required screenshots use the exact filenames and show the required identity.
 - [ ] No browser password, private SSH key or access token appears in my evidence.
 - [ ] `Lab5_Solution.pdf` contains my name, registration number, course/section, GitHub username, task screenshots, captions and practice answers.
 - [ ] My complete `DevOps/Labs/Lab05` submission is visible on GitHub.
@@ -450,12 +695,22 @@ Use `docker compose start` to resume that same container. Projects under `/confi
 - [Maven sample project](https://gitlab.com/nanuchi/java-maven-app)
 - [Gradle sample project](https://gitlab.com/nanuchi/java-app)
 - [Node.js sample project](https://gitlab.com/devopsbootcamp3/node-project)
+- [React and Node.js example: API scripts and dependencies](https://github.com/bbachi/react-nodejs-example/blob/master/api/package.json)
+- [React and Node.js example: webpack bundle configuration](https://github.com/bbachi/react-nodejs-example/blob/master/api/webpack.config.js)
 - [JetBrains: Clone a repository](https://www.jetbrains.com/help/idea/set-up-a-git-repository.html)
+- [JetBrains: Maven dependencies and synchronization](https://www.jetbrains.com/help/idea/work-with-maven-dependencies.html)
+- [JetBrains: Gradle project synchronization](https://www.jetbrains.com/help/idea/work-with-gradle-projects.html)
 - [JetBrains: IntelliJ terminal](https://www.jetbrains.com/help/idea/terminal-emulator.html)
 - [JetBrains: Configure SDKs and download a JDK](https://www.jetbrains.com/help/idea/sdk.html)
 - [Maven: Build lifecycle and package phase](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)
 - [Gradle: Java compatibility](https://docs.gradle.org/current/userguide/compatibility.html)
+- [Gradle: Declaring dependencies](https://docs.gradle.org/current/userguide/declaring_dependencies_basics.html)
 - [Gradle: The Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html)
 - [npm: Install dependencies](https://docs.npmjs.com/cli/v11/commands/npm-install/)
+- [npm: Test scripts](https://docs.npmjs.com/cli/v11/commands/npm-test/)
+- [npm: Package tarballs](https://docs.npmjs.com/cli/v11/commands/npm-pack/)
+- [Node.js: OpenSSL compatibility option for older build tools](https://nodejs.org/en/blog/release/v17.0.0#openssl-30)
+- [Docker: Build context and image tags](https://docs.docker.com/reference/cli/docker/buildx/build/)
+- [Docker: List images](https://docs.docker.com/reference/cli/docker/image/ls/)
 - [npm: Start scripts](https://docs.npmjs.com/cli/v11/commands/npm-start/)
 - [LinuxServer Webtop: Desktop ports](https://docs.linuxserver.io/images/docker-webtop/)
