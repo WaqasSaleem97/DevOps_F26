@@ -342,15 +342,16 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
    - Set **Project language level** to **8 - Lambdas, type annotations, etc.**
    - If JDK 16 is unavailable, open the SDK list and select **Download JDK**. Use a JDK build and architecture compatible with your computer.
 
-   ![IntelliJ Project Structure configured with JDK 16](images/gradle-jdk16-project-structure.png)
+   <img width="1918" height="937" alt="image" src="https://github.com/user-attachments/assets/abfef1bc-e319-459d-b963-91377479fb66" />
 
+   
    The image above is an instructor reference. Capture your own project and build evidence.
 
    Then open **File → Settings → Build, Execution, Deployment → Build Tools → Gradle** and set **Gradle JVM** to **Project SDK (JDK 16)** or the downloaded JDK 16. Select **Apply** and **OK**, then close and reopen IntelliJ's terminal.
 
    The supplied wrapper is Gradle 7.x. It can run on Java 16, but it cannot run on Java 21. Java 21 produces class-file major version 65 and requires Gradle 8.5 or newer to run Gradle itself.
 
-4. Open **View → Tool Windows → Terminal**. From the Gradle project root, verify the JVM used by the wrapper:
+5. Open **View → Tool Windows → Terminal**. From the Gradle project root, verify the JVM used by the wrapper:
 
    ```bash
    ./gradlew --version
@@ -372,7 +373,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    If the wrapper reports `Permission denied`, run `chmod +x gradlew` and retry `./gradlew build`.
 
-5. Open **`build.gradle`** and add this line inside the existing **`dependencies { ... }`** block:
+6. Open **`build.gradle`** and add this line inside the existing **`dependencies { ... }`** block:
 
    ```groovy
    implementation("org.elasticsearch:elasticsearch:7.0.0")
@@ -382,7 +383,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_elasticsearch_dependency.png`, showing the dependency in `build.gradle` and the synchronized Elasticsearch library. Keep your required terminal prompt visible.
 
-6. Build the project again after the dependency change:
+7. Build the project again after the dependency change:
 
    ```bash
    ./gradlew build
@@ -392,7 +393,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_rebuild.png`, showing the command and successful rebuild.
 
-7. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
+8. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
 
    ```text
    build/libs/java-app-1.0-SNAPSHOT.jar
@@ -400,7 +401,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_jar.png`, showing the output directory and exact JAR filename.
 
-8. Run the generated JAR from the project root:
+9. Run the generated JAR from the project root:
 
    ```bash
    java -jar build/libs/java-app-1.0-SNAPSHOT.jar
@@ -410,11 +411,11 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_running.png`, showing the command and startup output.
 
-9. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
+10. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
 
    - Screenshot as `gradle_stopped.png`, showing the shutdown and returned prompt.
 
-10. Select **File → Close Project**.
+11. Select **File → Close Project**.
 
     - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu host terminal.
 
