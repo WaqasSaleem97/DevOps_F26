@@ -14,6 +14,7 @@ DevOps/
     └── Lab05/
         ├── README.md
         ├── Lab5_Solution.pdf
+        ├── images/                     # Instructor reference images
         └── screenshots/
 ```
 
@@ -26,7 +27,7 @@ By the end of this lab, you will be able to:
 - Launch IntelliJ IDEA through the supplied Docker environment.
 - Clone and open existing projects through IntelliJ.
 - Install Maven, add an Elasticsearch dependency, test the project, package it and run its generated JAR.
-- Add an Elasticsearch dependency to a Gradle project, sync it and rebuild it with the Gradle Wrapper.
+- Configure the Gradle project and Gradle JVM to use JDK 16, add an Elasticsearch dependency, sync it and rebuild it with the Gradle Wrapper.
 - Install Node.js and npm, download dependencies, run tests, create a package with `npm pack` and start a Node.js application.
 - Resolve a port conflict by changing the application port to 4000.
 - Build and inspect a bundled Node.js API artifact with webpack.
@@ -38,7 +39,7 @@ By the end of this lab, you will be able to:
 - Docker Engine and Docker Compose are already installed on your local computer.
 - Your host Ubuntu username matches your registered GitHub username, and the hostname is `ubuntu`.
 - Your computer has a browser and a screenshot tool.
-- Allow time and disk space for the first Docker image, IDE and dependency downloads.
+- Allow time and disk space for the first Docker image, IDE, JDK 16 and dependency downloads.
 - Use your normal Ubuntu login account to start the Docker environment.
 
 The repository configures the IDE terminal prompt to display the host user's name with `@ubuntu`. The desktop's internal account is `abc`; use the supplied setup and your registered host login for the required prompt.
@@ -334,7 +335,30 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
 2. Select the project's **Gradle Wrapper** when IntelliJ asks which Gradle installation to use.
 
-3. Open **View → Tool Windows → Terminal**. From the Gradle project root, run:
+3. Configure JDK 16 before running the Gradle Wrapper:
+
+   - Select **File → Project Structure → Project**.
+   - Set **Project SDK** to **JDK 16**.
+   - Set **Project language level** to **8 - Lambdas, type annotations, etc.**
+   - If JDK 16 is unavailable, open the SDK list and select **Download JDK**. Use a JDK build and architecture compatible with your computer.
+
+   ![IntelliJ Project Structure configured with JDK 16](images/gradle-jdk16-project-structure.png)
+
+   The image above is an instructor reference. Capture your own project and build evidence.
+
+   Then open **File → Settings → Build, Execution, Deployment → Build Tools → Gradle** and set **Gradle JVM** to **Project SDK (JDK 16)** or the downloaded JDK 16. Select **Apply** and **OK**, then close and reopen IntelliJ's terminal.
+
+   The supplied wrapper is Gradle 7.x. It can run on Java 16, but it cannot run on Java 21. Java 21 produces class-file major version 65 and requires Gradle 8.5 or newer to run Gradle itself.
+
+4. Open **View → Tool Windows → Terminal**. From the Gradle project root, verify the JVM used by the wrapper:
+
+   ```bash
+   ./gradlew --version
+   ```
+
+   Confirm that the JVM information reports Java **16**. Do not continue while it reports Java 21.
+
+   Build the project:
 
    ```bash
    ./gradlew build
@@ -344,9 +368,11 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_build.png`, showing the command and successful build.
 
+   If the build reports **`Unsupported class file major version 65`**, Gradle is still running on Java 21. Recheck both the Project SDK and Gradle JVM, reopen the terminal, confirm Java 16 with `./gradlew --version`, and retry.
+
    If the wrapper reports `Permission denied`, run `chmod +x gradlew` and retry `./gradlew build`.
 
-4. Open **`build.gradle`** and add this line inside the existing **`dependencies { ... }`** block:
+5. Open **`build.gradle`** and add this line inside the existing **`dependencies { ... }`** block:
 
    ```groovy
    implementation("org.elasticsearch:elasticsearch:7.0.0")
@@ -356,7 +382,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_elasticsearch_dependency.png`, showing the dependency in `build.gradle` and the synchronized Elasticsearch library. Keep your required terminal prompt visible.
 
-5. Build the project again after the dependency change:
+6. Build the project again after the dependency change:
 
    ```bash
    ./gradlew build
@@ -366,7 +392,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_rebuild.png`, showing the command and successful rebuild.
 
-6. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
+7. In IntelliJ's Project pane, expand **`build` → `libs`**. Locate:
 
    ```text
    build/libs/java-app-1.0-SNAPSHOT.jar
@@ -374,7 +400,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_jar.png`, showing the output directory and exact JAR filename.
 
-7. Run the generated JAR from the project root:
+8. Run the generated JAR from the project root:
 
    ```bash
    java -jar build/libs/java-app-1.0-SNAPSHOT.jar
@@ -384,13 +410,13 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 
    - Screenshot as `gradle_running.png`, showing the command and startup output.
 
-8. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
+9. Press **Ctrl+C** and wait for the prompt to return. This also releases port 8080 before another application uses it.
 
    - Screenshot as `gradle_stopped.png`, showing the shutdown and returned prompt.
 
-9. Select **File → Close Project**.
+10. Select **File → Close Project**.
 
-   - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu host terminal.
+    - Screenshot as `gradle_project_closed.png`, showing the Welcome screen beside your Ubuntu host terminal.
 
 
 **Screenshot Required:**
@@ -404,7 +430,7 @@ Create all four projects under **`/config/IdeaProjects`**. This directory is sto
 - `gradle_stopped.png`
 - `gradle_project_closed.png`
 
-**Summary:** You added Elasticsearch 7.0.0 to `build.gradle`, synchronized the project and rebuilt it. The Gradle Wrapper created the executable JAR in `build/libs`, and Java ran it.
+**Summary:** You configured the project and Gradle JVM to use JDK 16, added Elasticsearch 7.0.0 to `build.gradle`, synchronized the project and rebuilt it. The Gradle Wrapper created the executable JAR in `build/libs`, and Java ran it.
 
 ---
 
@@ -650,7 +676,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 - You used IntelliJ to clone four existing projects.
 - You added Elasticsearch 7.0.0 to the Maven and Gradle builds, synchronized both projects and rebuilt them.
 - You ran `mvn test` and created the Maven executable JAR under `target`.
-- You used the Gradle Wrapper to create an executable JAR under `build/libs`.
+- You configured the Gradle project and Gradle JVM to use JDK 16, then used the Gradle Wrapper to create an executable JAR under `build/libs`.
 - You ran both JARs with `java -jar`, stopped them with Ctrl+C and closed each project.
 - You installed Node.js/npm, downloaded dependencies and started the Node.js application.
 - You ran `npm test` and used `npm pack` to create `bootcamp-node-project-1.0.0.tgz`.
@@ -661,7 +687,7 @@ These questions are **practice only and are not graded**. Put your answers in th
 ## Final Submission Checklist
 
 - [ ] I used IntelliJ's integrated terminal for the build-tool and application commands.
-- [ ] Maven reported `BUILD SUCCESS`, and Gradle reported `BUILD SUCCESSFUL` before and after the dependency changes.
+- [ ] Maven reported `BUILD SUCCESS`, and Gradle ran on JDK 16 and reported `BUILD SUCCESSFUL` before and after the dependency changes.
 - [ ] I added Elasticsearch 7.0.0 to `pom.xml` and `build.gradle` and synchronized both projects.
 - [ ] I ran `mvn test` and captured its actual test-phase result.
 - [ ] I showed both exact JAR filenames in their generated output directories.
@@ -700,6 +726,7 @@ Use `docker compose start` to resume that same container. Projects under `/confi
 - [JetBrains: Clone a repository](https://www.jetbrains.com/help/idea/set-up-a-git-repository.html)
 - [JetBrains: Maven dependencies and synchronization](https://www.jetbrains.com/help/idea/work-with-maven-dependencies.html)
 - [JetBrains: Gradle project synchronization](https://www.jetbrains.com/help/idea/work-with-gradle-projects.html)
+- [JetBrains: Gradle JVM settings](https://www.jetbrains.com/help/idea/gradle-settings.html)
 - [JetBrains: IntelliJ terminal](https://www.jetbrains.com/help/idea/terminal-emulator.html)
 - [JetBrains: Configure SDKs and download a JDK](https://www.jetbrains.com/help/idea/sdk.html)
 - [Maven: Build lifecycle and package phase](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)
