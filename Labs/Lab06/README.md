@@ -544,6 +544,8 @@ Expand the `1.0-SNAPSHOT` folder and confirm that Nexus contains the published J
 
 ![Published my-app snapshot and Maven metadata in Nexus](images/18-published-gradle-artifact.png)
 
+The instructor reference image shows the repository hierarchy and metadata. For your required evidence, expand `1.0-SNAPSHOT` one level further so the JAR filename is also visible.
+
 - Screenshot as `nexus_gradle_artifact.png`, showing `maven-snapshots`, the expanded `com/example/my-app/1.0-SNAPSHOT` path, the published JAR and the metadata. Keep the required terminal prompt visible beside the browser.
 
 **Screenshot Required:**
