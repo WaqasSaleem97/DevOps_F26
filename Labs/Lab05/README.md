@@ -1,7 +1,7 @@
 # Lab 5: Build, Test, and Package Applications with IntelliJ IDEA and Docker
 
 **Estimated duration:** 3 hours  
-**IntelliJ setup repository:** [WaqasSaleem97/Intellij-Idea-docker](https://github.com/WaqasSaleem97/Intellij-Idea-docker)  
+**IntelliJ setup repository:** [Intellij-Idea-docker](https://github.com/WaqasSaleem97/Intellij-Idea-docker)  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab05`  
 **Screenshot directory:** `Labs/Lab05/screenshots`
