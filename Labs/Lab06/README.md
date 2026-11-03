@@ -2,12 +2,12 @@
 
 **Estimated duration:** 2 hours  
 **Execution environment:** Run Nexus and all Docker/curl commands directly on the Ubuntu server  
-**Previous work:** Reuse the IntelliJ IDEA environment and `java-app` Gradle project from Lab 5  
+**Previous work:** Reuse the IntelliJ IDEA environment, `java-app` Gradle project and `java-maven-app` Maven project from Lab 5  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab06`  
 **Screenshot directory:** `Labs/Lab06/screenshots`
 
-This lab continues from Lab 5, but Nexus must run directly on the **Ubuntu server**, not inside the IntelliJ container. Use the Ubuntu server terminal for the Nexus `docker run`, `docker ps`, `docker exec`, logs, and user-verification `curl` commands. Reuse the IntelliJ IDEA environment and the `java-app` Gradle project for Task 3.
+This lab continues from Lab 5, but Nexus must run directly on the **Ubuntu server**, not inside the IntelliJ container. Use the Ubuntu server terminal for the Nexus `docker run`, `docker ps`, `docker exec`, logs, and user-verification `curl` commands. Reuse the IntelliJ IDEA environment, the `java-app` Gradle project for Task 3 and the `java-maven-app` Maven project for Task 4.
 
 ```text
 DevOps/
@@ -34,12 +34,15 @@ By the end of this lab, you will be able to:
 - Verify the user's credentials through the Nexus Status API.
 - Configure a Gradle project for Maven publication.
 - Build a Java JAR and publish it to the Nexus `maven-snapshots` repository.
-- Verify the published JAR and Maven metadata in Nexus.
+- Verify the published Gradle JAR and Maven metadata in Nexus.
+- Configure Maven distribution management and authenticated deployment.
+- Publish a Maven snapshot JAR and verify it in Nexus.
 
 ## Prerequisites
 
 - Complete Lab 5 and keep the existing `Intellij-Idea-docker` environment.
 - Keep or reopen the Lab 5 Gradle project at `/config/IdeaProjects/java-app`.
+- Keep or reopen the Lab 5 Maven project at `/config/IdeaProjects/java-maven-app`.
 - Docker must be installed and running directly on the Ubuntu server.
 - Run the Task 1 and Task 2 Nexus container and user-verification commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
 - Ports `8006` and `8007` must be available on the Ubuntu Docker host.
@@ -52,7 +55,8 @@ By the end of this lab, you will be able to:
 - [Task 1: Run Nexus Repository and Complete the Initial Setup](#task-1-run-nexus-repository-and-complete-the-initial-setup)
 - [Task 2: Create a Role and User and Verify Access](#task-2-create-a-role-and-user-and-verify-access)
 - [Task 3: Build and Publish the Gradle Application to Nexus](#task-3-build-and-publish-the-gradle-application-to-nexus)
-- [Task 4: Continue](#task-4-continue)
+- [Task 4: Publish the Maven Application to Nexus](#task-4-publish-the-maven-application-to-nexus)
+- [Task 5: Continue](#task-5-continue)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -101,7 +105,7 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 requires these 13 screenshots:
+Lab 6 currently requires these 18 screenshots:
 
 ```text
 nexus_container_running.png
@@ -117,6 +121,11 @@ gradle_nexus_configuration.png
 gradle_nexus_build.png
 gradle_nexus_publish.png
 nexus_gradle_artifact.png
+maven_nexus_project.png
+maven_distribution_management.png
+maven_package_nexus.png
+maven_deploy_nexus.png
+nexus_maven_artifact.png
 ```
 
 Each required screenshot has equal weight.
@@ -145,13 +154,14 @@ Each required screenshot has equal weight.
    docker ps
    ```
 
-4. Keep the Lab 5 IntelliJ IDEA environment and the following Gradle project for Task 3:
+4. Keep the Lab 5 IntelliJ IDEA environment and these projects for Tasks 3 and 4:
 
    ```text
    /config/IdeaProjects/java-app
+   /config/IdeaProjects/java-maven-app
    ```
 
-   If this project does not exist, Task 3 explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1 and 2 from the Ubuntu server terminal.
+   If either project does not exist, its task explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1 and 2 from the Ubuntu server terminal.
 
 ---
 
@@ -551,9 +561,138 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 
 ---
 
-## Task 4: Continue
+## Task 4: Publish the Maven Application to Nexus
 
-Additional Task 4 instructions will be added here.
+Keep the Nexus container running on the Ubuntu server. Perform the Maven project editing, packaging and deployment commands in the **IntelliJ IDEA terminal** used in Lab 5.
+
+### 1. Clone or reopen the Maven project
+
+From IntelliJ's Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
+
+- **URL:** `https://gitlab.com/nanuchi/java-maven-app.git`
+- **Directory:** `/config/IdeaProjects/java-maven-app`
+
+![IntelliJ Clone Repository dialog for the java-maven-app project](images/21-clone-java-maven-app.png)
+
+If `/config/IdeaProjects/java-maven-app` already exists from Lab 5, do not clone it again. Select **Open** or **Recent Projects** and open the existing directory.
+
+- Screenshot as `maven_nexus_project.png`, showing the successfully opened `java-maven-app` project in IntelliJ.
+
+### 2. Add snapshot distribution management to `pom.xml`
+
+Open `pom.xml`. Add this block as a direct child of the top-level `<project>` element, immediately after the project's existing `<version>` line. Do not place it inside `<dependencies>` or `<build>`.
+
+Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus. Keep the URL on one line.
+
+```xml
+<distributionManagement>
+    <snapshotRepository>
+        <id>nexus-snapshots</id>
+        <url>http://<ubuntu-server-ip>:8006/repository/maven-snapshots/</url>
+    </snapshotRepository>
+</distributionManagement>
+```
+
+The project version ends with `SNAPSHOT`, so Maven uses this `snapshotRepository` when it deploys the artifact.
+
+- Screenshot as `maven_distribution_management.png`, showing the complete saved `distributionManagement` block and the surrounding top-level `pom.xml` structure. Keep the required terminal identity visible.
+
+### 3. Configure the Nexus deployment credentials
+
+Open IntelliJ's terminal and install Vim:
+
+```bash
+sudo apt install -y vim
+```
+
+Open the Maven settings file:
+
+```bash
+vim ~/.m2/settings.xml
+```
+
+Press **i** to enter Insert mode and add:
+
+```xml
+<settings>
+    <servers>
+        <server>
+            <id>nexus-snapshots</id>
+            <username>nexus</username>
+            <password>REPLACE_WITH_NEXUS_PASSWORD</password>
+        </server>
+    </servers>
+</settings>
+```
+
+Replace `REPLACE_WITH_NEXUS_PASSWORD` with the password created for the `nexus` user in Task 2. The server ID must remain exactly `nexus-snapshots` because it must match the ID in `pom.xml`.
+
+Press **Esc**, type `:wq`, and press **Enter** to save and close Vim.
+
+Never display `settings.xml` in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose the password in terminal output.
+
+### 4. Package the Maven application
+
+In IntelliJ's terminal, run:
+
+```bash
+mvn package
+```
+
+Wait for `BUILD SUCCESS` and verify that Maven creates the snapshot JAR under `target/`.
+
+- Screenshot as `maven_package_nexus.png`, showing `mvn package`, `BUILD SUCCESS`, and the generated snapshot JAR filename.
+
+### 5. Deploy the snapshot to Nexus
+
+Run:
+
+```bash
+mvn deploy
+```
+
+Maven runs the lifecycle through the deploy phase and uploads the JAR, POM, checksums and metadata to the configured Nexus snapshot repository.
+
+- Screenshot as `maven_deploy_nexus.png`, showing `mvn deploy`, the Nexus upload lines and `BUILD SUCCESS`. Do not show the password or `settings.xml`.
+
+If deployment returns `401 Unauthorized`, verify the username, password and matching `nexus-snapshots` IDs. If it returns `403 Forbidden`, confirm that the `nexus` user is Active and has the `nx-java` role containing `nx-repository-view-maven2-maven-snapshots-*`.
+
+### 6. Verify the Maven artifact in Nexus
+
+Open and sign in to:
+
+```text
+http://<ubuntu-server-ip>:8006
+```
+
+Select **Browse → maven-snapshots**, then expand:
+
+```text
+com → example → java-maven-app → 1.1.0-SNAPSHOT
+```
+
+![Published java-maven-app snapshot in Nexus](images/22-published-maven-artifact.png)
+
+The instructor reference image shows the Maven repository hierarchy and metadata. For your required evidence, expand `1.1.0-SNAPSHOT` so the published JAR, POM and metadata/checksum files are visible. Nexus may use timestamped filenames for the snapshot.
+
+- Screenshot as `nexus_maven_artifact.png`, showing the expanded `com/example/java-maven-app/1.1.0-SNAPSHOT` path, the JAR, POM and Maven metadata. Keep the required terminal prompt visible beside the browser.
+
+**Screenshot Required:**
+
+- `maven_nexus_project.png`
+- `maven_distribution_management.png`
+- `maven_package_nexus.png`
+- `maven_deploy_nexus.png`
+- `nexus_maven_artifact.png`
+
+**Summary:** Maven read the deployment destination from `pom.xml`, matched it to the private credentials in `~/.m2/settings.xml`, packaged the snapshot JAR and deployed the artifact and metadata to Nexus.
+
+---
+
+## Task 5: Continue
+
+Additional Task 5 instructions will be added here.
+
 
 ---
 
@@ -568,7 +707,9 @@ Additional Task 4 instructions will be added here.
 - You verified the user through the Nexus Status API without exposing its password.
 - You configured Gradle's Maven Publish plugin and stored the deployment credentials in the project-level `gradle.properties` file instead of hardcoding them in `build.gradle`.
 - You built `my-app-1.0-SNAPSHOT.jar` and published it to Nexus.
-- You verified the snapshot JAR and Maven metadata in `maven-snapshots`.
+- You verified the Gradle snapshot JAR and Maven metadata in `maven-snapshots`.
+- You configured Maven snapshot distribution and matching private server credentials.
+- You packaged and deployed `java-maven-app` to Nexus and verified its JAR, POM and metadata.
 
 ## Final Submission Checklist
 
@@ -585,8 +726,12 @@ Additional Task 4 instructions will be added here.
 - [ ] My Nexus credentials are stored in the project-level `gradle.properties` file and are not committed or shown in screenshots.
 - [ ] `./gradlew clean build` created `my-app-1.0-SNAPSHOT.jar`.
 - [ ] `./gradlew clean build publish` completed successfully.
-- [ ] The snapshot JAR and Maven metadata are visible under `com/example/my-app/1.0-SNAPSHOT` in Nexus.
-- [ ] All 13 required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] The Gradle snapshot JAR and Maven metadata are visible under `com/example/my-app/1.0-SNAPSHOT` in Nexus.
+- [ ] `pom.xml` contains the `nexus-snapshots` distribution-management entry.
+- [ ] `~/.m2/settings.xml` contains the matching `nexus-snapshots` server ID and is not committed or shown in screenshots.
+- [ ] `mvn package` and `mvn deploy` both completed successfully.
+- [ ] The Maven snapshot JAR, POM and metadata are visible under `com/example/java-maven-app/1.1.0-SNAPSHOT` in Nexus.
+- [ ] All 18 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
@@ -611,3 +756,7 @@ Do not delete the `nexus` container or the `nexus-data` volume. The next task wi
 - [Gradle: Supported Repository Protocols and Credentials](https://docs.gradle.org/current/userguide/supported_repository_protocols.html)
 - [Gradle: Java Compatibility](https://docs.gradle.org/current/userguide/compatibility.html)
 - [Gradle: Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html)
+- [Maven: POM Distribution Management](https://maven.apache.org/pom.html#distribution-management)
+- [Maven: Settings and Server Credentials](https://maven.apache.org/settings.html#servers)
+- [Maven: Security and Deployment Settings](https://maven.apache.org/guides/mini/guide-deployment-security-settings.html)
+- [Maven: Build Lifecycle and Deploy Phase](https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)
