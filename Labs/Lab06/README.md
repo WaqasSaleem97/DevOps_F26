@@ -2,12 +2,12 @@
 
 **Estimated duration:** 2 hours  
 **Execution environment:** Run Nexus and all Docker/curl commands directly on the Ubuntu server  
-**Previous work:** Keep the IntelliJ IDEA environment and Maven project from Lab 5 for the later Lab 6 tasks  
+**Previous work:** Reuse the IntelliJ IDEA environment and `java-app` Gradle project from Lab 5  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab06`  
 **Screenshot directory:** `Labs/Lab06/screenshots`
 
-This lab continues from Lab 5, but Nexus must run directly on the **Ubuntu server**, not inside the IntelliJ container. Use the Ubuntu server terminal for `docker run`, `docker ps`, `docker exec`, logs, and `curl`. Keep the existing IntelliJ IDEA environment and `java-maven-app` Maven project because a later Lab 6 task will use them.
+This lab continues from Lab 5, but Nexus must run directly on the **Ubuntu server**, not inside the IntelliJ container. Use the Ubuntu server terminal for the Nexus `docker run`, `docker ps`, `docker exec`, logs, and user-verification `curl` commands. Reuse the IntelliJ IDEA environment and the `java-app` Gradle project for Task 3.
 
 ```text
 DevOps/
@@ -23,22 +23,25 @@ The instructor supplies this README. Create your own screenshots directory and s
 
 ## Lab Objective
 
-By the end of the currently published part of this lab, you will be able to:
+By the end of this lab, you will be able to:
 
-- Keep the IntelliJ IDEA environment and Maven project prepared in Lab 5 ready for a later task.
+- Reuse the IntelliJ IDEA environment and Gradle project prepared in Lab 5.
 - Run Nexus Repository in Docker with persistent storage.
 - Complete the initial Nexus administrator setup without exposing credentials.
 - Disable anonymous access.
 - Create a Nexus role for the Maven snapshots repository.
 - Create an active local user and assign the role.
 - Verify the user's credentials through the Nexus Status API.
+- Configure a Gradle project for Maven publication.
+- Build a Java JAR and publish it to the Nexus `maven-snapshots` repository.
+- Verify the published JAR and Maven metadata in Nexus.
 
 ## Prerequisites
 
 - Complete Lab 5 and keep the existing `Intellij-Idea-docker` environment.
-- Keep the Lab 5 Maven project at `/config/IdeaProjects/java-maven-app`.
+- Keep or reopen the Lab 5 Gradle project at `/config/IdeaProjects/java-app`.
 - Docker must be installed and running directly on the Ubuntu server.
-- Run the Nexus container and all verification commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
+- Run the Task 1 and Task 2 Nexus container and user-verification commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
 - Ports `8006` and `8007` must be available on the Ubuntu Docker host.
 - Know the IP address of the Ubuntu computer or server on which Docker is running.
 - Use a strong password for the Nexus `admin` account and a different strong password for the `nexus` user.
@@ -48,7 +51,7 @@ By the end of the currently published part of this lab, you will be able to:
 - [Getting Started](#getting-started)
 - [Task 1: Run Nexus Repository and Complete the Initial Setup](#task-1-run-nexus-repository-and-complete-the-initial-setup)
 - [Task 2: Create a Role and User and Verify Access](#task-2-create-a-role-and-user-and-verify-access)
-- [Task 3: Continue](#task-3-continue)
+- [Task 3: Build and Publish the Gradle Application to Nexus](#task-3-build-and-publish-the-gradle-application-to-nexus)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -73,7 +76,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
    - the required command; and
    - its relevant result or output.
 
-3. For Nexus browser pages, keep the Nexus page and a terminal showing `YourGitHubUsername@ubuntu` visible in the same screenshot. Keep the required Nexus fields and results readable.
+3. For Nexus browser pages and IntelliJ dialog/editor evidence, keep a terminal showing `YourGitHubUsername@ubuntu` visible in the same screenshot. Keep the required fields, code and results readable.
 
 4. Save every screenshot inside:
 
@@ -95,9 +98,9 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 The images embedded below are **instructor reference images only**. They illustrate the expected Nexus pages, but they are not student evidence. Do not download, copy, edit, or submit these images as your screenshots; capture your own work on your own Nexus server.
 
-### Required Screenshot Filenames for Tasks 1 and 2
+### Required Screenshot Filenames
 
-The currently published part of Lab 6 requires these seven screenshots:
+Lab 6 requires these 13 screenshots:
 
 ```text
 nexus_container_running.png
@@ -107,9 +110,15 @@ nexus_role_created.png
 nexus_role_privilege.png
 nexus_user_created.png
 nexus_user_access.png
+gradle_nexus_project.png
+gradle_jdk_configured.png
+gradle_nexus_configuration.png
+gradle_nexus_build.png
+gradle_nexus_publish.png
+nexus_gradle_artifact.png
 ```
 
-Each required screenshot has equal weight. Task 3 may add more required screenshots when its instructions are published.
+Each required screenshot has equal weight.
 
 ---
 
@@ -135,13 +144,13 @@ Each required screenshot has equal weight. Task 3 may add more required screensh
    docker ps
    ```
 
-4. Keep the Lab 5 IntelliJ IDEA environment and the following Maven project unchanged for a later task:
+4. Keep the Lab 5 IntelliJ IDEA environment and the following Gradle project for Task 3:
 
    ```text
-   /config/IdeaProjects/java-maven-app
+   /config/IdeaProjects/java-app
    ```
 
-   Do **not** open an IntelliJ container shell to run Nexus. Run every command in Tasks 1 and 2 from the Ubuntu server terminal.
+   If this project does not exist, Task 3 explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1 and 2 from the Ubuntu server terminal.
 
 ---
 
@@ -346,25 +355,226 @@ If the response is `401 Unauthorized`, verify the user ID, password, and Active 
 
 ---
 
-## Task 3: Continue
+## Task 3: Build and Publish the Gradle Application to Nexus
 
-Additional Task 3 instructions will be added here.
+Run the Nexus container on the Ubuntu server as configured in Tasks 1 and 2. Perform the project editing, Gradle build and Gradle publication commands in the **IntelliJ IDEA terminal** used in Lab 5.
+
+### 1. Clone or reopen the Gradle project
+
+From the IntelliJ Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
+
+- **URL:** `https://gitlab.com/nanuchi/java-app.git`
+- **Directory:** `/config/IdeaProjects/java-app`
+
+![IntelliJ Clone Repository dialog for the java-app project](images/13-clone-java-app.png)
+
+If `/config/IdeaProjects/java-app` already exists from Lab 5, do not create a duplicate clone. Select **Open** or **Recent Projects** and open that existing directory.
+
+After the project opens, use IntelliJ's terminal from the project root and verify its remote:
+
+```bash
+cd /config/IdeaProjects/java-app
+git remote -v
+```
+
+- Screenshot as `gradle_nexus_project.png`, showing the opened `java-app` project and `git remote -v` with the correct GitLab repository.
+
+### 2. Configure the project JDK
+
+In IntelliJ IDEA, select **File → Project Structure**.
+
+![IntelliJ File menu showing Project Structure](images/14-open-project-structure.png)
+
+Under **Project Settings → Project**, configure:
+
+| Setting | Required value |
+| --- | --- |
+| Project SDK | JDK 16 |
+| Project language level | `8 - Lambdas, type annotations, etc.` |
+
+If JDK 16 is not listed, open the SDK menu and select **Download JDK**. You may use Azul Zulu or another JDK vendor, but select the architecture that matches your computer. The instructor image uses ARM64 because it was captured on an ARM server; students using `x86_64` must select the matching `x86_64` JDK.
+
+![IntelliJ Project Structure configured with JDK 16](images/15-configure-project-jdk.png)
+
+Select **Apply**, then **OK**.
+
+- Screenshot as `gradle_jdk_configured.png`, showing JDK 16 and language level 8 in the saved Project Structure configuration. Keep the required terminal identity visible beside IntelliJ.
+
+### 3. Configure `build.gradle` for Maven publication
+
+Open `build.gradle`. Ensure its `plugins` block contains each plugin exactly once:
+
+```groovy
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '2.2.2.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+```
+
+Do not add a second `java` or `maven-publish` entry if it already exists.
+
+Keep the project's existing Maven coordinates. Verify that the file contains:
+
+```groovy
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+```
+
+Add the following `publishing` block at the end of `build.gradle`. Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus; do not include angle brackets in the final URL.
+
+```groovy
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifact("build/libs/my-app-$version" + ".jar") {
+                extension "jar"
+            }
+        }
+    }
+    repositories {
+        maven {
+            name "nexus"
+            url "http://<ubuntu-server-ip>:8006/repository/maven-snapshots/"
+            allowInsecureProtocol = true
+            credentials {
+                username project.repoUser
+                password project.repoPassword
+            }
+        }
+    }
+}
+```
+
+`allowInsecureProtocol = true` is required here because this classroom Nexus URL uses HTTP. Do not use this setting as a substitute for HTTPS in a production deployment.
+
+### 4. Set the project name
+
+Open `settings.gradle` and set its contents to:
+
+```groovy
+rootProject.name = 'my-app'
+```
+
+This name makes the generated JAR begin with `my-app`.
+
+### 5. Store the deployment credentials outside the project
+
+Create the Gradle user-home properties file from the IntelliJ terminal:
+
+```bash
+mkdir -p ~/.gradle
+nano ~/.gradle/gradle.properties
+```
+
+Add these two lines, using the `nexus` user's password created in Task 2:
+
+```properties
+repoUser=nexus
+repoPassword=<nexus-user-password>
+```
+
+Save the file, exit the editor, restrict its permissions, and clear the terminal:
+
+```bash
+chmod 600 ~/.gradle/gradle.properties
+clear
+```
+
+Use `~/.gradle/gradle.properties`, not a tracked project file. Never display this file in a screenshot, add it to Git, include it in `Lab6_Solution.pdf`, or expose its password in terminal output.
+
+- Screenshot as `gradle_nexus_configuration.png`, showing the updated `build.gradle` publication/repository configuration and `settings.gradle`. Keep the required terminal identity visible, but do not show `gradle.properties` or either password.
+
+### 6. Build the JAR
+
+From `/config/IdeaProjects/java-app`, run:
+
+```bash
+chmod +x gradlew
+./gradlew clean build
+ls -lh build/libs/
+```
+
+Wait for `BUILD SUCCESSFUL`. Confirm that `build/libs/` contains:
+
+```text
+my-app-1.0-SNAPSHOT.jar
+```
+
+- Screenshot as `gradle_nexus_build.png`, showing `./gradlew clean build`, `BUILD SUCCESSFUL`, and the generated `my-app-1.0-SNAPSHOT.jar`.
+
+### 7. Publish the JAR to Nexus
+
+Run:
+
+```bash
+./gradlew clean build publish
+```
+
+Gradle should run the Nexus publication task and finish with `BUILD SUCCESSFUL`.
+
+- Screenshot as `gradle_nexus_publish.png`, showing the command, the Nexus publish task and `BUILD SUCCESSFUL`. Do not display the credentials file or password.
+
+If publication returns `401 Unauthorized`, verify `repoUser`, `repoPassword` and the Active status of the `nexus` user. If it returns `403 Forbidden`, confirm that the user has the `nx-java` role and that the role contains `nx-repository-view-maven2-maven-snapshots-*`.
+
+### 8. Verify the artifact in Nexus
+
+Open the Nexus web application:
+
+```text
+http://<ubuntu-server-ip>:8006
+```
+
+Sign in and open the navigation menu if it is collapsed.
+
+![Nexus Repository dashboard](images/16-nexus-dashboard.png)
+
+Select **Browse**, then select the hosted `maven-snapshots` repository.
+
+![Nexus Browse page showing the maven-snapshots repository](images/17-browse-maven-snapshots.png)
+
+Expand this path:
+
+```text
+com → example → my-app → 1.0-SNAPSHOT
+```
+
+Expand the `1.0-SNAPSHOT` folder and confirm that Nexus contains the published JAR, POM and Maven metadata/checksum files. Nexus may store the snapshot JAR with a timestamp and build number rather than the literal `SNAPSHOT` filename.
+
+![Published my-app snapshot and Maven metadata in Nexus](images/18-published-gradle-artifact.png)
+
+- Screenshot as `nexus_gradle_artifact.png`, showing `maven-snapshots`, the expanded `com/example/my-app/1.0-SNAPSHOT` path, the published JAR and the metadata. Keep the required terminal prompt visible beside the browser.
+
+**Screenshot Required:**
+
+- `gradle_nexus_project.png`
+- `gradle_jdk_configured.png`
+- `gradle_nexus_configuration.png`
+- `gradle_nexus_build.png`
+- `gradle_nexus_publish.png`
+- `nexus_gradle_artifact.png`
+
+**Summary:** IntelliJ used JDK 16 to build the renamed `my-app` Gradle project. Gradle read the deployment credentials from the untracked user-home properties file and published the snapshot JAR and Maven metadata to Nexus.
 
 ---
 
 ## Summary
 
-- You kept the IntelliJ IDEA and Maven environment from Lab 5 ready for a later task.
+- You reused the IntelliJ IDEA environment and Gradle project from Lab 5.
 - You ran Nexus and its verification commands directly on the Ubuntu server.
 - You ran Nexus Repository in a Docker container with a persistent named volume.
 - You replaced the generated administrator password and disabled anonymous access.
 - You created the `nx-java` role with Maven snapshots privileges.
 - You created the active local `nexus` user and assigned the role.
 - You verified the user through the Nexus Status API without exposing its password.
+- You configured Gradle's Maven Publish plugin without hardcoding deployment credentials in `build.gradle`.
+- You built `my-app-1.0-SNAPSHOT.jar` and published it to Nexus.
+- You verified the snapshot JAR and Maven metadata in `maven-snapshots`.
 
 ## Final Submission Checklist
 
-- [ ] I kept the IntelliJ IDEA environment and Maven project from Lab 5 ready for a later task.
+- [ ] I reused the IntelliJ IDEA environment and the existing `java-app` Gradle project from Lab 5.
 - [ ] I ran Nexus and every Task 1 and Task 2 terminal command directly on the Ubuntu server, not inside the IntelliJ container.
 - [ ] The `nexus` container is running with ports `8006` and `8007` published.
 - [ ] Nexus data uses the persistent `nexus-data` volume.
@@ -372,7 +582,13 @@ Additional Task 3 instructions will be added here.
 - [ ] The saved `nx-java` role contains `nx-repository-view-maven2-maven-snapshots-*`.
 - [ ] The local `nexus` user is Active and has the `nx-java` role.
 - [ ] The authenticated Status API request returned HTTP 200.
-- [ ] All seven currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] `build.gradle` contains `java`, `maven-publish`, the Nexus repository URL and the publication block.
+- [ ] `settings.gradle` sets `rootProject.name = 'my-app'`.
+- [ ] My Nexus credentials are stored only in `~/.gradle/gradle.properties`, with mode `600`, and are not committed.
+- [ ] `./gradlew clean build` created `my-app-1.0-SNAPSHOT.jar`.
+- [ ] `./gradlew clean build publish` completed successfully.
+- [ ] The snapshot JAR and Maven metadata are visible under `com/example/my-app/1.0-SNAPSHOT` in Nexus.
+- [ ] All 13 required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
@@ -380,9 +596,9 @@ Additional Task 3 instructions will be added here.
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab06` directory after the remaining Lab 6 tasks are published and completed.
+Submit the URL of your own `DevOps/Labs/Lab06` directory after completing all three tasks.
 
-Do not delete the `nexus` container or the `nexus-data` volume after Tasks 1 and 2. Task 3 will continue using them.
+Do not delete the `nexus` container or the `nexus-data` volume before completing Task 3.
 
 ## Official References
 
@@ -393,3 +609,7 @@ Do not delete the `nexus` container or the `nexus-data` volume after Tasks 1 and
 - [Sonatype: Privileges](https://help.sonatype.com/en/privileges.html)
 - [Sonatype: Anonymous Access](https://help.sonatype.com/en/anonymous-access.html)
 - [Docker Hub: sonatype/nexus3](https://hub.docker.com/r/sonatype/nexus3)
+- [Gradle: The Maven Publish Plugin](https://docs.gradle.org/current/userguide/publishing_maven.html)
+- [Gradle: Supported Repository Protocols and Credentials](https://docs.gradle.org/current/userguide/supported_repository_protocols.html)
+- [Gradle: Java Compatibility](https://docs.gradle.org/current/userguide/compatibility.html)
+- [Gradle: Gradle Wrapper](https://docs.gradle.org/current/userguide/gradle_wrapper.html)
