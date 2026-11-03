@@ -1,6 +1,6 @@
 # Lab 6: Set Up Nexus Repository and Configure User Access
 
-**Estimated duration:** 2 hours  
+**Estimated duration:** 3 hours  
 **Execution environment:** Run Nexus and all Docker/curl commands directly on the Ubuntu server  
 **Previous work:** Reuse the IntelliJ IDEA environment, `java-app` Gradle project and `java-maven-app` Maven project from Lab 5  
 **Submission repository:** `DevOps`  
