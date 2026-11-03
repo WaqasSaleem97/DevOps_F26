@@ -52,6 +52,7 @@ By the end of this lab, you will be able to:
 - [Task 1: Run Nexus Repository and Complete the Initial Setup](#task-1-run-nexus-repository-and-complete-the-initial-setup)
 - [Task 2: Create a Role and User and Verify Access](#task-2-create-a-role-and-user-and-verify-access)
 - [Task 3: Build and Publish the Gradle Application to Nexus](#task-3-build-and-publish-the-gradle-application-to-nexus)
+- [Task 4: Continue](#task-4-continue)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -370,14 +371,7 @@ From the IntelliJ Welcome screen, select **Clone Repository** or **Get from Vers
 
 If `/config/IdeaProjects/java-app` already exists from Lab 5, do not create a duplicate clone. Select **Open** or **Recent Projects** and open that existing directory.
 
-After the project opens, use IntelliJ's terminal from the project root and verify its remote:
-
-```bash
-cd /config/IdeaProjects/java-app
-git remote -v
-```
-
-- Screenshot as `gradle_nexus_project.png`, showing the opened `java-app` project and `git remote -v` with the correct GitLab repository.
+- Screenshot as `gradle_nexus_project.png`, showing the successfully opened `java-app` project in IntelliJ.
 
 ### 2. Configure the project JDK
 
@@ -422,7 +416,7 @@ group = 'com.example'
 version = '1.0-SNAPSHOT'
 ```
 
-Add the following `publishing` block at the end of `build.gradle`. Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus; do not include angle brackets in the final URL.
+Add the following `publishing` block immediately after the existing `group` and `version` lines. Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus; do not include angle brackets in the final URL.
 
 ```groovy
 publishing {
@@ -459,14 +453,19 @@ rootProject.name = 'my-app'
 
 This name makes the generated JAR begin with `my-app`.
 
-### 5. Store the deployment credentials outside the project
+### 5. Create `gradle.properties`
 
-Create the Gradle user-home properties file from the IntelliJ terminal:
+In IntelliJ's **Project** pane, right-click the `java-app` project root and select **New → File**.
 
-```bash
-mkdir -p ~/.gradle
-nano ~/.gradle/gradle.properties
+![Creating a new file from the IntelliJ Project pane](images/19-create-gradle-properties-file.png)
+
+Enter this filename and press **Enter**:
+
+```text
+gradle.properties
 ```
+
+![Naming the new file gradle.properties](images/20-name-gradle-properties-file.png)
 
 Add these two lines, using the `nexus` user's password created in Task 2:
 
@@ -475,28 +474,19 @@ repoUser=nexus
 repoPassword=<nexus-user-password>
 ```
 
-Save the file, exit the editor, restrict its permissions, and clear the terminal:
-
-```bash
-chmod 600 ~/.gradle/gradle.properties
-clear
-```
-
-Use `~/.gradle/gradle.properties`, not a tracked project file. Never display this file in a screenshot, add it to Git, include it in `Lab6_Solution.pdf`, or expose its password in terminal output.
+Save the project-level `gradle.properties` file. Never display its contents in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose its password in terminal output.
 
 - Screenshot as `gradle_nexus_configuration.png`, showing the updated `build.gradle` publication/repository configuration and `settings.gradle`. Keep the required terminal identity visible, but do not show `gradle.properties` or either password.
 
 ### 6. Build the JAR
 
-From `/config/IdeaProjects/java-app`, run:
+Open IntelliJ's terminal in the `java-app` project and run:
 
 ```bash
-chmod +x gradlew
 ./gradlew clean build
-ls -lh build/libs/
 ```
 
-Wait for `BUILD SUCCESSFUL`. Confirm that `build/libs/` contains:
+Wait for `BUILD SUCCESSFUL`. In IntelliJ's Project pane, expand `build/libs/` and confirm that it contains:
 
 ```text
 my-app-1.0-SNAPSHOT.jar
@@ -557,7 +547,13 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 - `gradle_nexus_publish.png`
 - `nexus_gradle_artifact.png`
 
-**Summary:** IntelliJ used JDK 16 to build the renamed `my-app` Gradle project. Gradle read the deployment credentials from the untracked user-home properties file and published the snapshot JAR and Maven metadata to Nexus.
+**Summary:** IntelliJ used JDK 16 to build the renamed `my-app` Gradle project. Gradle read the deployment credentials from the uncommitted project-level `gradle.properties` file and published the snapshot JAR and Maven metadata to Nexus.
+
+---
+
+## Task 4: Continue
+
+Additional Task 4 instructions will be added here.
 
 ---
 
@@ -570,7 +566,7 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 - You created the `nx-java` role with Maven snapshots privileges.
 - You created the active local `nexus` user and assigned the role.
 - You verified the user through the Nexus Status API without exposing its password.
-- You configured Gradle's Maven Publish plugin without hardcoding deployment credentials in `build.gradle`.
+- You configured Gradle's Maven Publish plugin and stored the deployment credentials in the project-level `gradle.properties` file instead of hardcoding them in `build.gradle`.
 - You built `my-app-1.0-SNAPSHOT.jar` and published it to Nexus.
 - You verified the snapshot JAR and Maven metadata in `maven-snapshots`.
 
@@ -586,7 +582,7 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 - [ ] The authenticated Status API request returned HTTP 200.
 - [ ] `build.gradle` contains `java`, `maven-publish`, the Nexus repository URL and the publication block.
 - [ ] `settings.gradle` sets `rootProject.name = 'my-app'`.
-- [ ] My Nexus credentials are stored only in `~/.gradle/gradle.properties`, with mode `600`, and are not committed.
+- [ ] My Nexus credentials are stored in the project-level `gradle.properties` file and are not committed or shown in screenshots.
 - [ ] `./gradlew clean build` created `my-app-1.0-SNAPSHOT.jar`.
 - [ ] `./gradlew clean build publish` completed successfully.
 - [ ] The snapshot JAR and Maven metadata are visible under `com/example/my-app/1.0-SNAPSHOT` in Nexus.
@@ -598,9 +594,9 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab06` directory after completing all three tasks.
+Submit the URL of your own `DevOps/Labs/Lab06` directory after all Lab 6 tasks are published and completed.
 
-Do not delete the `nexus` container or the `nexus-data` volume before completing Task 3.
+Do not delete the `nexus` container or the `nexus-data` volume. The next task will continue using them.
 
 ## Official References
 
