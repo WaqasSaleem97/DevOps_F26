@@ -14,7 +14,6 @@ DevOps/
     └── Lab05/
         ├── README.md
         ├── Lab5_Solution.pdf
-        ├── images/                     # Instructor reference images
         └── screenshots/
 ```
 
