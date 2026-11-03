@@ -105,18 +105,11 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 currently requires these 18 screenshots:
+Lab 6 currently requires these 11 screenshots:
 
 ```text
 nexus_container_running.png
-nexus_login_page.png
-nexus_setup_complete.png
-nexus_role_created.png
-nexus_role_privilege.png
-nexus_user_created.png
 nexus_user_access.png
-gradle_nexus_project.png
-gradle_jdk_configured.png
 gradle_nexus_configuration.png
 gradle_nexus_build.png
 gradle_nexus_publish.png
@@ -167,115 +160,110 @@ Each required screenshot has equal weight.
 
 ## Task 1: Run Nexus Repository and Complete the Initial Setup
 
-### 1. Start the Nexus container
+1. **Start the Nexus container**
 
-In the Ubuntu server terminal, run:
+   In the Ubuntu server terminal, run:
 
-```bash
-docker run -d \
-  --name nexus \
-  --restart unless-stopped \
-  -p 8006:8081 \
-  -p 8007:8007 \
-  -v nexus-data:/nexus-data \
-  sonatype/nexus3:latest
-```
+   ```bash
+   docker run -d \
+     --name nexus \
+     --restart unless-stopped \
+     -p 8006:8081 \
+     -p 8007:8007 \
+     -v nexus-data:/nexus-data \
+     sonatype/nexus3:latest
+   ```
 
-This command creates a container named `nexus`. Host port `8006` opens the Nexus web interface, host port `8007` is reserved for a later repository task, and the named volume `nexus-data` keeps Nexus data when the container restarts.
+   This command creates a container named `nexus`. Host port `8006` opens the Nexus web interface, host port `8007` is reserved for a later repository task, and the named volume `nexus-data` keeps Nexus data when the container restarts.
 
-If you previously created the container and it is stopped, do not run the creation command again. Start the existing container with:
+   If you previously created the container and it is stopped, do not run the creation command again. Start the existing container with:
 
-```bash
-docker start nexus
-```
+   ```bash
+   docker start nexus
+   ```
 
-### 2. Verify that Nexus is running
+2. **Verify that Nexus is running**
 
-Run:
+   Run:
 
-```bash
-docker ps | grep nexus
-```
+   ```bash
+   docker ps | grep nexus
+   ```
 
-Wait until the output shows the `nexus` container. The first startup can take several minutes. If the browser is not ready yet, inspect startup progress with:
+   Wait until the output shows the `nexus` container. The first startup can take several minutes. If the browser is not ready yet, inspect startup progress with:
 
-```bash
-docker logs -f nexus
-```
+   ```bash
+   docker logs -f nexus
+   ```
 
-Press **Ctrl+C** after Nexus finishes starting. This stops only the log display; it does not stop the container.
+   Press **Ctrl+C** after Nexus finishes starting. This stops only the log display; it does not stop the container.
 
-- Screenshot as `nexus_container_running.png`, showing `docker ps | grep nexus`, the running `nexus` container, and the published ports.
+   - Screenshot as `nexus_container_running.png`, showing `docker ps | grep nexus`, the running `nexus` container, and the published ports.
 
-### 3. Open the Nexus login page
+3. **Open the Nexus login page**
 
-On a computer that can reach the Ubuntu Docker host, open:
+   On a computer that can reach the Ubuntu Docker host, open:
 
-```text
-http://<ubuntu-server-ip>:8006
-```
+   ```text
+   http://<ubuntu-server-ip>:8006
+   ```
 
-Replace `<ubuntu-server-ip>` with the real IP address. The first login username is:
+   Replace `<ubuntu-server-ip>` with the real IP address. The first login username is:
 
-```text
-admin
-```
+   ```text
+   admin
+   ```
 
-- Screenshot as `nexus_login_page.png`, showing the Nexus login page and the URL. Keep your required terminal prompt visible beside the browser. Do not enter or display a password in the screenshot.
 
-**Instructor reference image:**
+   **Instructor reference image:**
 
-![Nexus first-login page showing the location of the generated administrator password](images/01-nexus-login.png)
+   ![Nexus first-login page showing the location of the generated administrator password](images/01-nexus-login.png)
 
-### 4. Retrieve the one-time administrator password
+4. **Retrieve the one-time administrator password**
 
-Return to the Ubuntu server terminal and run:
+   Return to the Ubuntu server terminal and run:
 
-```bash
-docker exec nexus cat /nexus-data/admin.password
-```
+   ```bash
+   docker exec nexus cat /nexus-data/admin.password
+   ```
 
-Copy the generated value privately and use it once to sign in as `admin`. **Do not take a screenshot of this command or its output.** Clear the visible terminal immediately afterward:
+   Copy the generated value privately and use it once to sign in as `admin`. **Do not take a screenshot of this command or its output.** Clear the visible terminal immediately afterward:
 
-```bash
-clear
-```
+   ```bash
+   clear
+   ```
 
-### 5. Complete the setup wizard
+5. **Complete the setup wizard**
 
-Complete the pages shown by Nexus in this order:
+   Complete the pages shown by Nexus in this order:
 
-1. Select **Next** on **Let's Get You Set Up**.
+   1. Select **Next** on **Let's Get You Set Up**.
 
-   ![Nexus initial setup welcome page](images/02-setup-welcome.png)
+      ![Nexus initial setup welcome page](images/02-setup-welcome.png)
 
-2. Enter and confirm a new strong password for the `admin` user, then select **Next**.
+   2. Enter and confirm a new strong password for the `admin` user, then select **Next**.
 
-   ![Nexus administrator password-change page](images/03-change-admin-password.png)
+      ![Nexus administrator password-change page](images/03-change-admin-password.png)
 
-3. Continue with **Nexus Repository Community Edition**.
+   3. Continue with **Nexus Repository Community Edition**.
 
-   ![Nexus Repository Community Edition information page](images/04-community-edition.png)
+      ![Nexus Repository Community Edition information page](images/04-community-edition.png)
 
-4. Read the End User License Agreement, scroll as required, and select **Agree**.
+   4. Read the End User License Agreement, scroll as required, and select **Agree**.
 
-   ![Nexus End User License Agreement page](images/05-license-agreement.png)
+      ![Nexus End User License Agreement page](images/05-license-agreement.png)
 
-5. On **Configure Anonymous Access**, select **Disable anonymous access**, then select **Next**.
+   5. On **Configure Anonymous Access**, select **Disable anonymous access**, then select **Next**.
 
-   ![Nexus anonymous-access configuration with anonymous access disabled](images/06-disable-anonymous-access.png)
+      ![Nexus anonymous-access configuration with anonymous access disabled](images/06-disable-anonymous-access.png)
 
-6. On **Setup Complete**, select **Finish**.
+   6. On **Setup Complete**, select **Finish**.
 
-   ![Nexus setup-complete page](images/07-setup-complete.png)
-
-- Screenshot as `nexus_setup_complete.png`, showing the **Setup Complete** page and the Nexus URL. Keep your required terminal prompt visible and do not show either password.
+      ![Nexus setup-complete page](images/07-setup-complete.png)
 
 **Screenshot Required:**
 
 - `nexus_container_running.png`
-- `nexus_login_page.png`
-- `nexus_setup_complete.png`
 
 **Summary:** Nexus is running in Docker with persistent data, the initial administrator password has been replaced, and anonymous access is disabled.
 
@@ -283,83 +271,75 @@ Complete the pages shown by Nexus in this order:
 
 ## Task 2: Create a Role and User and Verify Access
 
-### 1. Create the `nx-java` role
+1. **Create the `nx-java` role**
 
-Sign in as `admin`, open **Settings**, and go to **Security → Roles**. Select **Create Role** and enter:
+   Sign in as `admin`, open **Settings**, and go to **Security → Roles**. Select **Create Role** and enter:
 
-![Nexus Security menu showing Roles and Users](images/08-security-menu.png)
+   ![Nexus Security menu showing Roles and Users](images/08-security-menu.png)
 
-| Field | Value |
-| --- | --- |
-| Type | `Nexus role` |
-| Role ID | `nx-java` |
-| Role Name | `nx-java` |
-| Role Description | `Maven snapshots role` |
+   | Field | Value |
+   | --- | --- |
+   | Type | `Nexus role` |
+   | Role ID | `nx-java` |
+   | Role Name | `nx-java` |
+   | Role Description | `Maven snapshots role` |
 
-![Nexus Create Role page with nx-java as the role ID and role name](images/09-create-role.png)
+   ![Nexus Create Role page with nx-java as the role ID and role name](images/09-create-role.png)
 
-Under **Applied Privileges**, select **Modify Applied Privileges**. Search for `maven2-maven-snapshots`, select this privilege, and confirm the selection:
+   Under **Applied Privileges**, select **Modify Applied Privileges**. Search for `maven2-maven-snapshots`, select this privilege, and confirm the selection:
 
-```text
-nx-repository-view-maven2-maven-snapshots-*
-```
+   ```text
+   nx-repository-view-maven2-maven-snapshots-*
+   ```
 
-![Nexus privilege selection for the Maven snapshots repository](images/10-select-maven-snapshot-privilege.png)
+   ![Nexus privilege selection for the Maven snapshots repository](images/10-select-maven-snapshot-privilege.png)
 
-After confirming the selection, verify that the privilege appears under **Applied Privileges**:
+   After confirming the selection, verify that the privilege appears under **Applied Privileges**:
 
-![Nexus role showing the applied Maven snapshots privilege](images/11-applied-maven-snapshot-privilege.png)
+   ![Nexus role showing the applied Maven snapshots privilege](images/11-applied-maven-snapshot-privilege.png)
 
-Save the role. Reopen the saved role if necessary to show its details.
+   Save the role. Reopen the saved role if necessary to show its details.
 
-- Screenshot as `nexus_role_created.png`, showing the saved role with Role ID `nx-java` and Role Name `nx-java`.
-- Screenshot as `nexus_role_privilege.png`, showing `nx-repository-view-maven2-maven-snapshots-*` in the role's saved applied privileges.
+2. **Create the local `nexus` user**
 
-### 2. Create the local `nexus` user
+   Go to **Settings → Security → Users**, select **Create local user**, and enter:
 
-Go to **Settings → Security → Users**, select **Create local user**, and enter:
+   | Field | Value |
+   | --- | --- |
+   | ID | `nexus` |
+   | First name | `nexus` |
+   | Last name | `dev` |
+   | Email | `nexus@example.com` |
+   | Password | A new strong password chosen by you |
+   | Status | `Active` |
+   | Granted role | `nx-java` |
 
-| Field | Value |
-| --- | --- |
-| ID | `nexus` |
-| First name | `nexus` |
-| Last name | `dev` |
-| Email | `nexus@example.com` |
-| Password | A new strong password chosen by you |
-| Status | `Active` |
-| Granted role | `nx-java` |
+   ![Nexus Create User page with the nx-java role granted](images/12-create-user.png)
 
-![Nexus Create User page with the nx-java role granted](images/12-create-user.png)
+   Move `nx-java` from **Available** to **Granted**, then select **Create local user**. Do not reuse the administrator password.
 
-Move `nx-java` from **Available** to **Granted**, then select **Create local user**. Do not reuse the administrator password.
+3. **Verify the user's access**
 
-- Screenshot as `nexus_user_created.png`, showing the saved local user `nexus`, Active status, and the granted `nx-java` role. Do not show a password.
+   In the Ubuntu server terminal, run the following command after replacing `<ubuntu-server-ip>` with the real IP address:
 
-### 3. Verify the user's access
+   ```bash
+   curl -i -u nexus http://<ubuntu-server-ip>:8006/service/rest/v1/status
+   ```
 
-In the Ubuntu server terminal, run the following command after replacing `<ubuntu-server-ip>` with the real IP address:
+   When curl displays `Enter host password for user 'nexus':`, enter the password created in the previous step. The password is not displayed. Do not place the password after `nexus:` in the command because that would save it in shell history and may expose it in the screenshot.
 
-```bash
-curl -i -u nexus http://<ubuntu-server-ip>:8006/service/rest/v1/status
-```
+   A successful request returns an HTTP status line containing:
 
-When curl displays `Enter host password for user 'nexus':`, enter the password created in the previous step. The password is not displayed. Do not place the password after `nexus:` in the command because that would save it in shell history and may expose it in the screenshot.
+   ```text
+   HTTP/1.1 200 OK
+   ```
 
-A successful request returns an HTTP status line containing:
+   - Screenshot as `nexus_user_access.png`, showing the curl command, the `HTTP/1.1 200` response, and your required terminal prompt. The password must not be visible.
 
-```text
-HTTP/1.1 200 OK
-```
-
-- Screenshot as `nexus_user_access.png`, showing the curl command, the `HTTP/1.1 200` response, and your required terminal prompt. The password must not be visible.
-
-If the response is `401 Unauthorized`, verify the user ID, password, and Active status. If repository access later returns `403 Forbidden`, verify that `nx-java` is granted to the user and contains the required Maven snapshots privilege.
+   If the response is `401 Unauthorized`, verify the user ID, password, and Active status. If repository access later returns `403 Forbidden`, verify that `nx-java` is granted to the user and contains the required Maven snapshots privilege.
 
 **Screenshot Required:**
 
-- `nexus_role_created.png`
-- `nexus_role_privilege.png`
-- `nexus_user_created.png`
 - `nexus_user_access.png`
 
 **Summary:** The local `nexus` user is active, receives Maven snapshots access through the `nx-java` role, and can authenticate to Nexus.
@@ -370,188 +350,182 @@ If the response is `401 Unauthorized`, verify the user ID, password, and Active 
 
 Run the Nexus container on the Ubuntu server as configured in Tasks 1 and 2. Perform the project editing, Gradle build and Gradle publication commands in the **IntelliJ IDEA terminal** used in Lab 5.
 
-### 1. Clone or reopen the Gradle project
+1. **Clone or reopen the Gradle project**
 
-From the IntelliJ Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
+   From the IntelliJ Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
 
-- **URL:** `https://gitlab.com/nanuchi/java-app.git`
-- **Directory:** `/config/IdeaProjects/java-app`
+   - **URL:** `https://gitlab.com/nanuchi/java-app.git`
+   - **Directory:** `/config/IdeaProjects/java-app`
 
-![IntelliJ Clone Repository dialog for the java-app project](images/13-clone-java-app.png)
+   ![IntelliJ Clone Repository dialog for the java-app project](images/13-clone-java-app.png)
 
-If `/config/IdeaProjects/java-app` already exists from Lab 5, do not create a duplicate clone. Select **Open** or **Recent Projects** and open that existing directory.
+   If `/config/IdeaProjects/java-app` already exists from Lab 5, do not create a duplicate clone. Select **Open** or **Recent Projects** and open that existing directory.
 
-- Screenshot as `gradle_nexus_project.png`, showing the successfully opened `java-app` project in IntelliJ.
+2. **Configure the project JDK**
 
-### 2. Configure the project JDK
+   In IntelliJ IDEA, select **File → Project Structure**.
 
-In IntelliJ IDEA, select **File → Project Structure**.
+   ![IntelliJ File menu showing Project Structure](images/14-open-project-structure.png)
 
-![IntelliJ File menu showing Project Structure](images/14-open-project-structure.png)
+   Under **Project Settings → Project**, configure:
 
-Under **Project Settings → Project**, configure:
+   | Setting | Required value |
+   | --- | --- |
+   | Project SDK | JDK 16 |
+   | Project language level | `8 - Lambdas, type annotations, etc.` |
 
-| Setting | Required value |
-| --- | --- |
-| Project SDK | JDK 16 |
-| Project language level | `8 - Lambdas, type annotations, etc.` |
+   If JDK 16 is not listed, open the SDK menu and select **Download JDK**. You may use Azul Zulu or another JDK vendor, but select the architecture that matches your computer. The instructor image uses ARM64 because it was captured on an ARM server; students using `x86_64` must select the matching `x86_64` JDK.
 
-If JDK 16 is not listed, open the SDK menu and select **Download JDK**. You may use Azul Zulu or another JDK vendor, but select the architecture that matches your computer. The instructor image uses ARM64 because it was captured on an ARM server; students using `x86_64` must select the matching `x86_64` JDK.
+   ![IntelliJ Project Structure configured with JDK 16](images/15-configure-project-jdk.png)
 
-![IntelliJ Project Structure configured with JDK 16](images/15-configure-project-jdk.png)
+   Select **Apply**, then **OK**.
 
-Select **Apply**, then **OK**.
+3. **Configure `build.gradle` for Maven publication**
 
-- Screenshot as `gradle_jdk_configured.png`, showing JDK 16 and language level 8 in the saved Project Structure configuration. Keep the required terminal identity visible beside IntelliJ.
+   Open `build.gradle`. Ensure its `plugins` block contains each plugin exactly once:
 
-### 3. Configure `build.gradle` for Maven publication
+   ```groovy
+   plugins {
+       id 'java'
+       id 'maven-publish'
+       id 'org.springframework.boot' version '2.2.2.RELEASE'
+       id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+   }
+   ```
 
-Open `build.gradle`. Ensure its `plugins` block contains each plugin exactly once:
+   Do not add a second `java` or `maven-publish` entry if it already exists.
 
-```groovy
-plugins {
-    id 'java'
-    id 'maven-publish'
-    id 'org.springframework.boot' version '2.2.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-}
-```
+   Keep the project's existing Maven coordinates. Verify that the file contains:
 
-Do not add a second `java` or `maven-publish` entry if it already exists.
+   ```groovy
+   group = 'com.example'
+   version = '1.0-SNAPSHOT'
+   ```
 
-Keep the project's existing Maven coordinates. Verify that the file contains:
+   Add the following `publishing` block immediately after the existing `group` and `version` lines. Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus; do not include angle brackets in the final URL.
 
-```groovy
-group = 'com.example'
-version = '1.0-SNAPSHOT'
-```
+   ```groovy
+   publishing {
+       publications {
+           maven(MavenPublication) {
+               artifact("build/libs/my-app-$version" + ".jar") {
+                   extension "jar"
+               }
+           }
+       }
+       repositories {
+           maven {
+               name "nexus"
+               url "http://<ubuntu-server-ip>:8006/repository/maven-snapshots/"
+               allowInsecureProtocol = true
+               credentials {
+                   username project.repoUser
+                   password project.repoPassword
+               }
+           }
+       }
+   }
+   ```
 
-Add the following `publishing` block immediately after the existing `group` and `version` lines. Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus; do not include angle brackets in the final URL.
+   `allowInsecureProtocol = true` is required here because this classroom Nexus URL uses HTTP. Do not use this setting as a substitute for HTTPS in a production deployment.
 
-```groovy
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifact("build/libs/my-app-$version" + ".jar") {
-                extension "jar"
-            }
-        }
-    }
-    repositories {
-        maven {
-            name "nexus"
-            url "http://<ubuntu-server-ip>:8006/repository/maven-snapshots/"
-            allowInsecureProtocol = true
-            credentials {
-                username project.repoUser
-                password project.repoPassword
-            }
-        }
-    }
-}
-```
+4. **Set the project name**
 
-`allowInsecureProtocol = true` is required here because this classroom Nexus URL uses HTTP. Do not use this setting as a substitute for HTTPS in a production deployment.
+   Open `settings.gradle` and set its contents to:
 
-### 4. Set the project name
+   ```groovy
+   rootProject.name = 'my-app'
+   ```
 
-Open `settings.gradle` and set its contents to:
+   This name makes the generated JAR begin with `my-app`.
 
-```groovy
-rootProject.name = 'my-app'
-```
+5. **Create `gradle.properties`**
 
-This name makes the generated JAR begin with `my-app`.
+   In IntelliJ's **Project** pane, right-click the `java-app` project root and select **New → File**.
 
-### 5. Create `gradle.properties`
+   ![Creating a new file from the IntelliJ Project pane](images/19-create-gradle-properties-file.png)
 
-In IntelliJ's **Project** pane, right-click the `java-app` project root and select **New → File**.
+   Enter this filename and press **Enter**:
 
-![Creating a new file from the IntelliJ Project pane](images/19-create-gradle-properties-file.png)
+   ```text
+   gradle.properties
+   ```
 
-Enter this filename and press **Enter**:
+   ![Naming the new file gradle.properties](images/20-name-gradle-properties-file.png)
 
-```text
-gradle.properties
-```
+   Add these two lines, using the `nexus` user's password created in Task 2:
 
-![Naming the new file gradle.properties](images/20-name-gradle-properties-file.png)
+   ```properties
+   repoUser=nexus
+   repoPassword=<nexus-user-password>
+   ```
 
-Add these two lines, using the `nexus` user's password created in Task 2:
+   Save the project-level `gradle.properties` file. Never display its contents in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose its password in terminal output.
 
-```properties
-repoUser=nexus
-repoPassword=<nexus-user-password>
-```
+   - Screenshot as `gradle_nexus_configuration.png`, showing the updated `build.gradle` publication/repository configuration and `settings.gradle`. Keep the required terminal identity visible, but do not show `gradle.properties` or either password.
 
-Save the project-level `gradle.properties` file. Never display its contents in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose its password in terminal output.
+6. **Build the JAR**
 
-- Screenshot as `gradle_nexus_configuration.png`, showing the updated `build.gradle` publication/repository configuration and `settings.gradle`. Keep the required terminal identity visible, but do not show `gradle.properties` or either password.
+   Open IntelliJ's terminal in the `java-app` project and run:
 
-### 6. Build the JAR
+   ```bash
+   ./gradlew clean build
+   ```
 
-Open IntelliJ's terminal in the `java-app` project and run:
+   Wait for `BUILD SUCCESSFUL`. In IntelliJ's Project pane, expand `build/libs/` and confirm that it contains:
 
-```bash
-./gradlew clean build
-```
+   ```text
+   my-app-1.0-SNAPSHOT.jar
+   ```
 
-Wait for `BUILD SUCCESSFUL`. In IntelliJ's Project pane, expand `build/libs/` and confirm that it contains:
+   - Screenshot as `gradle_nexus_build.png`, showing `./gradlew clean build`, `BUILD SUCCESSFUL`, and the generated `my-app-1.0-SNAPSHOT.jar`.
 
-```text
-my-app-1.0-SNAPSHOT.jar
-```
+7. **Publish the JAR to Nexus**
 
-- Screenshot as `gradle_nexus_build.png`, showing `./gradlew clean build`, `BUILD SUCCESSFUL`, and the generated `my-app-1.0-SNAPSHOT.jar`.
+   Run:
 
-### 7. Publish the JAR to Nexus
+   ```bash
+   ./gradlew clean build publish
+   ```
 
-Run:
+   Gradle should run the Nexus publication task and finish with `BUILD SUCCESSFUL`.
 
-```bash
-./gradlew clean build publish
-```
+   - Screenshot as `gradle_nexus_publish.png`, showing the command, the Nexus publish task and `BUILD SUCCESSFUL`. Do not display the credentials file or password.
 
-Gradle should run the Nexus publication task and finish with `BUILD SUCCESSFUL`.
+   If publication returns `401 Unauthorized`, verify `repoUser`, `repoPassword` and the Active status of the `nexus` user. If it returns `403 Forbidden`, confirm that the user has the `nx-java` role and that the role contains `nx-repository-view-maven2-maven-snapshots-*`.
 
-- Screenshot as `gradle_nexus_publish.png`, showing the command, the Nexus publish task and `BUILD SUCCESSFUL`. Do not display the credentials file or password.
+8. **Verify the artifact in Nexus**
 
-If publication returns `401 Unauthorized`, verify `repoUser`, `repoPassword` and the Active status of the `nexus` user. If it returns `403 Forbidden`, confirm that the user has the `nx-java` role and that the role contains `nx-repository-view-maven2-maven-snapshots-*`.
+   Open the Nexus web application:
 
-### 8. Verify the artifact in Nexus
+   ```text
+   http://<ubuntu-server-ip>:8006
+   ```
 
-Open the Nexus web application:
+   Sign in and open the navigation menu if it is collapsed.
 
-```text
-http://<ubuntu-server-ip>:8006
-```
+   ![Nexus Repository dashboard](images/16-nexus-dashboard.png)
 
-Sign in and open the navigation menu if it is collapsed.
+   Select **Browse**, then select the hosted `maven-snapshots` repository.
 
-![Nexus Repository dashboard](images/16-nexus-dashboard.png)
+   ![Nexus Browse page showing the maven-snapshots repository](images/17-browse-maven-snapshots.png)
 
-Select **Browse**, then select the hosted `maven-snapshots` repository.
+   Expand this path:
 
-![Nexus Browse page showing the maven-snapshots repository](images/17-browse-maven-snapshots.png)
+   ```text
+   com → example → my-app → 1.0-SNAPSHOT
+   ```
 
-Expand this path:
+   Expand the `1.0-SNAPSHOT` folder and confirm that Nexus contains the published JAR, POM and Maven metadata/checksum files. Nexus may store the snapshot JAR with a timestamp and build number rather than the literal `SNAPSHOT` filename.
 
-```text
-com → example → my-app → 1.0-SNAPSHOT
-```
+   ![Published my-app snapshot and Maven metadata in Nexus](images/18-published-gradle-artifact.png)
 
-Expand the `1.0-SNAPSHOT` folder and confirm that Nexus contains the published JAR, POM and Maven metadata/checksum files. Nexus may store the snapshot JAR with a timestamp and build number rather than the literal `SNAPSHOT` filename.
+   The instructor reference image shows the repository hierarchy and metadata. For your required evidence, expand `1.0-SNAPSHOT` one level further so the JAR filename is also visible.
 
-![Published my-app snapshot and Maven metadata in Nexus](images/18-published-gradle-artifact.png)
-
-The instructor reference image shows the repository hierarchy and metadata. For your required evidence, expand `1.0-SNAPSHOT` one level further so the JAR filename is also visible.
-
-- Screenshot as `nexus_gradle_artifact.png`, showing `maven-snapshots`, the expanded `com/example/my-app/1.0-SNAPSHOT` path, the published JAR and the metadata. Keep the required terminal prompt visible beside the browser.
+   - Screenshot as `nexus_gradle_artifact.png`, showing `maven-snapshots`, the expanded `com/example/my-app/1.0-SNAPSHOT` path, the published JAR and the metadata. Keep the required terminal prompt visible beside the browser.
 
 **Screenshot Required:**
 
-- `gradle_nexus_project.png`
-- `gradle_jdk_configured.png`
 - `gradle_nexus_configuration.png`
 - `gradle_nexus_build.png`
 - `gradle_nexus_publish.png`
@@ -565,117 +539,117 @@ The instructor reference image shows the repository hierarchy and metadata. For 
 
 Keep the Nexus container running on the Ubuntu server. Perform the Maven project editing, packaging and deployment commands in the **IntelliJ IDEA terminal** used in Lab 5.
 
-### 1. Clone or reopen the Maven project
+1. **Clone or reopen the Maven project**
 
-From IntelliJ's Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
+   From IntelliJ's Welcome screen, select **Clone Repository** or **Get from Version Control** and use:
 
-- **URL:** `https://gitlab.com/nanuchi/java-maven-app.git`
-- **Directory:** `/config/IdeaProjects/java-maven-app`
+   - **URL:** `https://gitlab.com/nanuchi/java-maven-app.git`
+   - **Directory:** `/config/IdeaProjects/java-maven-app`
 
-![IntelliJ Clone Repository dialog for the java-maven-app project](images/21-clone-java-maven-app.png)
+   ![IntelliJ Clone Repository dialog for the java-maven-app project](images/21-clone-java-maven-app.png)
 
-If `/config/IdeaProjects/java-maven-app` already exists from Lab 5, do not clone it again. Select **Open** or **Recent Projects** and open the existing directory.
+   If `/config/IdeaProjects/java-maven-app` already exists from Lab 5, do not clone it again. Select **Open** or **Recent Projects** and open the existing directory.
 
-- Screenshot as `maven_nexus_project.png`, showing the successfully opened `java-maven-app` project in IntelliJ.
+   - Screenshot as `maven_nexus_project.png`, showing the successfully opened `java-maven-app` project in IntelliJ.
 
-### 2. Add snapshot distribution management to `pom.xml`
+2. **Add snapshot distribution management to `pom.xml`**
 
-Open `pom.xml`. Add this block as a direct child of the top-level `<project>` element, immediately after the project's existing `<version>` line. Do not place it inside `<dependencies>` or `<build>`.
+   Open `pom.xml`. Add this block as a direct child of the top-level `<project>` element, immediately after the project's existing `<version>` line. Do not place it inside `<dependencies>` or `<build>`.
 
-Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus. Keep the URL on one line.
+   Replace `<ubuntu-server-ip>` with the IP address of the Ubuntu server running Nexus. Keep the URL on one line.
 
-```xml
-<distributionManagement>
-    <snapshotRepository>
-        <id>nexus-snapshots</id>
-        <url>http://<ubuntu-server-ip>:8006/repository/maven-snapshots/</url>
-    </snapshotRepository>
-</distributionManagement>
-```
+   ```xml
+   <distributionManagement>
+       <snapshotRepository>
+           <id>nexus-snapshots</id>
+           <url>http://<ubuntu-server-ip>:8006/repository/maven-snapshots/</url>
+       </snapshotRepository>
+   </distributionManagement>
+   ```
 
-The project version ends with `SNAPSHOT`, so Maven uses this `snapshotRepository` when it deploys the artifact.
+   The project version ends with `SNAPSHOT`, so Maven uses this `snapshotRepository` when it deploys the artifact.
 
-- Screenshot as `maven_distribution_management.png`, showing the complete saved `distributionManagement` block and the surrounding top-level `pom.xml` structure. Keep the required terminal identity visible.
+   - Screenshot as `maven_distribution_management.png`, showing the complete saved `distributionManagement` block and the surrounding top-level `pom.xml` structure. Keep the required terminal identity visible.
 
-### 3. Configure the Nexus deployment credentials
+3. **Configure the Nexus deployment credentials**
 
-Open IntelliJ's terminal and install Vim:
+   Open IntelliJ's terminal and install Vim:
 
-```bash
-sudo apt install -y vim
-```
+   ```bash
+   sudo apt install -y vim
+   ```
 
-Open the Maven settings file:
+   Open the Maven settings file:
 
-```bash
-vim ~/.m2/settings.xml
-```
+   ```bash
+   vim ~/.m2/settings.xml
+   ```
 
-Press **i** to enter Insert mode and add:
+   Press **i** to enter Insert mode and add:
 
-```xml
-<settings>
-    <servers>
-        <server>
-            <id>nexus-snapshots</id>
-            <username>nexus</username>
-            <password>REPLACE_WITH_NEXUS_PASSWORD</password>
-        </server>
-    </servers>
-</settings>
-```
+   ```xml
+   <settings>
+       <servers>
+           <server>
+               <id>nexus-snapshots</id>
+               <username>nexus</username>
+               <password>REPLACE_WITH_NEXUS_PASSWORD</password>
+           </server>
+       </servers>
+   </settings>
+   ```
 
-Replace `REPLACE_WITH_NEXUS_PASSWORD` with the password created for the `nexus` user in Task 2. The server ID must remain exactly `nexus-snapshots` because it must match the ID in `pom.xml`.
+   Replace `REPLACE_WITH_NEXUS_PASSWORD` with the password created for the `nexus` user in Task 2. The server ID must remain exactly `nexus-snapshots` because it must match the ID in `pom.xml`.
 
-Press **Esc**, type `:wq`, and press **Enter** to save and close Vim.
+   Press **Esc**, type `:wq`, and press **Enter** to save and close Vim.
 
-Never display `settings.xml` in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose the password in terminal output.
+   Never display `settings.xml` in a screenshot, commit it to Git, include it in `Lab6_Solution.pdf`, or expose the password in terminal output.
 
-### 4. Package the Maven application
+4. **Package the Maven application**
 
-In IntelliJ's terminal, run:
+   In IntelliJ's terminal, run:
 
-```bash
-mvn package
-```
+   ```bash
+   mvn package
+   ```
 
-Wait for `BUILD SUCCESS` and verify that Maven creates the snapshot JAR under `target/`.
+   Wait for `BUILD SUCCESS` and verify that Maven creates the snapshot JAR under `target/`.
 
-- Screenshot as `maven_package_nexus.png`, showing `mvn package`, `BUILD SUCCESS`, and the generated snapshot JAR filename.
+   - Screenshot as `maven_package_nexus.png`, showing `mvn package`, `BUILD SUCCESS`, and the generated snapshot JAR filename.
 
-### 5. Deploy the snapshot to Nexus
+5. **Deploy the snapshot to Nexus**
 
-Run:
+   Run:
 
-```bash
-mvn deploy
-```
+   ```bash
+   mvn deploy
+   ```
 
-Maven runs the lifecycle through the deploy phase and uploads the JAR, POM, checksums and metadata to the configured Nexus snapshot repository.
+   Maven runs the lifecycle through the deploy phase and uploads the JAR, POM, checksums and metadata to the configured Nexus snapshot repository.
 
-- Screenshot as `maven_deploy_nexus.png`, showing `mvn deploy`, the Nexus upload lines and `BUILD SUCCESS`. Do not show the password or `settings.xml`.
+   - Screenshot as `maven_deploy_nexus.png`, showing `mvn deploy`, the Nexus upload lines and `BUILD SUCCESS`. Do not show the password or `settings.xml`.
 
-If deployment returns `401 Unauthorized`, verify the username, password and matching `nexus-snapshots` IDs. If it returns `403 Forbidden`, confirm that the `nexus` user is Active and has the `nx-java` role containing `nx-repository-view-maven2-maven-snapshots-*`.
+   If deployment returns `401 Unauthorized`, verify the username, password and matching `nexus-snapshots` IDs. If it returns `403 Forbidden`, confirm that the `nexus` user is Active and has the `nx-java` role containing `nx-repository-view-maven2-maven-snapshots-*`.
 
-### 6. Verify the Maven artifact in Nexus
+6. **Verify the Maven artifact in Nexus**
 
-Open and sign in to:
+   Open and sign in to:
 
-```text
-http://<ubuntu-server-ip>:8006
-```
+   ```text
+   http://<ubuntu-server-ip>:8006
+   ```
 
-Select **Browse → maven-snapshots**, then expand:
+   Select **Browse → maven-snapshots**, then expand:
 
-```text
-com → example → java-maven-app → 1.1.0-SNAPSHOT
-```
+   ```text
+   com → example → java-maven-app → 1.1.0-SNAPSHOT
+   ```
 
-![Published java-maven-app snapshot in Nexus](images/22-published-maven-artifact.png)
+   ![Published java-maven-app snapshot in Nexus](images/22-published-maven-artifact.png)
 
-The instructor reference image shows the Maven repository hierarchy and metadata. For your required evidence, expand `1.1.0-SNAPSHOT` so the published JAR, POM and metadata/checksum files are visible. Nexus may use timestamped filenames for the snapshot.
+   The instructor reference image shows the Maven repository hierarchy and metadata. For your required evidence, expand `1.1.0-SNAPSHOT` so the published JAR, POM and metadata/checksum files are visible. Nexus may use timestamped filenames for the snapshot.
 
-- Screenshot as `nexus_maven_artifact.png`, showing the expanded `com/example/java-maven-app/1.1.0-SNAPSHOT` path, the JAR, POM and Maven metadata. Keep the required terminal prompt visible beside the browser.
+   - Screenshot as `nexus_maven_artifact.png`, showing the expanded `com/example/java-maven-app/1.1.0-SNAPSHOT` path, the JAR, POM and Maven metadata. Keep the required terminal prompt visible beside the browser.
 
 **Screenshot Required:**
 
@@ -731,7 +705,7 @@ Additional Task 5 instructions will be added here.
 - [ ] `~/.m2/settings.xml` contains the matching `nexus-snapshots` server ID and is not committed or shown in screenshots.
 - [ ] `mvn package` and `mvn deploy` both completed successfully.
 - [ ] The Maven snapshot JAR, POM and metadata are visible under `com/example/java-maven-app/1.1.0-SNAPSHOT` in Nexus.
-- [ ] All 18 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] All 11 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
