@@ -37,6 +37,7 @@ By the end of this lab, you will be able to:
 - Verify the published Gradle JAR and Maven metadata in Nexus.
 - Configure Maven distribution management and authenticated deployment.
 - Publish a Maven snapshot JAR and verify it in Nexus.
+- Query Nexus repositories and components through authenticated REST API requests.
 
 ## Prerequisites
 
@@ -44,7 +45,7 @@ By the end of this lab, you will be able to:
 - Keep or reopen the Lab 5 Gradle project at `/config/IdeaProjects/java-app`.
 - Keep or reopen the Lab 5 Maven project at `/config/IdeaProjects/java-maven-app`.
 - Docker must be installed and running directly on the Ubuntu server.
-- Run the Task 1 and Task 2 Nexus container and user-verification commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
+- Run the Task 1, Task 2 and Task 5 Nexus container and REST API commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
 - Ports `8006` and `8007` must be available on the Ubuntu Docker host.
 - Know the IP address of the Ubuntu computer or server on which Docker is running.
 - Use a strong password for the Nexus `admin` account and a different strong password for the `nexus` user.
@@ -56,7 +57,8 @@ By the end of this lab, you will be able to:
 - [Task 2: Create a Role and User and Verify Access](#task-2-create-a-role-and-user-and-verify-access)
 - [Task 3: Build and Publish the Gradle Application to Nexus](#task-3-build-and-publish-the-gradle-application-to-nexus)
 - [Task 4: Publish the Maven Application to Nexus](#task-4-publish-the-maven-application-to-nexus)
-- [Task 5: Continue](#task-5-continue)
+- [Task 5: Inspect Nexus Repositories and Components Using the REST API](#task-5-inspect-nexus-repositories-and-components-using-the-rest-api)
+- [Task 6: Continue](#task-6-continue)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -105,7 +107,7 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 currently requires these 11 screenshots:
+Lab 6 currently requires these 15 screenshots:
 
 ```text
 nexus_container_running.png
@@ -119,6 +121,10 @@ maven_distribution_management.png
 maven_package_nexus.png
 maven_deploy_nexus.png
 nexus_maven_artifact.png
+nexus_repositories_user.png
+nexus_repositories_admin.png
+nexus_components_list.png
+nexus_component_details.png
 ```
 
 Each required screenshot has equal weight.
@@ -154,7 +160,7 @@ Each required screenshot has equal weight.
    /config/IdeaProjects/java-maven-app
    ```
 
-   If either project does not exist, its task explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1 and 2 from the Ubuntu server terminal.
+   If either project does not exist, its task explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1, 2 and 5 from the Ubuntu server terminal.
 
 ---
 
@@ -663,10 +669,74 @@ Keep the Nexus container running on the Ubuntu server. Perform the Maven project
 
 ---
 
-## Task 5: Continue
+## Task 5: Inspect Nexus Repositories and Components Using the REST API
 
-Additional Task 5 instructions will be added here.
+Run every command in this task directly from the **Ubuntu server terminal**. Keep the Nexus container running. These requests use the Nexus Repository REST API and compare the access available to the restricted `nexus` user with the `admin` user.
 
+> **Password safety:** Do not place a real password directly in the command. Using `curl -u nexus` or `curl -u admin` makes curl prompt for the password securely; the entered password is not displayed or stored as part of the command.
+
+1. **List repositories as the `nexus` user**
+
+   Run:
+
+   ```bash
+   curl -u nexus -X GET "http://<ubuntu-server-ip>:8006/service/rest/v1/repositories"
+   ```
+
+   Enter the `nexus` user's password when curl prompts for it. Review the returned JSON and note which repositories are visible to this restricted user.
+
+   - Screenshot as `nexus_repositories_user.png`, showing the command, the repository response and your required terminal prompt. The password must not be visible.
+
+2. **List repositories as the `admin` user**
+
+   Run the same request with the administrator account:
+
+   ```bash
+   curl -u admin -X GET "http://<ubuntu-server-ip>:8006/service/rest/v1/repositories"
+   ```
+
+   Enter the current `admin` password when prompted. Compare this response with the response returned for the `nexus` user.
+
+   - Screenshot as `nexus_repositories_admin.png`, showing the command, the repository response and your required terminal prompt. The password must not be visible.
+
+3. **List the components in `maven-snapshots`**
+
+   Authenticate as the `nexus` user and request the components stored in the Maven snapshots repository:
+
+   ```bash
+   curl -u nexus -X GET "http://<ubuntu-server-ip>:8006/service/rest/v1/components?repository=maven-snapshots"
+   ```
+
+   Enter the `nexus` user's password when prompted. In the JSON response, locate the `items` array and identify one component's `id`. The response can also contain a `continuationToken` when more results are available.
+
+   - Screenshot as `nexus_components_list.png`, showing the command and a returned component with its `id`, `repository`, `name` and `version`. The password must not be visible.
+
+4. **Get one component's details by ID**
+
+   Copy one exact component `id` from Step 3 and replace `<component-id>` below:
+
+   ```bash
+   curl -u nexus -X GET "http://<ubuntu-server-ip>:8006/service/rest/v1/components/<component-id>"
+   ```
+
+   Enter the `nexus` user's password when prompted. Verify that the response describes the selected component and includes its repository, format, group, name, version and assets.
+
+   - Screenshot as `nexus_component_details.png`, showing the command with the selected component ID and the returned component details. The password must not be visible.
+
+**Screenshot Required:**
+
+- `nexus_repositories_user.png`
+- `nexus_repositories_admin.png`
+- `nexus_components_list.png`
+- `nexus_component_details.png`
+
+**Summary:** You queried the Nexus repositories with both the restricted `nexus` account and the `admin` account, listed the components in `maven-snapshots`, and retrieved one component by its REST API ID without exposing either password.
+
+---
+
+## Task 6: Continue
+
+Additional Task 6 instructions will be added here.
 
 ---
 
@@ -684,11 +754,12 @@ Additional Task 5 instructions will be added here.
 - You verified the Gradle snapshot JAR and Maven metadata in `maven-snapshots`.
 - You configured Maven snapshot distribution and matching private server credentials.
 - You packaged and deployed `java-maven-app` to Nexus and verified its JAR, POM and metadata.
+- You compared authenticated repository listings, listed Maven snapshot components and retrieved one component by ID through the Nexus REST API.
 
 ## Final Submission Checklist
 
 - [ ] I reused the IntelliJ IDEA environment and the existing `java-app` Gradle project from Lab 5.
-- [ ] I ran Nexus and every Task 1 and Task 2 terminal command directly on the Ubuntu server, not inside the IntelliJ container.
+- [ ] I ran Nexus and every Task 1, Task 2 and Task 5 terminal command directly on the Ubuntu server, not inside the IntelliJ container.
 - [ ] The `nexus` container is running with ports `8006` and `8007` published.
 - [ ] Nexus data uses the persistent `nexus-data` volume.
 - [ ] I changed the generated `admin` password and disabled anonymous access.
@@ -705,7 +776,10 @@ Additional Task 5 instructions will be added here.
 - [ ] `~/.m2/settings.xml` contains the matching `nexus-snapshots` server ID and is not committed or shown in screenshots.
 - [ ] `mvn package` and `mvn deploy` both completed successfully.
 - [ ] The Maven snapshot JAR, POM and metadata are visible under `com/example/java-maven-app/1.1.0-SNAPSHOT` in Nexus.
-- [ ] All 11 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] I queried the repository list as both the `nexus` user and the `admin` user.
+- [ ] I listed the components in `maven-snapshots` and retrieved one component by its exact ID.
+- [ ] No Nexus password appears in a curl command, screenshot, terminal history or solution file.
+- [ ] All 15 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
@@ -721,6 +795,8 @@ Do not delete the `nexus` container or the `nexus-data` volume. The next task wi
 
 - [Sonatype: Install Self-Hosted Nexus Repository](https://help.sonatype.com/en/install-nexus-repository.html)
 - [Sonatype: Nexus Repository Status API](https://help.sonatype.com/en/status-api.html)
+- [Sonatype: Nexus Repository API Reference](https://help.sonatype.com/en/api-reference.html)
+- [Sonatype: Repositories API](https://help.sonatype.com/en/repositories-api.html)
 - [Sonatype: Roles](https://help.sonatype.com/en/roles.html)
 - [Sonatype: Users](https://help.sonatype.com/en/users.html)
 - [Sonatype: Privileges](https://help.sonatype.com/en/privileges.html)
