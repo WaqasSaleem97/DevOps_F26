@@ -40,6 +40,7 @@ By the end of this lab, you will be able to:
 - Query Nexus repositories and components through authenticated REST API requests.
 - Inspect Nexus blob storage and create a file blob store.
 - Create a Docker hosted repository backed by the new blob store.
+- Create, schedule and manually run a cleanup policy for Maven snapshots.
 
 ## Prerequisites
 
@@ -61,6 +62,7 @@ By the end of this lab, you will be able to:
 - [Task 4: Publish the Maven Application to Nexus](#task-4-publish-the-maven-application-to-nexus)
 - [Task 5: Inspect Nexus Repositories and Components Using the REST API](#task-5-inspect-nexus-repositories-and-components-using-the-rest-api)
 - [Task 6: Create a Nexus Blob Store and Docker Hosted Repository](#task-6-create-a-nexus-blob-store-and-docker-hosted-repository)
+- [Task 7: Create and Run a Maven Snapshot Cleanup Policy](#task-7-create-and-run-a-maven-snapshot-cleanup-policy)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -109,7 +111,7 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 currently requires these 19 screenshots:
+Lab 6 currently requires these 24 screenshots:
 
 ```text
 nexus_container_running.png
@@ -131,6 +133,11 @@ nexus_default_blob_content.png
 nexus_mystore_created.png
 nexus_blob_directories.png
 nexus_docker_hosted_repository.png
+nexus_cleanup_policy_created.png
+nexus_cleanup_policy_attached.png
+nexus_cleanup_task_waiting.png
+nexus_cleanup_task_completed.png
+nexus_maven_snapshots_empty.png
 ```
 
 Each required screenshot has equal weight.
@@ -852,6 +859,106 @@ Run the Docker commands in this task directly from the **Ubuntu server terminal*
 
 ---
 
+## Task 7: Create and Run a Maven Snapshot Cleanup Policy
+
+This task removes every component currently visible in the `maven-snapshots` repository. Complete Tasks 3–5 first and capture all required publishing and REST API evidence before running this cleanup.
+
+> **Destructive action:** The Asset Name Matcher `.*` matches all snapshot assets. After the cleanup service runs, the published Gradle and Maven components will no longer appear in `maven-snapshots`. Do not run the task until your earlier screenshots and `Lab6_Solution.pdf` evidence are saved.
+
+1. **Create the Maven cleanup policy**
+
+   Sign in to Nexus as `admin`, then open:
+
+   **Settings → Repository → Cleanup Policies → Create Cleanup Policy**
+
+   Configure:
+
+   - **Name:** `maven`
+   - **Format:** `maven2`
+   - **Release Type:** `Pre-Releases/Snapshots`
+   - **Component Age:** Not selected
+   - **Component Usage:** Not selected
+   - **Asset Name Matcher:** Selected
+   - **Regular expression:** `.*`
+
+   Under **Preview Repository**, select `maven-snapshots` and select **Preview**. Confirm that the preview lists the Gradle and Maven snapshot components created earlier.
+
+   ![Create Maven cleanup policy and preview matching snapshot components](images/28-create-maven-cleanup-policy.png)
+
+   Carefully review the preview, then select **Save**.
+
+   - Screenshot as `nexus_cleanup_policy_created.png`, showing the `maven` policy, `maven2` format, snapshot release type, `.*` matcher and the populated `maven-snapshots` preview. Keep the required Ubuntu terminal identity visible beside the browser.
+
+2. **Attach the policy to `maven-snapshots`**
+
+   Open:
+
+   **Settings → Repository → Repositories → maven-snapshots**
+
+   In **Cleanup Policies**, move `maven` from **Available** to **Applied**, then select **Save**.
+
+   ![Maven snapshots repository with the maven cleanup policy applied](images/29-maven-snapshots-cleanup-policy.png)
+
+   Reopen `maven-snapshots` and verify that `maven` remains in the **Applied** list.
+
+   - Screenshot as `nexus_cleanup_policy_attached.png`, showing the `maven-snapshots` repository name and the saved `maven` policy in **Applied**. Keep the required Ubuntu terminal identity visible beside the browser.
+
+3. **Verify the cleanup service schedule**
+
+   Open:
+
+   **Settings → System → Tasks**
+
+   Locate **Cleanup service**, whose type is **Admin - Cleanup repositories using their associated policies**.
+
+   ![Nexus Tasks page showing the cleanup service in Waiting state](images/30-cleanup-service-task-list.png)
+
+   Open **Cleanup service** and verify:
+
+   - **Status:** `Waiting`
+   - **Next run:** The following day at `06:00:00`
+   - **Last result:** `Ok`, when a previous run exists
+
+   ![Cleanup service task summary with Run control and next scheduled time](images/31-cleanup-service-task-summary.png)
+
+   If your instance does not show the next run at 6:00 AM, open the task's **Settings** tab, configure its daily schedule for **06:00**, save it and return to **Summary**.
+
+   - Screenshot as `nexus_cleanup_task_waiting.png`, showing **Cleanup service**, `Waiting` status and the next run scheduled for 6:00 AM. Keep the required Ubuntu terminal identity visible beside the browser.
+
+4. **Run the cleanup service manually**
+
+   Confirm once more that all earlier Lab 6 evidence has been saved. On the **Cleanup service** task page, select **Run** (the play button) and confirm the action.
+
+   Wait for execution to finish, refresh the page and verify that the task returns to **Waiting** with **Last result: Ok** and an updated **Last run** time.
+
+   - Screenshot as `nexus_cleanup_task_completed.png`, showing the cleanup service after the manual execution, including the updated **Last run** and **Last result: Ok**. Keep the required Ubuntu terminal identity visible beside the browser.
+
+5. **Verify that `maven-snapshots` is empty**
+
+   Open:
+
+   **Browse → maven-snapshots**
+
+   The repository must display **No component/assets found in repository**.
+
+   ![Empty maven-snapshots repository after the cleanup service runs](images/32-maven-snapshots-empty.png)
+
+   - Screenshot as `nexus_maven_snapshots_empty.png`, showing the `maven-snapshots` repository and the **No component/assets found in repository** message. Keep the required Ubuntu terminal identity visible beside the browser.
+
+The cleanup service removes matching components from repository browsing through soft deletion. Do not run an **Admin - Compact blob store** task in this lab.
+
+**Screenshot Required:**
+
+- `nexus_cleanup_policy_created.png`
+- `nexus_cleanup_policy_attached.png`
+- `nexus_cleanup_task_waiting.png`
+- `nexus_cleanup_task_completed.png`
+- `nexus_maven_snapshots_empty.png`
+
+**Summary:** You created a cleanup policy that matches every Maven snapshot component, attached it to `maven-snapshots`, verified its 6:00 AM schedule, ran the cleanup service manually and confirmed that the repository no longer displays any components or assets.
+
+---
+
 ## Summary
 
 - You reused the IntelliJ IDEA environment and Gradle project from Lab 5.
@@ -869,6 +976,7 @@ Run the Docker commands in this task directly from the **Ubuntu server terminal*
 - You compared authenticated repository listings, listed Maven snapshot components and retrieved one component by ID through the Nexus REST API.
 - You inspected the default blob-store directory without modifying it and created the `mystore` file blob store.
 - You created an online `docker-hosted` repository backed by `mystore` on connector port `8007`.
+- You attached a destructive Maven snapshot cleanup policy, ran the cleanup service manually and verified that `maven-snapshots` became empty.
 
 ## Final Submission Checklist
 
@@ -896,7 +1004,12 @@ Run the Docker commands in this task directly from the **Ubuntu server terminal*
 - [ ] I inspected the `default` blob-store directory without modifying its files.
 - [ ] The `mystore` file blob store is in the Started state and its directory is visible inside the Nexus container.
 - [ ] The `docker-hosted` repository is Online, uses the `mystore` blob store and has HTTP connector port `8007`.
-- [ ] All 19 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] I captured all Gradle and Maven publishing evidence before starting Task 7.
+- [ ] The `maven` cleanup policy uses the `maven2` format, snapshot release type and `.*` asset-name matcher.
+- [ ] The `maven` policy is saved in the Applied list of `maven-snapshots`.
+- [ ] The Cleanup service is scheduled for 6:00 AM and its manual run completed with `Last result: Ok`.
+- [ ] `maven-snapshots` displays `No component/assets found in repository` after cleanup.
+- [ ] All 24 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
@@ -918,6 +1031,8 @@ Do not delete the `nexus` container or the `nexus-data` volume. The next task wi
 - [Sonatype: Storage Guide](https://help.sonatype.com/en/storage-guide.html)
 - [Sonatype: Docker Registry](https://help.sonatype.com/en/docker-registry.html)
 - [Sonatype: Hosted Repository for Docker](https://help.sonatype.com/en/hosted-repository-for-docker.html)
+- [Sonatype: Cleanup Policies](https://help.sonatype.com/en/cleanup-policies.html)
+- [Sonatype: Tasks](https://help.sonatype.com/en/tasks.html)
 - [Sonatype: Roles](https://help.sonatype.com/en/roles.html)
 - [Sonatype: Users](https://help.sonatype.com/en/users.html)
 - [Sonatype: Privileges](https://help.sonatype.com/en/privileges.html)
