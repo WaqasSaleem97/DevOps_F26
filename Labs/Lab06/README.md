@@ -872,8 +872,6 @@ This task removes every component currently visible in the `maven-snapshots` rep
 
 1. **Create the Maven cleanup policy**
 
-   Sign in to Nexus as `admin`, then open:
-
    **Settings → Repository → Cleanup Policies → Create Cleanup Policy**
 
    Configure:
