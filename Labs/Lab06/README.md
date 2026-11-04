@@ -776,13 +776,9 @@ Run the Docker commands in this task directly from the **Ubuntu server terminal*
 
    This is a **read-only inspection**. Do not edit, rename or delete any file inside the blob-store directory.
 
-   Exit the container shell:
+   Keep this container shell open because it will be reused in Step 4.
 
-   ```sh
-   exit
-   ```
-
-   - Screenshot as `nexus_default_blob_content.png`, showing the Ubuntu prompt that launched `docker exec`, the `blobs` path, the `default` directory, the output of `ls default/content`, and the Ubuntu prompt after `exit`.
+   - Screenshot as `nexus_default_blob_content.png`, showing the Ubuntu prompt that launched `docker exec`, the `blobs` path, the `default` directory and the output of `ls default/content`.
 
 3. **Create the `mystore` file blob store**
 
@@ -801,26 +797,20 @@ Run the Docker commands in this task directly from the **Ubuntu server terminal*
 
    - Screenshot as `nexus_mystore_created.png`, showing both `default` and `mystore`, their `File` type and their **Started** state. Keep the required Ubuntu terminal identity visible beside the browser.
 
-4. **Verify the new blob-store directory inside the container**
+4. **Verify the new blob-store directory inside the existing container shell**
 
-   Return to the Ubuntu server terminal and run:
-
-   ```bash
-   docker exec -it nexus /bin/sh
-   ```
-
-   In the container shell, run:
+   Return to the Nexus container shell that you kept open in Step 2. Do not run `docker exec` again. Run:
 
    ```sh
-   cd sonatype-work/nexus3/blobs
+   pwd
    ls
    ls mystore
    exit
    ```
 
-   The `ls` output must show both `default` and `mystore`.
+   The `pwd` output must show the `blobs` directory, and the `ls` output must show both `default` and `mystore`. The final `exit` returns you to the Ubuntu server terminal.
 
-   - Screenshot as `nexus_blob_directories.png`, showing the Ubuntu prompt that launched the container shell, the `default` and `mystore` directories, and the Ubuntu prompt after `exit`.
+   - Screenshot as `nexus_blob_directories.png`, showing the existing container shell, the `blobs` path, the `default` and `mystore` directories, and the Ubuntu prompt after `exit`.
 
 5. **Create a Docker hosted repository that uses `mystore`**
 
