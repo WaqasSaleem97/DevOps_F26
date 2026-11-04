@@ -38,6 +38,8 @@ By the end of this lab, you will be able to:
 - Configure Maven distribution management and authenticated deployment.
 - Publish a Maven snapshot JAR and verify it in Nexus.
 - Query Nexus repositories and components through authenticated REST API requests.
+- Inspect Nexus blob storage and create a file blob store.
+- Create a Docker hosted repository backed by the new blob store.
 
 ## Prerequisites
 
@@ -45,7 +47,7 @@ By the end of this lab, you will be able to:
 - Keep or reopen the Lab 5 Gradle project at `/config/IdeaProjects/java-app`.
 - Keep or reopen the Lab 5 Maven project at `/config/IdeaProjects/java-maven-app`.
 - Docker must be installed and running directly on the Ubuntu server.
-- Run the Task 1, Task 2 and Task 5 Nexus container and REST API commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
+- Run the Task 1, Task 2, Task 5 and Task 6 Nexus container and REST API commands from the Ubuntu server terminal, not from an IntelliJ terminal or container shell.
 - Ports `8006` and `8007` must be available on the Ubuntu Docker host.
 - Know the IP address of the Ubuntu computer or server on which Docker is running.
 - Use a strong password for the Nexus `admin` account and a different strong password for the `nexus` user.
@@ -58,7 +60,7 @@ By the end of this lab, you will be able to:
 - [Task 3: Build and Publish the Gradle Application to Nexus](#task-3-build-and-publish-the-gradle-application-to-nexus)
 - [Task 4: Publish the Maven Application to Nexus](#task-4-publish-the-maven-application-to-nexus)
 - [Task 5: Inspect Nexus Repositories and Components Using the REST API](#task-5-inspect-nexus-repositories-and-components-using-the-rest-api)
-- [Task 6: Continue](#task-6-continue)
+- [Task 6: Create a Nexus Blob Store and Docker Hosted Repository](#task-6-create-a-nexus-blob-store-and-docker-hosted-repository)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -107,7 +109,7 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 currently requires these 15 screenshots:
+Lab 6 currently requires these 19 screenshots:
 
 ```text
 nexus_container_running.png
@@ -125,6 +127,10 @@ nexus_repositories_user.png
 nexus_repositories_admin.png
 nexus_components_list.png
 nexus_component_details.png
+nexus_default_blob_content.png
+nexus_mystore_created.png
+nexus_blob_directories.png
+nexus_docker_hosted_repository.png
 ```
 
 Each required screenshot has equal weight.
@@ -160,7 +166,7 @@ Each required screenshot has equal weight.
    /config/IdeaProjects/java-maven-app
    ```
 
-   If either project does not exist, its task explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1, 2 and 5 from the Ubuntu server terminal.
+   If either project does not exist, its task explains how to clone it. Do **not** use the IntelliJ container shell to run Nexus. Run every command in Tasks 1, 2, 5 and 6 from the Ubuntu server terminal.
 
 ---
 
@@ -734,9 +740,125 @@ Run every command in this task directly from the **Ubuntu server terminal**. Kee
 
 ---
 
-## Task 6: Continue
+## Task 6: Create a Nexus Blob Store and Docker Hosted Repository
 
-Additional Task 6 instructions will be added here.
+Run the Docker commands in this task directly from the **Ubuntu server terminal**. Use the Nexus web application as the `admin` user for the blob-store and repository configuration.
+
+1. **Open the Blob Stores page**
+
+   Sign in to Nexus as `admin`, then open:
+
+   **Settings → Repository → Blob Stores**
+
+   ![Nexus Blob Stores page showing the default file blob store](images/23-nexus-blob-stores-default.png)
+
+   Confirm that the existing `default` file blob store is in the **Started** state.
+
+2. **Inspect the default blob-store directory inside the Nexus container**
+
+   From the Ubuntu server terminal, open a shell in the Nexus container:
+
+   ```bash
+   docker exec -it nexus /bin/sh
+   ```
+
+   The container shell opens under `/opt/sonatype`. Run:
+
+   ```sh
+   pwd
+   cd sonatype-work/nexus3
+   cd blobs
+   ls
+   ls default/content
+   ```
+
+   The first `ls` should show the `default` blob-store directory. The second command displays its content structure.
+
+   This is a **read-only inspection**. Do not edit, rename or delete any file inside the blob-store directory.
+
+   Exit the container shell:
+
+   ```sh
+   exit
+   ```
+
+   - Screenshot as `nexus_default_blob_content.png`, showing the Ubuntu prompt that launched `docker exec`, the `blobs` path, the `default` directory, the output of `ls default/content`, and the Ubuntu prompt after `exit`.
+
+3. **Create the `mystore` file blob store**
+
+   On the **Blob Stores** page, select **Create Blob Store** and configure:
+
+   - **Type:** `File`
+   - **Name:** `mystore`
+   - **Path:** `/nexus-data/blobs/mystore`
+   - **Soft Quota:** Disabled
+
+   ![Nexus Create Blob Store page configured with the mystore file blob store](images/24-nexus-create-mystore.png)
+
+   Select **Save**. The Blob Stores page must now show both `default` and `mystore` in the **Started** state.
+
+   ![Nexus Blob Stores page showing default and mystore](images/25-nexus-blob-stores-mystore.png)
+
+   - Screenshot as `nexus_mystore_created.png`, showing both `default` and `mystore`, their `File` type and their **Started** state. Keep the required Ubuntu terminal identity visible beside the browser.
+
+4. **Verify the new blob-store directory inside the container**
+
+   Return to the Ubuntu server terminal and run:
+
+   ```bash
+   docker exec -it nexus /bin/sh
+   ```
+
+   In the container shell, run:
+
+   ```sh
+   cd sonatype-work/nexus3/blobs
+   ls
+   ls mystore
+   exit
+   ```
+
+   The `ls` output must show both `default` and `mystore`.
+
+   - Screenshot as `nexus_blob_directories.png`, showing the Ubuntu prompt that launched the container shell, the `default` and `mystore` directories, and the Ubuntu prompt after `exit`.
+
+5. **Create a Docker hosted repository that uses `mystore`**
+
+   In Nexus, open:
+
+   **Settings → Repository → Repositories**
+
+   ![Nexus Repositories page before creating the Docker hosted repository](images/26-nexus-repositories.png)
+
+   Select **Create repository**, choose **docker (hosted)** and configure:
+
+   - **Name:** `docker-hosted`
+   - **Online:** Enabled
+   - **Repository connector:** **Other Connectors**
+   - **HTTP connector:** `8007`
+   - **HTTPS connector:** Leave empty
+   - **Allow anonymous Docker pulls:** Disabled
+   - **Docker V1 API:** Disabled
+   - **Blob store:** `mystore`
+   - **Strict Content Type Validation:** Enabled
+   - **Deployment policy:** `Allow redeploy`
+
+   ![Docker hosted repository configuration using the mystore blob store](images/27-nexus-docker-hosted-mystore.png)
+
+   > Use connector port `8007` because Task 1 publishes `8007:8007` for the Nexus container.
+
+   Select **Create repository**. Return to the repository list and verify that `docker-hosted` is **Online**, its format is `docker`, its type is `hosted`, and its blob store is `mystore`.
+
+   - Screenshot as `nexus_docker_hosted_repository.png`, showing the saved `docker-hosted` repository and its `mystore` blob-store assignment. Also show the configured HTTP connector `8007`, either by reopening the saved repository or in the same readable evidence view. Keep the required Ubuntu terminal identity visible beside the browser.
+
+**Screenshot Required:**
+
+- `nexus_default_blob_content.png`
+- `nexus_mystore_created.png`
+- `nexus_blob_directories.png`
+- `nexus_docker_hosted_repository.png`
+
+**Summary:** You inspected Nexus blob storage without modifying its files, created the `mystore` file blob store, verified its directory inside the container, and created an online Docker hosted repository that uses `mystore` through connector port `8007`.
 
 ---
 
@@ -755,11 +877,13 @@ Additional Task 6 instructions will be added here.
 - You configured Maven snapshot distribution and matching private server credentials.
 - You packaged and deployed `java-maven-app` to Nexus and verified its JAR, POM and metadata.
 - You compared authenticated repository listings, listed Maven snapshot components and retrieved one component by ID through the Nexus REST API.
+- You inspected the default blob-store directory without modifying it and created the `mystore` file blob store.
+- You created an online `docker-hosted` repository backed by `mystore` on connector port `8007`.
 
 ## Final Submission Checklist
 
 - [ ] I reused the IntelliJ IDEA environment and the existing `java-app` Gradle project from Lab 5.
-- [ ] I ran Nexus and every Task 1, Task 2 and Task 5 terminal command directly on the Ubuntu server, not inside the IntelliJ container.
+- [ ] I ran Nexus and every Task 1, Task 2, Task 5 and Task 6 terminal command directly on the Ubuntu server, not inside the IntelliJ container.
 - [ ] The `nexus` container is running with ports `8006` and `8007` published.
 - [ ] Nexus data uses the persistent `nexus-data` volume.
 - [ ] I changed the generated `admin` password and disabled anonymous access.
@@ -779,7 +903,10 @@ Additional Task 6 instructions will be added here.
 - [ ] I queried the repository list as both the `nexus` user and the `admin` user.
 - [ ] I listed the components in `maven-snapshots` and retrieved one component by its exact ID.
 - [ ] No Nexus password appears in a curl command, screenshot, terminal history or solution file.
-- [ ] All 15 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] I inspected the `default` blob-store directory without modifying its files.
+- [ ] The `mystore` file blob store is in the Started state and its directory is visible inside the Nexus container.
+- [ ] The `docker-hosted` repository is Online, uses the `mystore` blob store and has HTTP connector port `8007`.
+- [ ] All 19 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
@@ -797,6 +924,10 @@ Do not delete the `nexus` container or the `nexus-data` volume. The next task wi
 - [Sonatype: Nexus Repository Status API](https://help.sonatype.com/en/status-api.html)
 - [Sonatype: Nexus Repository API Reference](https://help.sonatype.com/en/api-reference.html)
 - [Sonatype: Repositories API](https://help.sonatype.com/en/repositories-api.html)
+- [Sonatype: Blob Stores](https://help.sonatype.com/en/blob-stores.html)
+- [Sonatype: Storage Guide](https://help.sonatype.com/en/storage-guide.html)
+- [Sonatype: Docker Registry](https://help.sonatype.com/en/docker-registry.html)
+- [Sonatype: Hosted Repository for Docker](https://help.sonatype.com/en/hosted-repository-for-docker.html)
 - [Sonatype: Roles](https://help.sonatype.com/en/roles.html)
 - [Sonatype: Users](https://help.sonatype.com/en/users.html)
 - [Sonatype: Privileges](https://help.sonatype.com/en/privileges.html)
