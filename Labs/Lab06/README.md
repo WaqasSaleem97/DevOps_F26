@@ -41,6 +41,7 @@ By the end of this lab, you will be able to:
 - Inspect Nexus blob storage and create a file blob store.
 - Create a Docker hosted repository backed by the new blob store.
 - Create, schedule and manually run a cleanup policy for Maven snapshots.
+- Compact the default blob store and verify that disk space is reclaimed.
 
 ## Prerequisites
 
@@ -111,7 +112,7 @@ The images embedded below are **instructor reference images only**. They illustr
 
 ### Required Screenshot Filenames
 
-Lab 6 currently requires these 24 screenshots:
+Lab 6 currently requires these 28 screenshots:
 
 ```text
 nexus_container_running.png
@@ -138,6 +139,10 @@ nexus_cleanup_policy_attached.png
 nexus_cleanup_task_waiting.png
 nexus_cleanup_task_completed.png
 nexus_maven_snapshots_empty.png
+nexus_blob_store_before_compaction.png
+nexus_compact_task_configured.png
+nexus_compact_task_completed.png
+nexus_blob_store_after_compaction.png
 ```
 
 Each required screenshot has equal weight.
@@ -945,7 +950,73 @@ This task removes every component currently visible in the `maven-snapshots` rep
 
    - Screenshot as `nexus_maven_snapshots_empty.png`, showing the `maven-snapshots` repository and the **No component/assets found in repository** message. Keep the required Ubuntu terminal identity visible beside the browser.
 
-The cleanup service removes matching components from repository browsing through soft deletion. Do not run an **Admin - Compact blob store** task in this lab.
+6. **Check the blob store before compaction**
+
+   Open:
+
+   **Settings → Repository → Blob Stores**
+
+   The `maven-snapshots` repository is empty, but the `default` blob store can still show a high blob count and used size because the cleanup service performs soft deletion.
+
+   ![Default blob store still using space after repository cleanup](images/33-blob-store-before-compaction.png)
+
+   Record the `default` blob store's **Blob Count**, **Used Size** and **Available Space**. The exact values will differ between students.
+
+   - Screenshot as `nexus_blob_store_before_compaction.png`, showing the `default` blob store and its blob count, used size and available space before compaction. Keep the required Ubuntu terminal identity visible beside the browser.
+
+7. **Create the compact blob-store task**
+
+   Open:
+
+   **Settings → System → Tasks → Create task**
+
+   In the task-type filter, enter `compact`, then select **Admin - Compact blob store**.
+
+   ![Selecting the Admin Compact blob store task type](images/34-select-compact-blob-task.png)
+
+   Configure the task:
+
+   - **Task enabled:** Selected
+   - **Task name:** `compact-store`
+   - **Notification email:** Leave empty
+   - **Send notification on:** `Failure`
+   - **Blob store:** `default`
+   - **Blobs Older Than:** `0`
+   - **Task frequency:** `Daily`
+   - **Start date:** The current date
+   - **Time to run this task:** `06:30`
+
+   ![Compact blob store task settings for the default blob store](images/35-compact-blob-task-settings.png)
+
+   Select **Save**. Reopen `compact-store` and verify that it is enabled, targets `default` and has the configured schedule.
+
+   - Screenshot as `nexus_compact_task_configured.png`, showing the saved `compact-store` settings, `default` blob store, `0` days and the 06:30 daily schedule. Keep the required Ubuntu terminal identity visible beside the browser.
+
+8. **Run the compact task manually**
+
+   Open the `compact-store` task. Its Summary page should show **Type: Admin - Compact blob store** and **Status: Waiting**.
+
+   ![Compact blob store task ready for manual execution](images/36-compact-blob-task-summary.png)
+
+   > **Permanent deletion:** Running this task permanently removes blobs that were soft-deleted by the cleanup process and meet the `0`-day setting. Confirm that every required earlier screenshot and solution-file item has already been saved.
+
+   Select **Run**, confirm the action and wait for the task to finish. Refresh until the task returns to **Waiting** and shows **Last result: Ok**.
+
+   - Screenshot as `nexus_compact_task_completed.png`, showing `compact-store` after manual execution with an updated **Last run** and **Last result: Ok**. Keep the required Ubuntu terminal identity visible beside the browser.
+
+9. **Verify that blob-store space was reclaimed**
+
+   Return to:
+
+   **Settings → Repository → Blob Stores**
+
+   ![Default blob store after compaction with reduced used size](images/37-blob-store-after-compaction.png)
+
+   Compare the `default` row with Step 6. Its blob count and used size should be lower, while its available space should be higher. The exact values are not graded because they depend on the student's previous Nexus activity. The blob store does not need to reach zero because Nexus can retain other required files.
+
+   - Screenshot as `nexus_blob_store_after_compaction.png`, showing the `default` blob store after compaction with its updated blob count, used size and available space. Keep the required Ubuntu terminal identity visible beside the browser.
+
+The cleanup service first removes matching components from repository browsing through soft deletion. The compact task then permanently deletes eligible soft-deleted blobs and reclaims their disk space.
 
 **Screenshot Required:**
 
@@ -954,8 +1025,12 @@ The cleanup service removes matching components from repository browsing through
 - `nexus_cleanup_task_waiting.png`
 - `nexus_cleanup_task_completed.png`
 - `nexus_maven_snapshots_empty.png`
+- `nexus_blob_store_before_compaction.png`
+- `nexus_compact_task_configured.png`
+- `nexus_compact_task_completed.png`
+- `nexus_blob_store_after_compaction.png`
 
-**Summary:** You created a cleanup policy that matches every Maven snapshot component, attached it to `maven-snapshots`, verified its 6:00 AM schedule, ran the cleanup service manually and confirmed that the repository no longer displays any components or assets.
+**Summary:** You created a cleanup policy that matches every Maven snapshot component, attached it to `maven-snapshots`, ran the cleanup service manually, created and ran the `compact-store` task, and verified that the default blob store reclaimed disk space.
 
 ---
 
@@ -977,6 +1052,7 @@ The cleanup service removes matching components from repository browsing through
 - You inspected the default blob-store directory without modifying it and created the `mystore` file blob store.
 - You created an online `docker-hosted` repository backed by `mystore` on connector port `8007`.
 - You attached a destructive Maven snapshot cleanup policy, ran the cleanup service manually and verified that `maven-snapshots` became empty.
+- You compacted the `default` blob store and verified reduced used space and increased available space.
 
 ## Final Submission Checklist
 
@@ -1009,7 +1085,11 @@ The cleanup service removes matching components from repository browsing through
 - [ ] The `maven` policy is saved in the Applied list of `maven-snapshots`.
 - [ ] The Cleanup service is scheduled for 6:00 AM and its manual run completed with `Last result: Ok`.
 - [ ] `maven-snapshots` displays `No component/assets found in repository` after cleanup.
-- [ ] All 24 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
+- [ ] I recorded the `default` blob-store values before compaction.
+- [ ] The enabled `compact-store` task targets `default`, uses `0` days and is scheduled daily at 06:30.
+- [ ] The manual compact task completed with `Last result: Ok`.
+- [ ] The `default` blob store shows reduced used size and increased available space after compaction.
+- [ ] All 28 currently required screenshots use the exact filenames in `Labs/Lab06/screenshots/`.
 - [ ] My required Ubuntu terminal identity is readable in every screenshot.
 - [ ] No password, generated `admin.password` value, private key, or token appears in any screenshot or solution file.
 - [ ] `Lab6_Solution.pdf` contains my identity, captions, and the required evidence in task order.
