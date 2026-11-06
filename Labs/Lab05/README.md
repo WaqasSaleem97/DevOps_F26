@@ -52,6 +52,8 @@ The repository configures the IDE terminal prompt to display the host user's nam
 
 ## Task List
 
+- [Screenshot Rules](#screenshot-rules)
+- [Required Screenshot Filenames](#required-screenshot-filenames)
 - [Getting Started](#getting-started)
 - [Task 1: Clone and Launch IntelliJ IDEA](#task-1-clone-and-launch-intellij-idea)
 - [Task 2: Build and Run the Maven Project](#task-2-build-and-run-the-maven-project)
@@ -67,22 +69,22 @@ The repository configures the IDE terminal prompt to display the host user's nam
 
 ---
 
-## Mandatory Screenshot and Autograding Rules
+## Screenshot Rules
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
-1. Before doing this lab, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
    YourGitHubUsername@ubuntu:~$
    ```
 
-   The comparison is case-insensitive, but spelling must match the `user_name` registered in the Student Marks Portal.
+   The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
-2. Every screenshot must clearly show:
-   - `YourGitHubUsername@ubuntu` in the terminal prompt;
-   - the command or GitHub operation required by that task; and
-   - the relevant result or output.
+2. Every terminal screenshot must clearly show:
+   - `YourGitHubUsername@ubuntu` in the prompt;
+   - the required command; and
+   - its relevant result or output.
 
 3. For IntelliJ dialogs, Welcome screens and browser pages, keep a host Ubuntu terminal or IntelliJ terminal showing `YourGitHubUsername@ubuntu` visible in the same screenshot. For build and run commands, show IntelliJ's own Terminal tool window with that prompt and the relevant output.
 
@@ -92,17 +94,17 @@ Read these rules before starting. Each required screenshot is evaluated separate
    Labs/Lab05/screenshots/
    ```
 
-5. Use the exact filename and capitalization given in this document. Do not rename files, add numbers, or use alternative spellings.
+5. Use the exact filename and capitalization given in this document. Do not add numbers or alternative spellings.
 
-6. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
+6. Screenshots may use any image dimensions, but their text and evidence must be clear and readable. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
 
-7. The required command and its relevant output must be visible. A screenshot containing only the command or only unrelated output may receive zero.
+7. A screenshot containing only a command, only filled but unsaved form fields, or unrelated output is not proof of completion. The required command and its relevant output must be visible.
 
-8. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
+8. Do not expose real passwords, password hashes, private SSH keys, access tokens, recovery codes or other secrets in a screenshot or solution file.
 
-9. Do not expose passwords, private SSH keys, access tokens, recovery codes, or other secrets. It is acceptable to show a public-key entry or fingerprint without revealing private key contents.
+9. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
 
-10. Commit and push the complete `Labs/Lab05` directory to `DevOps` before the deadline. Files remaining only on your computer cannot be graded.
+10. Commit and push the complete `Labs/Lab05` directory to your `DevOps` repository before the deadline. Files that remain only on your computer cannot be graded.
 
 ### Required Screenshot Filenames
 

@@ -27,6 +27,8 @@ DevOps/
 
 ## Task List
 
+- [Screenshot Rules](#screenshot-rules)
+- [Required Screenshot Filenames](#required-screenshot-filenames)
 - [Getting Started](#getting-started)
 - [Task 1: Create Private GitHub Repository](#task-1-create-private-github-repository)
 - [Task 2: Connect Repository via SSH](#task-2-connect-repository-via-ssh)
@@ -46,24 +48,24 @@ DevOps/
 
 ---
 
-## Mandatory Screenshot and Autograding Rules
+## Screenshot Rules
 
-Read these rules before starting. The automated grader awards marks separately for each required screenshot.
+Read these rules before starting. Each required screenshot is evaluated separately.
 
-1. Before doing this lab, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
    YourGitHubUsername@ubuntu:~$
    ```
 
-   The comparison is case-insensitive, but spelling must match the `user_name` registered in the Student Marks Portal.
+   The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
-2. Every screenshot must clearly show:
-   - `YourGitHubUsername@ubuntu` in the terminal prompt;
-   - the command or GitHub operation required by that task; and
-   - the relevant result or output.
+2. Every terminal screenshot must clearly show:
+   - `YourGitHubUsername@ubuntu` in the prompt;
+   - the required command; and
+   - its relevant result or output.
 
-3. For GitHub web-interface tasks, use a split-screen view so the GitHub page and a terminal showing `YourGitHubUsername@ubuntu` are visible in the same screenshot.
+3. For GitHub web-interface tasks, use a split-screen view so the GitHub page and a terminal showing `YourGitHubUsername@ubuntu` are visible in the same screenshot. Windows PowerShell or Git Bash evidence must also show the actual client prompt, command and relevant output.
 
 4. Save every screenshot inside:
 
@@ -71,19 +73,19 @@ Read these rules before starting. The automated grader awards marks separately f
    Labs/Lab02/screenshots/
    ```
 
-5. Use the exact filename and capitalization given in this document. Do not rename files, add numbers, or use alternative spellings.
+5. Use the exact filename and capitalization given in this document. Do not add numbers or alternative spellings.
 
-6. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
+6. Screenshots may use any image dimensions, but their text and evidence must be clear and readable. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
 
-7. The required command and its relevant output must be visible. A screenshot containing only the command or only unrelated output may receive zero.
+7. A screenshot containing only a command, only filled but unsaved form fields, or unrelated output is not proof of completion. The required command and its relevant output must be visible.
 
-8. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
+8. Do not expose real passwords, password hashes, private SSH keys, access tokens, recovery codes or other secrets in a screenshot or solution file. It is acceptable to show a public-key entry or fingerprint without revealing private key contents.
 
-9. Do not expose passwords, private SSH keys, access tokens, recovery codes, or other secrets. It is acceptable to show a public-key entry or fingerprint without revealing private key contents.
+9. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
 
-10. Commit and push the complete `Labs/Lab02` directory to `DevOps` before the deadline. Files remaining only on your computer cannot be graded.
+10. Commit and push the complete `Labs/Lab02` directory to your `DevOps` repository before the deadline. Files that remain only on your computer cannot be graded.
 
-### Required Automated-Grading Filenames
+### Required Screenshot Filenames
 
 The current Lab 2 grader checks these 37 files:
 
@@ -129,6 +131,38 @@ remote_branch_delete_cmd.png
 
 Each of these 37 checks has equal weight. Bonus and additional exam-practice screenshots may be reviewed separately and are not included in these 37 automated checks.
 
+### Bonus Task Screenshot Filenames
+
+Follow the existing bonus-task instructions below. These screenshots are not included in the 37 mandatory automated checks:
+
+```text
+collab_commit.png
+collab_merge.png
+```
+
+### Exam Evaluation Screenshot Filenames
+
+The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+
+```text
+Q1_branch_created.png
+Q1_commit_done.png
+Q1_merge_done.png
+Q1_merge_history.png
+Q2_branches_created.png
+Q2_feature_branch_commit.png
+Q2_merge_into_develop.png
+Q2_merge_into_staging.png
+Q2_merge_into_main.png
+Q2_stage_verification.png
+Q3_branches_modified1.png
+Q3_branches_modified2.png
+Q3_branches_modified3.png
+Q3_merge_conflict.png
+Q3_conflict_resolved.png
+Q3_final_file.png
+```
+
 ---
 
 ## Getting Started
@@ -137,12 +171,20 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    - [Download Git for Windows, Mac, or Linux](https://git-scm.com/downloads)
    - Save the evidence as `Labs/Lab02/screenshots/git_installation.png`.
 
+**Screenshot Required:**
+
+- `git_installation.png`
+
 ---
 
 ## Task 1: Create Private GitHub Repository
 
 1. **Create a new private repository named exactly `DevOps_Lab2_Practice` on GitHub.**
 2. Take a split-screen screenshot showing the repository is private and your required terminal prompt. Save it as `Labs/Lab02/screenshots/repo_private.png`.
+
+**Screenshot Required:**
+
+- `repo_private.png`
 
 ---
 
@@ -162,6 +204,12 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    ```
    - Save it as `Labs/Lab02/screenshots/ssh_clone.png`.
 
+**Screenshot Required:**
+
+- `ssh_keygen.png`
+- `github_sshkey.png`
+- `ssh_clone.png`
+
 ---
 
 ## Task 3: Configure Git Username and Email
@@ -179,6 +227,11 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    ```
    - Screenshot as `git_config_list.png`.
 
+**Screenshot Required:**
+
+- `git_identity.png`
+- `git_config_list.png`
+
 ---
 
 ## Task 4: Explore the .git Folder
@@ -192,6 +245,10 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    - Take a screenshot as `git_folder.png`.
 
 4. Note: This folder contains history, logs, and config for your repository. Do **not** modify these files manually.
+
+**Screenshot Required:**
+
+- `git_folder.png`
 
 ---
 
@@ -223,6 +280,13 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    ```
    - Save a screenshot as `first_push.png`.
 
+**Screenshot Required:**
+
+- `delete_git.png`
+- `git_init.png`
+- `first_commit.png`
+- `first_push.png`
+
 ---
 
 ## Task 6: File Status & Staging
@@ -244,6 +308,11 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    - Screenshot as `commit_notes.png`.
 4. Edit `notes.txt` and repeat status/commit steps.
 
+**Screenshot Required:**
+
+- `status1.png`
+- `commit_notes.png`
+
 ---
 
 ## Task 7: Branch Creation Using GitHub GUI
@@ -255,6 +324,11 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    ```
    - Take a screenshot of branch creation in the GUI as `bugfix_branch_gui.png`.
    - Take a screenshot of your local git branch list after pulling as `bugfix_branch_local.png`.
+
+**Screenshot Required:**
+
+- `bugfix_branch_gui.png`
+- `bugfix_branch_local.png`
 
 ---
 
@@ -269,6 +343,10 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    git push origin feature/db-connection
    ```
    - Take a screenshot of the branch creation and push as `feature_db_branch.png`.
+
+**Screenshot Required:**
+
+- `feature_db_branch.png`
 
 ---
 
@@ -301,6 +379,13 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    ```
    - Screenshot as `push_branches.png`.
 
+**Screenshot Required:**
+
+- `branch_create.png`
+- `feature_commit.png`
+- `merge.png`
+- `push_branches.png`
+
 ---
 
 ## Task 10: Pull Request and Branch Review (GitHub GUI)
@@ -312,6 +397,12 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
      - The Pull Request creation (`pr_creation.png`)
      - The Pull Request review and merge (`pr_merge.png`)
      - The branch deletion (`branch_delete.png`)
+
+**Screenshot Required:**
+
+- `pr_creation.png`
+- `pr_merge.png`
+- `branch_delete.png`
 
 ---
 
@@ -333,6 +424,12 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
    - Branch list (`branch_strategy.png`)
    - Merges into `develop` and `staging` (`branch_merges.png`)
    - Final merge into `main` (`final_merge.png`)
+
+**Screenshot Required:**
+
+- `branch_strategy.png`
+- `branch_merges.png`
+- `final_merge.png`
 
 ---
 
@@ -364,6 +461,17 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
 6. **Branch Handling After Merge:**
    - Delete the merged PR branch and save the evidence as `pr_branch_deleted.png`.
 
+**Screenshot Required:**
+
+- `pr_create_details.png`
+- `pr_assigned_reviewer.png`
+- `pr_request_changes.png`
+- `pr_rejected.png`
+- `pr_updated_with_commits.png`
+- `pr_merge_confirm.png`
+- `pr_merged.png`
+- `pr_branch_deleted.png`
+
 ---
 
 ## Task 13: Branch Cleanup Best Practices
@@ -389,6 +497,11 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
 3. Save the GitHub branch-deletion evidence as `remote_branch_deleted.png`.
 4. Save the terminal command used to delete a remote branch as `remote_branch_delete_cmd.png`.
 
+**Screenshot Required:**
+
+- `remote_branch_deleted.png`
+- `remote_branch_delete_cmd.png`
+
 ---
 
 ## Bonus Task: Simulated Team Collaboration
@@ -409,6 +522,11 @@ Each of these 37 checks has equal weight. Bonus and additional exam-practice scr
 
 The bonus screenshots are not included in the 37 mandatory automated checks.
 
+**Screenshot Required:**
+
+- `collab_commit.png`
+- `collab_merge.png`
+
 ---
 
 
@@ -426,6 +544,13 @@ The three `Q1_*.png` files listed in the mandatory filename section are part of 
    - Show the history of commits in a way that verifies the merge.  
      - Screenshot as `Q1_merge_history.png`.  
 
+**Screenshot Required:**
+
+- `Q1_branch_created.png`
+- `Q1_commit_done.png`
+- `Q1_merge_done.png`
+- `Q1_merge_history.png`
+
 ---
 
 2. **Multi-Stage Workflow Simulation**  
@@ -442,6 +567,15 @@ The three `Q1_*.png` files listed in the mandatory filename section are part of 
    - Provide proof that each stage contains the updated changes before it reaches `main`.  
      - Screenshot as `Q2_stage_verification.png`.  
 
+**Screenshot Required:**
+
+- `Q2_branches_created.png`
+- `Q2_feature_branch_commit.png`
+- `Q2_merge_into_develop.png`
+- `Q2_merge_into_staging.png`
+- `Q2_merge_into_main.png`
+- `Q2_stage_verification.png`
+
 ---
 
 3. **Collaboration & Conflict Resolution**  
@@ -453,6 +587,15 @@ The three `Q1_*.png` files listed in the mandatory filename section are part of 
      - Screenshot as `Q3_conflict_resolved.png`.  
    - Provide evidence that the final version of the file contains both collaborators’ changes.  
      - Screenshot as `Q3_final_file.png`.  
+
+**Screenshot Required:**
+
+- `Q3_branches_modified1.png`
+- `Q3_branches_modified2.png`
+- `Q3_branches_modified3.png`
+- `Q3_merge_conflict.png`
+- `Q3_conflict_resolved.png`
+- `Q3_final_file.png`
 
 ---
 

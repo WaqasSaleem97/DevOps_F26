@@ -71,7 +71,7 @@ By the end of this lab, you will be able to:
 
 ---
 
-## Mandatory Screenshot and Autograding Rules
+## Screenshot Rules
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 

@@ -53,6 +53,8 @@ Follow these rules:
 
 ## Task List
 
+- [Screenshot Rules](#screenshot-rules)
+- [Required Screenshot Filenames](#required-screenshot-filenames)
 - [Getting Started](#getting-started)
 - [Task 1: Create and Configure Your GitHub Account](#task-1-create-and-configure-your-github-account)
 - [Task 2: Register in the Student Marks Portal](#task-2-register-in-the-student-marks-portal)
@@ -74,6 +76,100 @@ Follow these rules:
 - [Task 18: Prepare Lab1 Solution PDF](#task-18-prepare-lab1-solution-pdf)
 - [Final Submission Checklist](#final-submission-checklist)
 
+## Screenshot Rules
+
+Read these rules before starting. Each required screenshot is evaluated separately.
+
+1. After installing Ubuntu, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+
+   ```text
+   YourGitHubUsername@ubuntu:~$
+   ```
+
+   The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
+
+2. Every Ubuntu terminal screenshot must clearly show:
+   - `YourGitHubUsername@ubuntu` in the prompt;
+   - the required command; and
+   - its relevant result or output.
+
+3. For GitHub, Student Marks Portal, VMware and Ubuntu installer evidence, clearly show the required page, account, setting or result. Before the Ubuntu account is created, a terminal identity is not required for download or installation screens. Windows SSH screenshots must show the client command, target Ubuntu username/address and relevant result; successful Ubuntu sessions must show `YourGitHubUsername@ubuntu`.
+
+4. Save every screenshot inside:
+
+   ```text
+   Labs/Lab01/screenshots/
+   ```
+
+5. Use the exact filename and capitalization given in this document. Do not add numbers or alternative spellings.
+
+6. Screenshots may use any image dimensions, but their text and evidence must be clear and readable.
+
+7. A screenshot containing only a command, only filled but unsaved form fields, or unrelated output is not proof of completion.
+
+8. Do not expose real passwords, password hashes, private SSH keys, access tokens, recovery codes or other secrets in a screenshot or solution file.
+
+9. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both may receive zero for that task.
+
+10. Commit and push the complete `Labs/Lab01` directory to your `DevOps` repository before the deadline. Files that remain only on your computer cannot be graded.
+
+The images embedded below are **instructor reference images only**. They illustrate the Ubuntu installation screens, but they are not student evidence. Do not download, copy, edit or submit these images as your screenshots; capture your own work.
+
+### Required Screenshot Filenames
+
+Lab 1 requires these 44 guided-task screenshots. Save them inside `Labs/Lab01/screenshots/` using the exact filenames below:
+
+```text
+lab01_folder_structure.png
+github_profile.png
+github_actual_name.png
+portal_login_page.png
+portal_github_profile.png
+portal_enrollment_submitted.png
+vmware_workstation.png
+ubuntu_server_iso.png
+available_storage.png
+vm_creation_wizard.png
+vm_typical_configuration.png
+vm_ubuntu_iso_selected.png
+vm_configuration_summary.png
+ubuntu_installer_boot.png
+ubuntu_language.png
+ubuntu_keyboard_layout.png
+ubuntu_keyboard_variant.png
+ubuntu_installation_type.png
+ubuntu_network_interface.png
+ubuntu_installer_network.png
+ubuntu_guided_storage.png
+ubuntu_storage_configuration.png
+ubuntu_selected_disk.png
+ubuntu_disk_details.png
+ubuntu_partition_layout.png
+ubuntu_storage_warning.png
+ubuntu_storage_confirmed.png
+ubuntu_actual_name.png
+ubuntu_server_name.png
+ubuntu_username.png
+ubuntu_profile_setup.png
+ubuntu_installation_progress.png
+ubuntu_installation_complete.png
+ubuntu_login_screen.png
+ubuntu_terminal_login.png
+ubuntu_identity_verified.png
+ubuntu_ip_addr_command.png
+ubuntu_ip_address.png
+windows_ssh_command.png
+windows_ssh_fingerprint.png
+windows_ssh_login.png
+windows_ssh_identity.png
+solution_title_page.png
+lab1_solution_pdf.png
+```
+
+Missing, unclear, incorrectly named, misplaced, edited, or copied evidence may receive zero marks for the affected task.
+
+---
+
 ## Getting Started
 
 1. Create the following directory inside your `DevOps` repository:
@@ -86,6 +182,10 @@ Follow these rules:
 
 2. Read the complete task list before beginning the installation.
 
+
+**Screenshot Required:**
+
+- `lab01_folder_structure.png`
 
 ## Task 1: Create and Configure Your GitHub Account
 
@@ -107,6 +207,11 @@ Follow these rules:
    - Save a screenshot showing the completed Name field as `github_actual_name.png`.
 
 > Do not include your password, access token, recovery codes, or other private credentials in any screenshot.
+
+**Screenshot Required:**
+
+- `github_profile.png`
+- `github_actual_name.png`
 
 ## Task 2: Register in the Student Marks Portal
 
@@ -135,6 +240,12 @@ Follow these rules:
 
 > A registration number belongs to only one student. Never enter another student's registration number.
 
+**Screenshot Required:**
+
+- `portal_login_page.png`
+- `portal_github_profile.png`
+- `portal_enrollment_submitted.png`
+
 ## Task 3: Download VMware Workstation Pro and Ubuntu Server
 
 1. Download and install VMware Workstation Pro on your Windows computer.
@@ -149,6 +260,12 @@ Follow these rules:
 3. Confirm that at least 20 GB of free storage is available for the Ubuntu Server virtual machine.
 
    - Save a screenshot showing the available storage as `available_storage.png`.
+
+**Screenshot Required:**
+
+- `vmware_workstation.png`
+- `ubuntu_server_iso.png`
+- `available_storage.png`
 
 ## Task 4: Create the Ubuntu Server Virtual Machine
 
@@ -172,6 +289,14 @@ Follow these rules:
 
    - Save a screenshot of the Ubuntu Server boot screen as `ubuntu_installer_boot.png`.
 
+**Screenshot Required:**
+
+- `vm_creation_wizard.png`
+- `vm_typical_configuration.png`
+- `vm_ubuntu_iso_selected.png`
+- `vm_configuration_summary.png`
+- `ubuntu_installer_boot.png`
+
 ### Instructional reference
 
 The following image is provided to help you recognize the Ubuntu Server boot screen:
@@ -185,6 +310,10 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
    - Save a screenshot showing the selected language as `ubuntu_language.png`.
 
 2. Press **Enter** to continue.
+
+**Screenshot Required:**
+
+- `ubuntu_language.png`
 
 ### Instructional reference
 
@@ -202,6 +331,11 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 
 3. Select **Done** to continue.
 
+**Screenshot Required:**
+
+- `ubuntu_keyboard_layout.png`
+- `ubuntu_keyboard_variant.png`
+
 ### Instructional references
 
 ![Ubuntu keyboard layout](images/install-ubuntu-server/5c918dc341d92f647d6f1665ed2714922d5e688c.png)
@@ -216,6 +350,10 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
    - Save a screenshot showing the selected installation type as `ubuntu_installation_type.png`.
 
 2. Continue to the next installer screen.
+
+**Screenshot Required:**
+
+- `ubuntu_installation_type.png`
 
 ### Instructional reference
 
@@ -233,6 +371,11 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 
 3. Continue when the network configuration is correct.
 
+**Screenshot Required:**
+
+- `ubuntu_network_interface.png`
+- `ubuntu_installer_network.png`
+
 ### Instructional reference
 
 ![Ubuntu Server network configuration](images/install-ubuntu-server/f3e24675ada8dec595905d3853766afdbe1a9039.png)
@@ -249,6 +392,11 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 
 > Use only the VMware virtual disk created for this lab. Selecting or formatting the wrong physical disk can destroy existing data.
 
+**Screenshot Required:**
+
+- `ubuntu_guided_storage.png`
+- `ubuntu_storage_configuration.png`
+
 ### Instructional reference
 
 ![Ubuntu Server storage configuration](images/install-ubuntu-server/48e6067fea81202b132da004d467ec9df20ecf4f.png)
@@ -262,6 +410,11 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 2. Check the displayed disk size and make sure it is the correct VMware virtual disk.
 
    - Save a screenshot showing the disk name and size as `ubuntu_disk_details.png`.
+
+**Screenshot Required:**
+
+- `ubuntu_selected_disk.png`
+- `ubuntu_disk_details.png`
 
 ### Instructional reference
 
@@ -277,6 +430,10 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 
 3. Select **Done** only after reviewing the complete layout.
 
+**Screenshot Required:**
+
+- `ubuntu_partition_layout.png`
+
 ### Instructional reference
 
 ![Ubuntu Server partition layout](images/install-ubuntu-server/5a1d73b678c2cdbd0a75225d0a583eb156e1b953.png)
@@ -290,6 +447,11 @@ The following image is provided to help you recognize the Ubuntu Server boot scr
 2. Confirm the changes only when you are certain that the VMware virtual disk is selected.
 
    - Save a screenshot showing the confirmation selection as `ubuntu_storage_confirmed.png`.
+
+**Screenshot Required:**
+
+- `ubuntu_storage_warning.png`
+- `ubuntu_storage_confirmed.png`
 
 ### Instructional reference
 
@@ -327,6 +489,13 @@ Complete the Ubuntu profile using the following required values:
    - Save a screenshot of the completed profile page as `ubuntu_profile_setup.png`.
 
 
+**Screenshot Required:**
+
+- `ubuntu_actual_name.png`
+- `ubuntu_server_name.png`
+- `ubuntu_username.png`
+- `ubuntu_profile_setup.png`
+
 ## Task 14: Complete the Software Installation
 
 1. Wait while Ubuntu Server installs the required software.
@@ -336,6 +505,10 @@ Complete the Ubuntu profile using the following required values:
 2. Do not power off the virtual machine during the installation.
 
 3. Wait until the installer reports that the installation is complete.
+
+**Screenshot Required:**
+
+- `ubuntu_installation_progress.png`
 
 ### Instructional reference
 
@@ -365,6 +538,13 @@ Complete the Ubuntu profile using the following required values:
 
    - Save a clear screenshot showing the complete prompt as `ubuntu_identity_verified.png`.
 
+**Screenshot Required:**
+
+- `ubuntu_installation_complete.png`
+- `ubuntu_login_screen.png`
+- `ubuntu_terminal_login.png`
+- `ubuntu_identity_verified.png`
+
 ### Instructional reference
 
 ![Ubuntu Server installation complete](images/install-ubuntu-server/c36b4880b5e4291ca57e6a51b527c05449fec48e.png)
@@ -385,6 +565,11 @@ Complete the Ubuntu profile using the following required values:
    - Save a screenshot clearly showing the correct IPv4 address as `ubuntu_ip_address.png`.
 
 3. Keep your `<github-username>@ubuntu` prompt visible in the screenshot.
+
+**Screenshot Required:**
+
+- `ubuntu_ip_addr_command.png`
+- `ubuntu_ip_address.png`
 
 ## Task 17: Connect to Ubuntu Server from Windows
 
@@ -425,6 +610,13 @@ sudo systemctl enable --now ssh
 ```
 
 
+**Screenshot Required:**
+
+- `windows_ssh_command.png`
+- `windows_ssh_fingerprint.png`
+- `windows_ssh_login.png`
+- `windows_ssh_identity.png`
+
 ## Task 18: Prepare Lab1 Solution PDF
 
 1. Create a new document and add a title page containing:
@@ -462,20 +654,10 @@ sudo systemctl enable --now ssh
 
 8. Keep all original screenshots inside `Labs/Lab01/screenshots/` for automatic grading.
 
-## Screenshot Rules
+**Screenshot Required:**
 
-- Every screenshot must be created from your own work.
-- Save every screenshot inside `Labs/Lab01/screenshots/`.
-- Use the exact filename written after each step.
-- Screenshots must be clear and readable.
-- Show the relevant window, command, output, or identity information.
-- Do not crop out the terminal prompt when it is required.
-- Do not edit a screenshot to add, remove, or replace evidence.
-- Do not copy or reuse another student's screenshots.
-- Do not expose passwords, access tokens, recovery codes, or private keys.
-- The instructional images inside `images/install-ubuntu-server/` are examples and must not be submitted as your own evidence.
-
-Missing, unclear, incorrectly named, misplaced, edited, or copied evidence may receive zero marks for the affected task.
+- `solution_title_page.png`
+- `lab1_solution_pdf.png`
 
 ## Final Submission Checklist
 

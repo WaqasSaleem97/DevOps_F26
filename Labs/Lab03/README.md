@@ -48,6 +48,8 @@ By the end of this lab, you will be able to:
 **Navigation:** Click any task below to jump to its instructions.
 ## 📋 Task List
 
+- [Screenshot Rules](#screenshot-rules)
+- [Required Screenshot Filenames](#required-screenshot-filenames)
 - [Task 1: Handling Local and Remote Commit Conflicts (Pull vs Pull --rebase)](#task-1--handling-local-and-remote-commit-conflicts-pull-vs-pull---rebase)
 - [Task 2: Creating and Resolving Merge Conflicts Manually](#task-2--creating-and-resolving-merge-conflicts-manually)
 - [Task 3: Managing Ignored Files with .gitignore and Removing Tracked Files](#task-3--managing-ignored-files-with-gitignore-and-removing-tracked-files)
@@ -62,6 +64,146 @@ By the end of this lab, you will be able to:
 - [Exam Evaluation Questions](#exam-evaluation-questions)
 - [Summary](#summary)
 - [Submission](#submission)
+
+---
+
+## Screenshot Rules
+
+Read these rules before starting. Each required screenshot is evaluated separately.
+
+1. For Ubuntu server work, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+
+   ```text
+   YourGitHubUsername@ubuntu:~$
+   ```
+
+   The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
+
+2. Every terminal screenshot must clearly show:
+   - the active prompt (`YourGitHubUsername@ubuntu` for Ubuntu server work, or the actual Codespaces prompt in Task 10);
+   - the required command; and
+   - its relevant result or output.
+
+3. For browser or editor evidence, include the terminal for the environment in use in the same screenshot, with the account or project identity visible. Task 10 uses the actual Codespaces prompt; Codespaces loading screens must show the signed-in GitHub account or repository. Do not change a Codespaces prompt to imitate Ubuntu.
+
+4. Save every screenshot inside:
+
+   ```text
+   Labs/Lab03/screenshots/
+   ```
+
+5. Use the exact filename and capitalization given in this document. Do not add numbers or alternative spellings.
+
+6. Screenshots may use any image dimensions, but their text and evidence must be clear and readable.
+
+7. A screenshot containing only a command, only filled but unsaved form fields, or unrelated output is not proof of completion.
+
+8. Do not expose real passwords, password hashes, private SSH keys, access tokens, recovery codes or other secrets in a screenshot or solution file.
+
+9. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both may receive zero for that task.
+
+10. Commit and push the complete `Labs/Lab03` directory to your `DevOps` repository before the deadline. Files that remain only on your computer cannot be graded.
+
+### Required Screenshot Filenames
+
+Lab 3 requires these 64 guided-task screenshots. Save them inside `Labs/Lab03/screenshots/` using the exact filenames below:
+
+```text
+remote_edit.png
+local_commit.png
+push_error.png
+merge_commit.png
+push_after_merge.png
+rebase_pull.png
+push_after_rebase.png
+remote_conflict_edit.png
+local_conflict_edit.png
+local_conflict_commit.png
+conflict_push_error.png
+conflict_message.png
+resolved_readme.png
+rebase_continue.png
+push_after_resolve.png
+push_textfiles.png
+gitignore_push.png
+repo_still_has_textfiles.png
+rm_cached_push.png
+repo_textfiles_removed.png
+modified_readme.png
+checkout_error.png
+stash_command.png
+branch_switched.png
+back_to_feature.png
+status_clean.png
+stash_pop.png
+log_before_checkout.png
+detached_head.png
+back_to_main.png
+first_commit.png
+second_commit.png
+log_before_reset.png
+file_before_reset.png
+soft_reset.png
+log_after_soft_reset.png
+file_after_soft_reset.png
+file_before_hard_reset.png
+hard_reset.png
+log_after_hard_reset.png
+file_after_hard_reset.png
+first_amend_commit.png
+amend_commit.png
+commit_temp_file.png
+revert_commit.png
+revert_push.png
+new_branch.png
+force_commit.png
+push_force_branch.png
+hard_reset_force.png
+normal_push.png
+force_push.png
+forked_gitea.png
+codespace_loading.png
+docker_up.png
+gitea_install_page.png
+admin_setup.png
+gitea_dashboard.png
+gitea_new_repo.png
+github_pages_repo.png
+local_static_site.png
+push_static_site.png
+github_pages_settings.png
+live_site.png
+```
+
+### Exam Evaluation Screenshot Filenames
+
+The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+
+```text
+Q1_remote_edit.png
+Q1_local_edit.png
+Q1_push_error.png
+Q1_merge_resolution.png
+Q1_rebase_resolution.png
+Q2_remote_conflict_edit.png
+Q2_local_conflict_edit.png
+Q2_conflict_push_error.png
+Q2_rebase_conflict.png
+Q2_resolved_file.png
+Q2_resolution_complete.png
+Q3_folder_created.png
+Q3_files_pushed.png
+Q3_gitignore_added.png
+Q3_gitignore_pushed.png
+Q3_folder_untracked.png
+Q3_folder_removed_github.png
+Q4_first_commit.png
+Q4_second_commit.png
+Q4_commit_history.png
+Q4_soft_reset.png
+Q4_third_commit.png
+Q4_hard_reset.png
+```
 
 ---
 
@@ -131,7 +273,8 @@ This task demonstrates what happens when your local repository and remote reposi
      ```
      - Save a screenshot as `push_after_rebase.png`. 
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `remote_edit.png`  
 - `local_commit.png`  
 - `push_error.png`  
@@ -218,7 +361,8 @@ This task will help you understand how Git handles file conflicts when two peopl
    ```
    - Save a screenshot as `push_after_resolve.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `remote_conflict_edit.png`
 - `local_conflict_edit.png`
 - `local_conflict_commit.png`
@@ -296,7 +440,8 @@ In this task, you will learn how to use a `.gitignore` file to exclude files or 
 9. Check your GitHub repository again — the `textfiles` folder should now be **deleted remotely**.
    - Save a screenshot as `repo_textfiles_removed.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `push_textfiles.png`
 - `gitignore_push.png`
 - `repo_still_has_textfiles.png`
@@ -384,7 +529,8 @@ This task demonstrates how `git stash` allows you to temporarily save uncommitte
 
 10. Confirm that your previous edits are back in the file.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `modified_readme.png`
 - `checkout_error.png`
 - `stash_command.png`
@@ -423,7 +569,8 @@ This task demonstrates how `git stash` allows you to temporarily save uncommitte
    ```
    - Save a screenshot as `back_to_main.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `log_before_checkout.png`
 - `detached_head.png`
 - `back_to_main.png`
@@ -522,7 +669,8 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
 
 ---
 
-### 📸 **Screenshot Required:**
+**Screenshot Required:**
+
 - `first_commit.png`
 - `second_commit.png`
 - `log_before_reset.png`
@@ -562,7 +710,8 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
    ```
    - Save a screenshot as `amend_commit.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `first_amend_commit.png`
 - `amend_commit.png`
 
@@ -599,7 +748,8 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
    ```
    - Save a screenshot as `revert_push.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `commit_temp_file.png`
 - `revert_commit.png`
 - `revert_push.png`
@@ -651,7 +801,8 @@ This task demonstrates the difference between a soft and hard reset in Git. In t
    ```
    - Save a screenshot as `force_push.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `new_branch.png`
 - `force_commit.png`
 - `push_force_branch.png`
@@ -715,7 +866,8 @@ This task will guide you through forking a repository, running a full web applic
    - Fill out the repository details and create it.
    - Save a screenshot of the new repository page as `gitea_new_repo.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `forked_gitea.png`  
 - `codespace_loading.png`  
 - `docker_up.png`  
@@ -773,7 +925,8 @@ This task will guide you through creating a personal portfolio/static site using
    - Open your GitHub Pages site in the browser.
    - Save a screenshot of your live site as `live_site.png`.
 
-📸 **Screenshot Required:**  
+**Screenshot Required:**
+
 - `github_pages_repo.png`  
 - `local_static_site.png`  
 - `push_static_site.png`  
@@ -807,6 +960,14 @@ This task will guide you through creating a personal portfolio/static site using
 5. Repeat with another remote/local change, but resolve using `git pull --rebase`, then push.  
    - Screenshot as `Q1_rebase_resolution.png`
 
+**Screenshot Required:**
+
+- `Q1_remote_edit.png`
+- `Q1_local_edit.png`
+- `Q1_push_error.png`
+- `Q1_merge_resolution.png`
+- `Q1_rebase_resolution.png`
+
 ---
 
 ### 2. Manual Merge Conflict Handling
@@ -824,6 +985,15 @@ This task will guide you through creating a personal portfolio/static site using
    - Screenshot as `Q2_resolved_file.png`
 6. Mark the conflict resolved (`git add <file>`, `git rebase --continue`) and push.  
    - Screenshot as `Q2_resolution_complete.png`
+
+**Screenshot Required:**
+
+- `Q2_remote_conflict_edit.png`
+- `Q2_local_conflict_edit.png`
+- `Q2_conflict_push_error.png`
+- `Q2_rebase_conflict.png`
+- `Q2_resolved_file.png`
+- `Q2_resolution_complete.png`
 
 ---
 
@@ -843,6 +1013,15 @@ This task will guide you through creating a personal portfolio/static site using
 6. Commit and push the change, then verify the folder is no longer tracked on GitHub.  
    - Screenshot as `Q3_folder_removed_github.png`
 
+**Screenshot Required:**
+
+- `Q3_folder_created.png`
+- `Q3_files_pushed.png`
+- `Q3_gitignore_added.png`
+- `Q3_gitignore_pushed.png`
+- `Q3_folder_untracked.png`
+- `Q3_folder_removed_github.png`
+
 ---
 
 ### 4. Commit History Manipulation and Recovery
@@ -860,6 +1039,15 @@ This task will guide you through creating a personal portfolio/static site using
    - Screenshot as `Q4_third_commit.png`
 6. Perform a hard reset (`git reset --hard HEAD~1`) and observe the changes.  
    - Screenshot as `Q4_hard_reset.png`
+
+**Screenshot Required:**
+
+- `Q4_first_commit.png`
+- `Q4_second_commit.png`
+- `Q4_commit_history.png`
+- `Q4_soft_reset.png`
+- `Q4_third_commit.png`
+- `Q4_hard_reset.png`
 
 ---
 

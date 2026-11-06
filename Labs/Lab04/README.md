@@ -60,6 +60,8 @@ Keep your Ubuntu terminal visible when capturing evidence from Windows over SSH.
 
 ## Task List
 
+- [Screenshot Rules](#screenshot-rules)
+- [Required Screenshot Filenames](#required-screenshot-filenames)
 - [Getting Started](#getting-started)
 - [Task 1: Fork and Clone the Databases Repository](#task-1-fork-and-clone-the-databases-repository)
 - [Task 2: Install Docker, Docker Compose, and Python on Ubuntu](#task-2-install-docker-docker-compose-and-python-on-ubuntu)
@@ -76,24 +78,24 @@ Keep your Ubuntu terminal visible when capturing evidence from Windows over SSH.
 
 ---
 
-## Mandatory Screenshot and Autograding Rules
+## Screenshot Rules
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
-1. Before doing this lab, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
+1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
    YourGitHubUsername@ubuntu:~$
    ```
 
-   The comparison is case-insensitive, but spelling must match the `user_name` registered in the Student Marks Portal.
+   The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
-2. Every screenshot must clearly show:
-   - `YourGitHubUsername@ubuntu` in the terminal prompt;
-   - the command or GitHub operation required by that task; and
-   - the relevant result or output.
+2. Every terminal screenshot must clearly show:
+   - `YourGitHubUsername@ubuntu` in the prompt;
+   - the required command; and
+   - its relevant result or output.
 
-3. For GitHub web-interface tasks, use a split-screen view so the GitHub page and a terminal showing `YourGitHubUsername@ubuntu` are visible in the same screenshot.
+3. For GitHub web-interface tasks, use a split-screen view so the GitHub page and a terminal showing `YourGitHubUsername@ubuntu` are visible in the same screenshot. Keep the required fields, code and results readable.
 
 4. Save every screenshot inside:
 
@@ -101,19 +103,19 @@ Read these rules before starting. Each required screenshot is evaluated separate
    Labs/Lab04/screenshots/
    ```
 
-5. Use the exact filename and capitalization given in this document. Do not rename files, add numbers, or use alternative spellings.
+5. Use the exact filename and capitalization given in this document. Do not add numbers or alternative spellings.
 
-6. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
+6. Screenshots may use any image dimensions, but their text and evidence must be clear and readable. Screenshots must be readable by OCR. A missing, unclear, cropped, or unreadable screenshot receives zero for that check.
 
-7. The required command and its relevant output must be visible. A screenshot containing only the command or only unrelated output may receive zero.
+7. A screenshot containing only a command, only filled but unsaved form fields, or unrelated output is not proof of completion. The required command and its relevant output must be visible.
 
-8. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
+8. Do not expose real passwords, password hashes, private SSH keys, access tokens, recovery codes or other secrets in a screenshot or solution file. Supplied training-only example values may appear where the task requires them.
 
-9. Do not expose passwords, private SSH keys, access tokens, recovery codes, or other secrets. It is acceptable to show a public-key entry or fingerprint without revealing private key contents.
+9. Exact and visually near-duplicate screenshots are compared across students for the same task. If two students submit the same or slightly modified screenshot, both receive zero for that task.
 
-10. Commit and push the complete `Labs/Lab04` directory to `DevOps` before the deadline. Files remaining only on your computer cannot be graded.
+10. Commit and push the complete `Labs/Lab04` directory to your `DevOps` repository before the deadline. Files that remain only on your computer cannot be graded.
 
-### Required Automated-Grading Filenames
+### Required Screenshot Filenames
 
 These are the 15 required Lab 4 screenshot filenames:
 
@@ -136,6 +138,16 @@ mongo_file_prod.png
 ```
 
 Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. Automated grading requires a configured Lab 4 grader.
+
+### Exam Evaluation Screenshot Filenames
+
+The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+
+```text
+Q1_missing_environment.png
+Q2_file_source_selection.png
+Q3_wrong_file_password.png
+```
 
 ---
 
@@ -600,6 +612,10 @@ Complete this during Task 6, before replacing the environment-variable code.
 2. Explain which `os.getenv()` call returned no value and why the `if` statement stopped the program.
 3. Restore `export MONGO_DATABASE=school_prod` and confirm that the program connects again.
 
+**Screenshot Required:**
+
+- `Q1_missing_environment.png`
+
 ### 2. Which Source Does the File Version Read?
 
 Complete this after Task 7.
@@ -615,6 +631,10 @@ Complete this after Task 7.
 2. Explain why this version connects to dev even though the shell still contains the prod connection settings.
 3. Select `APP_ENV=test` and verify the test connection.
 
+**Screenshot Required:**
+
+- `Q2_file_source_selection.png`
+
 ### 3. A Wrong Password in the File
 
 1. Open the local `credentials.ini`. In the `[test]` section only, temporarily set `password = wrong`. Keep the username, endpoint and database name unchanged.
@@ -628,6 +648,10 @@ Complete this after Task 7.
    - Screenshot as `Q3_wrong_file_password.png`, showing the authentication error without displaying the file.
 3. Explain why selecting the right endpoint does not make an incorrect password valid.
 4. Restore the supplied test dummy password, run again successfully, then restore `APP_ENV=prod`. Do not commit the credential file.
+
+**Screenshot Required:**
+
+- `Q3_wrong_file_password.png`
 
 ---
 
