@@ -89,7 +89,7 @@ Read these rules before starting. Each required screenshot is evaluated separate
 
 ### Required Screenshot Filenames
 
-The current Lab 2 grader checks these 37 files:
+Lab 2 requires these 37 guided-task screenshots. Save them inside `Labs/Lab02/screenshots/` using the exact filenames below:
 
 ```text
 git_installation.png
