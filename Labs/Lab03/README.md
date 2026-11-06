@@ -71,6 +71,8 @@ By the end of this lab, you will be able to:
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
+
 1. For Ubuntu server work, use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
@@ -177,7 +179,7 @@ live_site.png
 
 ### Exam Evaluation Screenshot Filenames
 
-The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+The existing exam questions use the following filenames. Save this practice evidence in the same `screenshots/` directory. These screenshots are not graded and do not count toward the lab marks:
 
 ```text
 Q1_remote_edit.png
@@ -945,6 +947,7 @@ This task will guide you through creating a personal portfolio/static site using
 
 ## Exam Evaluation Questions
 
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
 
 ### 1. Local vs Remote Conflict Resolution
 
@@ -1052,7 +1055,7 @@ This task will guide you through creating a personal portfolio/static site using
 ---
 
 **Reminder:**  
-Take a screenshot after every step and name it as shown above. Include all screenshots in your submission for full credit.
+Take a screenshot after every exam-practice step and name it as shown above. Include these screenshots with your practice answers; they are not graded.
 
 ## Summary
 

@@ -73,6 +73,8 @@ The repository configures the IDE terminal prompt to display the host user's nam
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
+
 1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text

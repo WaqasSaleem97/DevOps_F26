@@ -52,6 +52,8 @@ DevOps/
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
+
 1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
@@ -129,7 +131,7 @@ remote_branch_deleted.png
 remote_branch_delete_cmd.png
 ```
 
-Each of these 37 checks has equal weight. Bonus and additional exam-practice screenshots may be reviewed separately and are not included in these 37 automated checks.
+Each of these 37 checks has equal weight. Bonus screenshots may be reviewed separately and are not included in these 37 automated checks. Exam evaluation screenshots are for practice only, are not graded and do not count toward the lab marks.
 
 ### Bonus Task Screenshot Filenames
 
@@ -142,7 +144,7 @@ collab_merge.png
 
 ### Exam Evaluation Screenshot Filenames
 
-The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+The existing exam questions use the following filenames. Save this practice evidence in the same `screenshots/` directory. These screenshots are not graded and do not count toward the lab marks:
 
 ```text
 Q1_branch_created.png
@@ -532,7 +534,7 @@ The bonus screenshots are not included in the 37 mandatory automated checks.
 
 ## Exam Evaluation Questions
 
-The three `Q1_*.png` files listed in the mandatory filename section are part of the current automated score. `Q1_merge_history.png`, Q2, and Q3 evidence are additional exam-practice evidence and may be reviewed separately.
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
 
 1. **Advanced Branching & Merge Verification**  
    - Create a new branch in your repository.  

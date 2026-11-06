@@ -82,6 +82,8 @@ Keep your Ubuntu terminal visible when capturing evidence from Windows over SSH.
 
 Read these rules before starting. Each required screenshot is evaluated separately.
 
+**Exam evaluation screenshots are not graded.** They are for practice only and do not count toward the lab marks.
+
 1. Use an Ubuntu account whose terminal prompt shows your registered GitHub username before `@` and `ubuntu` as the hostname:
 
    ```text
@@ -137,11 +139,11 @@ mongo_file_test.png
 mongo_file_prod.png
 ```
 
-Each check has equal weight. The three `Q*.png` exam-practice screenshots are reviewed separately. Automated grading requires a configured Lab 4 grader.
+Each check has equal weight. The three `Q*.png` exam-practice screenshots are not graded and do not count toward the lab marks. Automated grading requires a configured Lab 4 grader.
 
 ### Exam Evaluation Screenshot Filenames
 
-The existing exam questions use the following filenames. Save this evidence in the same `screenshots/` directory and follow the marking notes in those questions:
+The existing exam questions use the following filenames. Save this practice evidence in the same `screenshots/` directory. These screenshots are not graded and do not count toward the lab marks:
 
 ```text
 Q1_missing_environment.png
@@ -595,7 +597,7 @@ Complete **Exam Questions 2 and 3** after this task. Keep the file version as yo
 
 ## Exam Evaluation Questions
 
-Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam-practice screenshots are not included in the 15 mandatory checks.
+Write your predictions, results and explanations in `Lab4_Solution.pdf`. The three exam-practice screenshots are not graded and do not count toward the lab marks or the 15 mandatory checks.
 
 ### 1. A Missing Environment Variable
 
