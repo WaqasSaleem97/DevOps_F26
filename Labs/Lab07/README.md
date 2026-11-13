@@ -5,7 +5,7 @@
 **Submission directory:** `Labs/Lab07`  
 **Screenshot directory:** `Labs/Lab07/screenshots`
 
-Install Docker and Docker Compose on your Ubuntu server if they are missing. If both tools are already installed, go directly to the version checks in Task 1. Then use Docker to run two versions of PostgreSQL in separate containers.
+Install Docker and Docker Compose on your Ubuntu server if they are missing. If both tools are already installed, go directly to the version checks in Task 1. Then run two versions of PostgreSQL in separate containers and practice listing, stopping and removing Docker containers and images.
 
 ```text
 DevOps/
@@ -16,7 +16,11 @@ DevOps/
             ├── docker_installation.png
             ├── postgres_missing_password.png
             ├── postgres_96_running.png
-            └── postgres_both_versions.png
+            ├── postgres_both_versions.png
+            ├── docker_info.png
+            ├── docker_search_ubuntu.png
+            ├── ubuntu_container_status.png
+            └── postgres_96_cleanup.png
 ```
 
 The instructor supplies this README. Create your own `screenshots/` directory in your `DevOps/Labs/Lab07` submission.
@@ -29,6 +33,8 @@ By the end of the published tasks, you will be able to:
 - Check the installed Docker and Docker Compose versions.
 - Pull a PostgreSQL image by its tag and identify a missing initialization password.
 - Start two PostgreSQL containers in the background and identify their image tags with `docker ps`.
+- Inspect the Docker installation, list local images and search Docker Hub.
+- Compare running and stopped containers, then restart, stop and remove a lab container and remove its image tag.
 
 ## Prerequisites
 
@@ -44,7 +50,8 @@ By the end of the published tasks, you will be able to:
 - [Getting Started](#getting-started)
 - [Task 1: Install Docker and Docker Compose](#task-1-install-docker-and-docker-compose)
 - [Task 2: Run Two PostgreSQL Versions in Docker](#task-2-run-two-postgresql-versions-in-docker)
-- [Task 3](#task-3)
+- [Task 3: Inspect Docker and Manage Containers and Images](#task-3-inspect-docker-and-manage-containers-and-images)
+- [Task 4](#task-4)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -67,7 +74,7 @@ Read these rules before starting.
    The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
 2. Show your `YourGitHubUsername@ubuntu` prompt, the required commands and their output.
-3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Task 2, follow the screenshot instructions under the corresponding steps.
+3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Tasks 2 and 3, follow the screenshot instructions under the corresponding steps. When a step asks for multiple commands in one screenshot, keep them together.
 4. Save your screenshots inside `Labs/Lab07/screenshots/`.
 5. Use the exact filenames and capitalization given below.
 6. Keep the terminal text clear and readable.
@@ -78,13 +85,17 @@ Read these rules before starting.
 
 ### Required Screenshot Filenames
 
-Lab 7 currently requires these 4 guided-task screenshots. Save them inside `Labs/Lab07/screenshots/` using the exact filenames below:
+Lab 7 currently requires these 8 guided-task screenshots. Save them inside `Labs/Lab07/screenshots/` using the exact filenames below:
 
 ```text
 docker_installation.png
 postgres_missing_password.png
 postgres_96_running.png
 postgres_both_versions.png
+docker_info.png
+docker_search_ubuntu.png
+ubuntu_container_status.png
+postgres_96_cleanup.png
 ```
 
 ---
@@ -206,7 +217,66 @@ Run all commands from the same Ubuntu terminal. The value `password` is a dummy 
 
 ---
 
-## Task 3
+## Task 3: Inspect Docker and Manage Containers and Images
+
+Use the same Ubuntu server as Task 2. Keep the running `postgres:9.6` container until Step 4.
+
+1. Display information about the Docker installation:
+
+   ```bash
+   docker info
+   ```
+
+   - Screenshot as `docker_info.png`, showing the command and the Docker server details.
+
+2. Search Docker Hub for Ubuntu images:
+
+   ```bash
+   docker search ubuntu
+   ```
+
+   - Screenshot as `docker_search_ubuntu.png`, showing the command and the search result for the official `ubuntu` image.
+
+3. List local images, start an Ubuntu container, and compare the two container lists. Run the four commands in order. Give the new Ubuntu container a moment to exit before running `docker ps`.
+
+   ```bash
+   docker images
+   docker run -d ubuntu
+   docker ps
+   docker ps -a
+   ```
+
+   The new Ubuntu container exits because its default process has no interactive session or other work to keep it running. Match the container ID returned by `docker run` to the `CONTAINER ID` column. The new container is absent from `docker ps` because that command lists only running containers. In `docker ps -a`, find it under the `ubuntu` image with an `Exited` status.
+
+   - Screenshot as `ubuntu_container_status.png`. Show all four commands and their relevant output in **one screenshot**, including the running-only list and the `Exited` Ubuntu container in the full list.
+
+4. Restart, stop and remove the PostgreSQL 9.6 container, then remove its image tag.
+
+   In the `docker ps -a` output, find the **running** row with `postgres:9.6` in the `IMAGE` column. Copy the value from its `NAMES` column and substitute it for `<postgres-96-container-name>` in the first three commands.
+
+   If the missing-password attempt from Task 2 still appears as a separate `Exited` row for `postgres:9.6`, remove that failed lab container first with `docker rm <failed-container-name-or-id>` using its actual name or ID. A stopped container can still prevent image removal. This preparation does not require a screenshot.
+
+   ```bash
+   docker restart <postgres-96-container-name>
+   docker stop <postgres-96-container-name>
+   docker rm <postgres-96-container-name>
+   docker rmi postgres:9.6
+   ```
+
+   Leave the `postgres:10.10` container running.
+
+   - Screenshot as `postgres_96_cleanup.png`. Show all four commands and their results in **one screenshot**.
+
+**Screenshot Required:**
+
+- `docker_info.png`
+- `docker_search_ubuntu.png`
+- `ubuntu_container_status.png`
+- `postgres_96_cleanup.png`
+
+---
+
+## Task 4
 
 Continue
 
@@ -217,18 +287,22 @@ Continue
 - Docker and Docker Compose are installed or were already available on your Ubuntu server.
 - You checked both tool versions and captured them in one screenshot.
 - You observed the PostgreSQL initialization error, supplied the password, and confirmed that both PostgreSQL versions were running.
+- You inspected Docker, searched Docker Hub for Ubuntu and found the exited Ubuntu container in `docker ps -a`.
+- You restarted, stopped and removed the PostgreSQL 9.6 container, then removed its image tag.
 
 ## Final Submission Checklist
 
 - [ ] Both version commands show their installed versions in my Ubuntu terminal.
 - [ ] My `YourGitHubUsername@ubuntu` prompt and both command outputs are readable in `Labs/Lab07/screenshots/docker_installation.png`.
 - [ ] I captured the missing-password error, the running PostgreSQL 9.6 container, and both containers running together.
-- [ ] All four screenshots use the exact required filenames in `Labs/Lab07/screenshots/`.
+- [ ] I saved separate screenshots for `docker info` and `docker search ubuntu`.
+- [ ] I captured the four Ubuntu commands in one screenshot and the four PostgreSQL 9.6 commands in another.
+- [ ] All eight screenshots use the exact required filenames in `Labs/Lab07/screenshots/`.
 - [ ] My complete `DevOps/Labs/Lab07` directory is visible on GitHub after all tasks are complete.
 
 ## Submission
 
-Save your Task 1 and Task 2 screenshots now. Submit the URL of your `DevOps/Labs/Lab07` directory after all Lab 7 tasks are published and completed.
+Save your screenshots for Tasks 1–3 now. Submit the URL of your `DevOps/Labs/Lab07` directory after all Lab 7 tasks are published and completed.
 
 ## Official References
 
@@ -237,3 +311,7 @@ Save your Task 1 and Task 2 screenshots now. Submit the URL of your `DevOps/Labs
 - [Docker: Run containers in the foreground or background](https://docs.docker.com/engine/containers/run/#foreground-and-background)
 - [Docker: List running containers](https://docs.docker.com/reference/cli/docker/container/ls/)
 - [Docker Hub: PostgreSQL Official Image](https://hub.docker.com/_/postgres)
+- [Docker: Display Docker system information](https://docs.docker.com/reference/cli/docker/system/info/)
+- [Docker: Search Docker Hub for images](https://docs.docker.com/reference/cli/docker/search/)
+- [Docker: Restart a container](https://docs.docker.com/reference/cli/docker/container/restart/)
+- [Docker: Remove an image](https://docs.docker.com/reference/cli/docker/image/rm/)
