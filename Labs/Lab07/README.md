@@ -67,7 +67,7 @@ Read these rules before starting.
    The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
 2. Show your `YourGitHubUsername@ubuntu` prompt, the required commands and their output.
-3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Task 2, capture the evidence listed under the task.
+3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Task 2, follow the screenshot instructions under the corresponding steps.
 4. Save your screenshots inside `Labs/Lab07/screenshots/`.
 5. Use the exact filenames and capitalization given below.
 6. Keep the terminal text clear and readable.
@@ -138,9 +138,11 @@ mkdir -p Labs/Lab07/screenshots
 
    Both commands must display their installed versions.
 
+   - Screenshot as `docker_installation.png`, showing both version commands, their outputs and your Ubuntu terminal prompt.
+
 **Screenshot Required:**
 
-- `docker_installation.png` — one screenshot showing `docker --version`, `docker compose version`, both outputs and your Ubuntu terminal prompt.
+- `docker_installation.png`
 
 ---
 
@@ -160,7 +162,9 @@ Run all commands from the same Ubuntu terminal. The value `password` is a dummy 
    docker run postgres:9.6
    ```
 
-   This attempt is expected to exit with an error because `POSTGRES_PASSWORD` was not supplied for the new database. Capture the command and the error before continuing.
+   This attempt is expected to exit with an error because `POSTGRES_PASSWORD` was not supplied for the new database.
+
+   - Screenshot as `postgres_missing_password.png`, showing `docker run postgres:9.6` and the missing-password error.
 
 3. Start a new PostgreSQL 9.6 container with the password set. The `-d` flag runs it in the background and returns control to your terminal:
 
@@ -176,6 +180,8 @@ Run all commands from the same Ubuntu terminal. The value `password` is a dummy 
 
    Check that `postgres:9.6` appears in the `IMAGE` column and its status is `Up`.
 
+   - Screenshot as `postgres_96_running.png`, showing `docker ps` and the running `postgres:9.6` container.
+
 5. Start a PostgreSQL 10.10 container in the background:
 
    ```bash
@@ -190,11 +196,13 @@ Run all commands from the same Ubuntu terminal. The value `password` is a dummy 
 
    Confirm that `postgres:9.6` and `postgres:10.10` both appear in the `IMAGE` column with an `Up` status.
 
+   - Screenshot as `postgres_both_versions.png`, showing `docker ps` and both running PostgreSQL containers.
+
 **Screenshot Required:**
 
-- `postgres_missing_password.png` — show `docker run postgres:9.6` and the missing-password error.
-- `postgres_96_running.png` — show the first `docker ps` command and the running `postgres:9.6` container.
-- `postgres_both_versions.png` — show the final `docker ps` command and both running PostgreSQL containers.
+- `postgres_missing_password.png`
+- `postgres_96_running.png`
+- `postgres_both_versions.png`
 
 ---
 
