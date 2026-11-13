@@ -1,11 +1,11 @@
-# Lab 7: Docker Setup and PostgreSQL Containers
+# Lab 7: Docker Containers and Images
 
 **Execution environment:** Your assigned Ubuntu server  
 **Submission repository:** `DevOps`  
 **Submission directory:** `Labs/Lab07`  
 **Screenshot directory:** `Labs/Lab07/screenshots`
 
-Install Docker and Docker Compose on your Ubuntu server if they are missing. If both tools are already installed, go directly to the version checks in Task 1. Then run two versions of PostgreSQL in separate containers and practice listing, stopping and removing Docker containers and images.
+Install Docker and Docker Compose on your Ubuntu server if they are missing. If both tools are already installed, go directly to the version checks in Task 1. Then run PostgreSQL and NGINX in Docker, manage containers and images, and save changes from an NGINX container to a new image.
 
 ```text
 DevOps/
@@ -20,7 +20,16 @@ DevOps/
             ├── docker_info.png
             ├── docker_search_ubuntu.png
             ├── ubuntu_container_status.png
-            └── postgres_96_cleanup.png
+            ├── postgres_96_cleanup.png
+            ├── nginx_containers_started.png
+            ├── nginx_latest_page.png
+            ├── nginx_older_page.png
+            ├── nginx_latest_logs.png
+            ├── nginx_attach_detach.png
+            ├── nginx_exec_shell.png
+            ├── nginx_diff.png
+            ├── nginx_inspect.png
+            └── nginx_commit.png
 ```
 
 The instructor supplies this README. Create your own `screenshots/` directory in your `DevOps/Labs/Lab07` submission.
@@ -35,13 +44,16 @@ By the end of the published tasks, you will be able to:
 - Start two PostgreSQL containers in the background and identify their image tags with `docker ps`.
 - Inspect the Docker installation, list local images and search Docker Hub.
 - Compare running and stopped containers, then restart, stop and remove a lab container and remove its image tag.
+- Run two NGINX containers on different host ports, open both welcome pages and view the container logs.
+- Attach to the main process, open a separate shell, inspect filesystem changes and save a new image.
 
 ## Prerequisites
 
 - Use your assigned Ubuntu server and the account prepared in the earlier labs.
 - Your Ubuntu username matches your registered GitHub username, and your hostname is `ubuntu`.
-- Have internet access to pull the PostgreSQL images and `sudo` access if Docker installation is needed.
+- Have internet access to pull the images and `sudo` access if Docker installation is needed.
 - The Compose download command below is for an `x86_64` Ubuntu server.
+- Have a browser that can reach your Ubuntu server on ports `6001` and `6002`. These ports must be free before starting Task 4.
 
 ## Task List
 
@@ -51,7 +63,8 @@ By the end of the published tasks, you will be able to:
 - [Task 1: Install Docker and Docker Compose](#task-1-install-docker-and-docker-compose)
 - [Task 2: Run Two PostgreSQL Versions in Docker](#task-2-run-two-postgresql-versions-in-docker)
 - [Task 3: Inspect Docker and Manage Containers and Images](#task-3-inspect-docker-and-manage-containers-and-images)
-- [Task 4](#task-4)
+- [Task 4: Run Two NGINX Containers on Different Ports](#task-4-run-two-nginx-containers-on-different-ports)
+- [Task 5: Work Inside a Container and Save a New Image](#task-5-work-inside-a-container-and-save-a-new-image)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -73,8 +86,8 @@ Read these rules before starting.
 
    The comparison is case-insensitive, but the spelling must match the `user_name` registered in the Student Marks Portal.
 
-2. Show your `YourGitHubUsername@ubuntu` prompt, the required commands and their output.
-3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Tasks 2 and 3, follow the screenshot instructions under the corresponding steps. When a step asks for multiple commands in one screenshot, keep them together.
+2. For terminal evidence, show your `YourGitHubUsername@ubuntu` prompt, the required commands and their output. For browser evidence, show the page and its address bar with your Ubuntu terminal prompt visible beside it.
+3. In Task 1, capture both version checks in one screenshot. No screenshots of the installation steps are required. In Tasks 2–5, follow the screenshot instructions under the corresponding steps. When a step asks for multiple commands in one screenshot, keep them together.
 4. Save your screenshots inside `Labs/Lab07/screenshots/`.
 5. Use the exact filenames and capitalization given below.
 6. Keep the terminal text clear and readable.
@@ -85,7 +98,7 @@ Read these rules before starting.
 
 ### Required Screenshot Filenames
 
-Lab 7 currently requires these 8 guided-task screenshots. Save them inside `Labs/Lab07/screenshots/` using the exact filenames below:
+Lab 7 requires these 17 guided-task screenshots. Save them inside `Labs/Lab07/screenshots/` using the exact filenames below:
 
 ```text
 docker_installation.png
@@ -96,6 +109,15 @@ docker_info.png
 docker_search_ubuntu.png
 ubuntu_container_status.png
 postgres_96_cleanup.png
+nginx_containers_started.png
+nginx_latest_page.png
+nginx_older_page.png
+nginx_latest_logs.png
+nginx_attach_detach.png
+nginx_exec_shell.png
+nginx_diff.png
+nginx_inspect.png
+nginx_commit.png
 ```
 
 ---
@@ -276,9 +298,118 @@ Use the same Ubuntu server as Task 2. Keep the running `postgres:9.6` container 
 
 ---
 
-## Task 4
+## Task 4: Run Two NGINX Containers on Different Ports
 
-Continue
+Run these commands on the Ubuntu server. Each NGINX container listens on port 80 inside Docker. Publish them on different host ports so both pages can be opened from your browser.
+
+1. Start the two containers:
+
+   ```bash
+   docker run -dit -p 6001:80 --name nginx-latest nginx
+   docker run -d -p 6002:80 --name nginx-older nginx:1.30.6
+   ```
+
+   The first command uses the default `latest` tag. The second uses the published `1.30.6` tag. Both containers run in the background. The first also uses `-i` and `-t` so you can detach from it using the keyboard in Task 5.
+
+   - Screenshot as `nginx_containers_started.png`, showing both `docker run` commands and their returned container IDs.
+
+2. Open `http://<server-ip>:6001` in your browser. Replace `<server-ip>` with the address of your Ubuntu server. Confirm that you see the default NGINX welcome page from `nginx-latest`.
+
+   - Screenshot as `nginx_latest_page.png`, showing the welcome page, the address bar with port `6001`, and your Ubuntu terminal prompt beside the browser.
+
+3. Open `http://<server-ip>:6002` in another tab. Confirm that you see the default NGINX welcome page from `nginx-older`.
+
+   - Screenshot as `nginx_older_page.png`, showing the welcome page, the address bar with port `6002`, and your Ubuntu terminal prompt beside the browser.
+
+4. View the logs from `nginx-latest`:
+
+   ```bash
+   docker logs nginx-latest
+   ```
+
+   Look for the access log entry from opening the page on port `6001`.
+
+   - Screenshot as `nginx_latest_logs.png`, showing `docker logs nginx-latest` and a request from your browser.
+
+**Screenshot Required:**
+
+- `nginx_containers_started.png`
+- `nginx_latest_page.png`
+- `nginx_older_page.png`
+- `nginx_latest_logs.png`
+
+---
+
+## Task 5: Work Inside a Container and Save a New Image
+
+Use the running `nginx-latest` container from Task 4.
+
+1. Attach to the running NGINX process:
+
+   ```bash
+   docker attach nginx-latest
+   ```
+
+   This connects your terminal to the container's main process. It does not open a shell. Refresh the port `6001` page in your browser to see a new request in the attached terminal. Press **Ctrl+P**, then **Ctrl+Q** to detach and return to your Ubuntu prompt while NGINX keeps running.
+
+   - Screenshot as `nginx_attach_detach.png`, showing `docker attach nginx-latest`, the request log and your Ubuntu prompt after detaching.
+
+2. Open a separate shell inside the same container:
+
+   ```bash
+   docker exec -it nginx-latest /bin/sh
+   ```
+
+   Run the following commands inside the container. List the root directory, create two files in the NGINX web directory, remove `oldfile.html`, and view the environment variables. `exit` closes this shell and returns you to Ubuntu.
+
+   ```sh
+   ls /
+   touch /usr/share/nginx/html/newfile.html
+   touch /usr/share/nginx/html/oldfile.html
+   rm /usr/share/nginx/html/oldfile.html
+   printenv
+   exit
+   ```
+
+   - Screenshot as `nginx_exec_shell.png`, showing the `docker exec` command, the commands run inside the shell, their relevant output and your return to the Ubuntu prompt.
+
+3. On the Ubuntu server, compare the container filesystem with its starting state:
+
+   ```bash
+   docker diff nginx-latest
+   ```
+
+   Look for `A /usr/share/nginx/html/newfile.html`. The `A` marks an added file. `oldfile.html` was created and removed during the same exercise, so it should not appear as a remaining change.
+
+   - Screenshot as `nginx_diff.png`, showing `docker diff nginx-latest` and the added `newfile.html`.
+
+4. Inspect the container's configuration and state:
+
+   ```bash
+   docker inspect nginx-latest
+   ```
+
+   Look for the running state and the port mapping in the JSON output.
+
+   - Screenshot as `nginx_inspect.png`, showing the command and the container state near the start of the output.
+
+5. Save the container's filesystem changes as a new local image:
+
+   ```bash
+   docker commit nginx-latest nginx:myimage
+   ```
+
+   Docker creates the image tagged `nginx:myimage` and prints its image ID.
+
+   - Screenshot as `nginx_commit.png`, showing the commit command and the returned image ID.
+
+**Screenshot Required:**
+
+- `nginx_attach_detach.png`
+- `nginx_exec_shell.png`
+- `nginx_diff.png`
+- `nginx_inspect.png`
+- `nginx_commit.png`
 
 ---
 
@@ -289,6 +420,8 @@ Continue
 - You observed the PostgreSQL initialization error, supplied the password, and confirmed that both PostgreSQL versions were running.
 - You inspected Docker, searched Docker Hub for Ubuntu and found the exited Ubuntu container in `docker ps -a`.
 - You restarted, stopped and removed the PostgreSQL 9.6 container, then removed its image tag.
+- You opened both NGINX welcome pages on different host ports and checked the request log.
+- You attached to NGINX, changed files in a separate shell, inspected the container and saved `nginx:myimage`.
 
 ## Final Submission Checklist
 
@@ -297,12 +430,14 @@ Continue
 - [ ] I captured the missing-password error, the running PostgreSQL 9.6 container, and both containers running together.
 - [ ] I saved separate screenshots for `docker info` and `docker search ubuntu`.
 - [ ] I captured the four Ubuntu commands in one screenshot and the four PostgreSQL 9.6 commands in another.
-- [ ] All eight screenshots use the exact required filenames in `Labs/Lab07/screenshots/`.
+- [ ] I captured both NGINX welcome pages with their ports visible and viewed the logs from `nginx-latest`.
+- [ ] I detached from NGINX, ran the shell commands, checked the filesystem changes and saved `nginx:myimage`.
+- [ ] All 17 screenshots use the exact required filenames in `Labs/Lab07/screenshots/`.
 - [ ] My complete `DevOps/Labs/Lab07` directory is visible on GitHub after all tasks are complete.
 
 ## Submission
 
-Save your screenshots for Tasks 1–3 now. Submit the URL of your `DevOps/Labs/Lab07` directory after all Lab 7 tasks are published and completed.
+Submit the URL of your `DevOps/Labs/Lab07` directory after completing all five tasks and saving the required screenshots.
 
 ## Official References
 
@@ -315,3 +450,10 @@ Save your screenshots for Tasks 1–3 now. Submit the URL of your `DevOps/Labs/L
 - [Docker: Search Docker Hub for images](https://docs.docker.com/reference/cli/docker/search/)
 - [Docker: Restart a container](https://docs.docker.com/reference/cli/docker/container/restart/)
 - [Docker: Remove an image](https://docs.docker.com/reference/cli/docker/image/rm/)
+- [Docker Hub: NGINX Official Image](https://hub.docker.com/_/nginx)
+- [Docker: View container logs](https://docs.docker.com/reference/cli/docker/container/logs/)
+- [Docker: Attach to a running container](https://docs.docker.com/reference/cli/docker/container/attach/)
+- [Docker: Run a command in a running container](https://docs.docker.com/reference/cli/docker/container/exec/)
+- [Docker: View filesystem changes](https://docs.docker.com/reference/cli/docker/container/diff/)
+- [Docker: Inspect a container](https://docs.docker.com/reference/cli/docker/container/inspect/)
+- [Docker: Create an image from a container](https://docs.docker.com/reference/cli/docker/container/commit/)
