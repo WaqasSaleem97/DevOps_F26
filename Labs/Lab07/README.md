@@ -305,7 +305,7 @@ Run these commands on the Ubuntu server. Each NGINX container listens on port 80
 1. Start the two containers:
 
    ```bash
-   docker run -dit -p 6001:80 --name nginx-latest nginx
+   docker run -d -p 6001:80 --name nginx-latest nginx
    docker run -d -p 6002:80 --name nginx-older nginx:1.30.6
    ```
 
