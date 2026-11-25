@@ -1,4 +1,4 @@
-# Lab 8: Build Docker Images with Dockerfiles
+# Lab 8: Docker Images, Container Networking, and Amazon ECR
 
 **Execution environment:** Your assigned Ubuntu server  
 **Submission repository:** `DevOps`  
