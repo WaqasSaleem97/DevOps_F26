@@ -197,14 +197,16 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    FROM ubuntu
    LABEL maintainer="you@gmail.com"
    RUN apt-get update && apt-get install -y python3
-   COPY index.html /app/
-   WORKDIR /app
-   ENV PORT=3000
-   EXPOSE $PORT
-   CMD ["sh", "-c", "exec python3 -m http.server \"$PORT\" --bind 0.0.0.0"]
+   ENV APP_HOME=/app
+   WORKDIR $APP_HOME
+   COPY index.html .
+   EXPOSE 3000
+   CMD ["python3", "-m", "http.server", "3000", "--bind", "0.0.0.0"]
    ```
 
-   `ENV PORT=3000` sets the port variable and `EXPOSE $PORT` records the container's intended port. The square-bracket `CMD` uses `sh -c` to expand `$PORT`. `exec` starts Python's web server as the container's main process, serving the current `/app` directory. The server keeps running, so the container stays running.
+   **ENV situation:** The webpage's location must be configured in one place. `ENV APP_HOME=/app` supplies that directory to `WORKDIR $APP_HOME`, and `COPY index.html .` copies the page into it. Keep the `ENV` line before `WORKDIR`, because that instruction depends on its value. Changing `APP_HOME` and rebuilding places and serves the page from the new directory.
+
+   `EXPOSE 3000` records the container port. The square-bracket `CMD` starts Python's web server on the fixed port `3000`, serving the current working directory. The server keeps running, so the container stays running.
 
    - Screenshot as `task2_web_files.png`, showing the one-line HTML file, the complete Dockerfile and your Ubuntu terminal prompt. Place the two files side by side in your editor if needed.
 
@@ -244,7 +246,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
 - You built `my-ubuntu:1.0` and ran its default command to print a file.
 - You downloaded a public image during the build and viewed the container logs by container name.
-- You built `my-ubuntu:1.1` with a one-line HTML page and a web server.
+- You used `APP_HOME` to set the webpage directory and built `my-ubuntu:1.1` with a one-line HTML page and a web server on the fixed port `3000`.
 - You published port `3000` and viewed the running container's webpage in a browser.
 
 ## Final Submission Checklist
