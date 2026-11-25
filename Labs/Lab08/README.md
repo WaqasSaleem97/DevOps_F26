@@ -113,13 +113,11 @@ task3_entrypoint_build.png
 task3_entrypoint_run.png
 ```
 
-If you complete the bonus task, also save these 8 bonus screenshots in the same directory:
+If you complete the bonus task, also save these 6 bonus screenshots in the same directory:
 
 ```text
 bonus_aws_cli_version.png
 bonus_ecr_repository.png
-bonus_ecr_push_commands.png
-bonus_dockerfile.png
 bonus_ecr_login.png
 bonus_image_build.png
 bonus_image_push.png
@@ -445,10 +443,6 @@ The reference screenshots below show the instructor's example. Use your own AWS 
 
    Set **Repository name** to `my-app`, choose **Mutable** for image tags and **AES-256** for encryption, then choose **Create**.
 
-   ![Create a private repository named my-app with Mutable tags and AES-256 encryption](assets/ecr-repository-settings.png)
-
-   ![The private repository my-app has been created and selected](assets/ecr-repository-created.png)
-
    - Screenshot as `bonus_ecr_repository.png`, showing that the private repository `my-app` was created, its repository URI and Region, with your Ubuntu terminal prompt beside the browser.
 
 4. In the private repository list, select the **radio button** beside `my-app`, then choose **View push commands**. Select the **macOS / Linux** tab.
@@ -458,8 +452,6 @@ The reference screenshots below show the instructor's example. Use your own AWS 
    Read the four commands in the dialog. They log Docker in to ECR, build the image, add its ECR tag, and push it. Prepare the Dockerfile in the next step, then run these four commands one at a time in the order shown below.
 
    **Use your own registry address:** Copy the commands from your dialog. In the examples below, replace `YOUR_AWS_ACCOUNT_ID` with the 12-digit account ID in that dialog. If you chose another Region, replace `ap-southeast-1` everywhere with that Region.
-
-   - Screenshot as `bonus_ecr_push_commands.png`, showing all four commands in the `my-app` push dialog and your Ubuntu terminal prompt beside the browser.
 
 5. Create a separate directory for the bonus image:
 
@@ -479,8 +471,6 @@ The reference screenshots below show the instructor's example. Use your own AWS 
    ```
 
    The image will print `Hello from my-app` when run. Keep this terminal in `bonus-ecr` for the next steps so that Docker can find the Dockerfile.
-
-   - Screenshot as `bonus_dockerfile.png`, showing the complete Dockerfile and your Ubuntu terminal prompt.
 
 6. Run **command 1** from the push dialog to log Docker in to your registry:
 
@@ -530,8 +520,6 @@ The reference screenshots below show the instructor's example. Use your own AWS 
 
 - `bonus_aws_cli_version.png`
 - `bonus_ecr_repository.png`
-- `bonus_ecr_push_commands.png`
-- `bonus_dockerfile.png`
 - `bonus_ecr_login.png`
 - `bonus_image_build.png`
 - `bonus_image_push.png`
@@ -564,7 +552,7 @@ Continue
 - [ ] `my-ubuntu-web` is running and the webpage is visible on port `3000`.
 - [ ] Task 3 shows the default `CMD`, its replacement by `ls -l`, and both `ENTRYPOINT` runs.
 - [ ] All fourteen screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
-- [ ] If I completed the bonus task, `bonus-ecr/Dockerfile` and all eight bonus screenshots are saved, including ECR evidence of `my-app:latest`.
+- [ ] If I completed the bonus task, `bonus-ecr/Dockerfile` and all six bonus screenshots are saved, including ECR evidence of `my-app:latest`.
 - [ ] My complete `DevOps/Labs/Lab08` directory is visible on GitHub.
 
 ## Submission
