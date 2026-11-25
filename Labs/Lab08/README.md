@@ -572,11 +572,25 @@ The reference screenshots below show the instructor's example. Use your own AWS 
 
 Create a network named `app-net` and use the container name `nginx` to communicate between containers.
 
-1. On your Ubuntu host, create the network:
+1. On your Ubuntu host, list the existing networks:
+
+   ```bash
+   docker network ls
+   ```
+
+   Create the network:
 
    ```bash
    docker network create app-net
    ```
+
+   List the networks again:
+
+   ```bash
+   docker network ls
+   ```
+
+   Compare the two lists: `app-net` appears after creation with the `bridge` driver.
 
    Start NGINX on this network:
 
@@ -584,9 +598,9 @@ Create a network named `app-net` and use the container name `nginx` to communica
    docker run -d --name nginx --network app-net nginx:alpine
    ```
 
-   Both commands print an ID. Docker creates a bridge network by default. Containers on this user-defined network can find each other by name.
+   The create and run commands print IDs. Containers on this user-defined network can find each other by name.
 
-   - Screenshot as `task4_network_setup.png`, showing both commands and their successful results in **one screenshot**.
+   - Screenshot as `task4_network_setup.png`, showing **all four commands in one screenshot**: the network list before creation, the create command, the updated network list containing `app-net`, and the NGINX start command with its result.
 
 2. Use a temporary Alpine container to ping NGINX by its container name:
 
