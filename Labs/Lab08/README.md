@@ -5,7 +5,7 @@
 **Submission directory:** `Labs/Lab08`  
 **Screenshot directory:** `Labs/Lab08/screenshots`
 
-Write Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`. Finally, compare how `CMD` and `ENTRYPOINT` handle arguments passed to `docker run`.
+Write Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`. Finally, compare how `CMD` and `ENTRYPOINT` handle arguments passed to `docker run`. The bonus task publishes a Docker image to AWS ECR.
 
 ```text
 DevOps/
@@ -22,11 +22,13 @@ DevOps/
         │   │   └── Dockerfile
         │   └── entrypoint/
         │       └── Dockerfile
+        ├── bonus-ecr/
+        │   └── Dockerfile
         └── screenshots/
-            └── (your fourteen required screenshots)
+            └── (your fourteen guided-task screenshots and bonus evidence)
 ```
 
-The instructor supplies this README. Create the task files and screenshots yourself.
+The instructor supplies this README. Create the task files and screenshots yourself. Create `bonus-ecr/` if you complete the bonus task.
 
 ## Lab Objective
 
@@ -37,6 +39,7 @@ By the end of this lab, you will be able to:
 - Use `ENV` and `EXPOSE` and publish a container port with `-p`.
 - Keep a container running by starting a web server as its main application.
 - Compare `CMD` and `ENTRYPOINT` by running images with and without extra arguments.
+- In the bonus task, install the AWS CLI and push a Docker image to a private ECR repository.
 
 ## Prerequisites
 
@@ -54,6 +57,7 @@ By the end of this lab, you will be able to:
 - [Task 1: Build an Ubuntu Image that Prints a File](#task-1-build-an-ubuntu-image-that-prints-a-file)
 - [Task 2: Serve an HTML Page on Port 3000](#task-2-serve-an-html-page-on-port-3000)
 - [Task 3: Compare CMD and ENTRYPOINT](#task-3-compare-cmd-and-entrypoint)
+- [Bonus Task: Publish a Docker Image to AWS ECR](#bonus-task-publish-a-docker-image-to-aws-ecr)
 - [Task 4](#task-4)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
@@ -105,6 +109,19 @@ task3_cmd_run.png
 task3_entrypoint_dockerfile.png
 task3_entrypoint_build.png
 task3_entrypoint_run.png
+```
+
+If you complete the bonus task, also save these 8 bonus screenshots in the same directory:
+
+```text
+bonus_aws_cli_version.png
+bonus_ecr_repository.png
+bonus_ecr_push_commands.png
+bonus_dockerfile.png
+bonus_ecr_login.png
+bonus_image_build.png
+bonus_image_push.png
+bonus_ecr_image.png
 ```
 
 ---
@@ -361,6 +378,153 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/task3/cmd Labs/Lab08/task3
 
 ---
 
+## Bonus Task: Publish a Docker Image to AWS ECR
+
+Install the AWS CLI, create a private Amazon Elastic Container Registry (ECR) repository, and publish a simple image as `my-app:latest`.
+
+**Before you start:** Use a 64-bit `x86_64` Ubuntu server for the installer below. Have an AWS account and an IAM identity with permission to create and view an ECR repository, authenticate Docker, and push images. Use the same AWS account and Region in the CLI and console. This example uses `ap-southeast-1`.
+
+1. Install the AWS CLI on your Ubuntu server. If AWS CLI v2 is already installed, skip the installation commands and run `aws --version` below. If `curl` or `unzip` is missing, install them first:
+
+   ```bash
+   sudo apt install -y curl unzip
+   ```
+
+   Keep the installer outside your `DevOps` repository:
+
+   ```bash
+   cd /tmp
+   ```
+
+   ```bash
+   curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   ```
+
+   ```bash
+   unzip awscliv2.zip
+   ```
+
+   ```bash
+   sudo ./aws/install
+   ```
+
+   Verify the installed version:
+
+   ```bash
+   aws --version
+   ```
+
+   - Screenshot as `bonus_aws_cli_version.png`, showing **only the `aws --version` command**, its installed version and your Ubuntu terminal prompt. Installation-command screenshots are not required.
+
+2. Configure the AWS CLI:
+
+   ```bash
+   aws configure
+   ```
+
+   Enter these four values when prompted:
+
+   - **AWS Access Key ID:** your access key ID.
+   - **AWS Secret Access Key:** your secret access key.
+   - **Default region name:** `ap-southeast-1`.
+   - **Default output format:** `json`.
+
+   **No screenshot is required for `aws configure` because it involves credentials.** Clear the configuration output from your terminal before capturing later screenshots. Keep your AWS credentials outside the Git repository; do not include `~/.aws/credentials` or `~/.aws/config` in your submission.
+
+3. In the [AWS Management Console](https://console.aws.amazon.com/), press **Alt+S**, type **ECR**, and select **Elastic Container Registry** from the search results. If the shortcut is intercepted by your browser, click the console search box.
+
+   Select **ap-southeast-1 (Singapore)** in the Region selector. On the ECR welcome page, choose **Create** under **Create a repository**. If you are already on the repository list, choose **Private registry → Repositories → Create repository**.
+
+   Set **Repository name** to `my-app`, choose **Mutable** for image tags and **AES-256** for encryption, then choose **Create**.
+
+   - Screenshot as `bonus_ecr_repository.png`, showing that the private repository `my-app` was created, its repository URI and Region, with your Ubuntu terminal prompt beside the browser.
+
+4. In the private repository list, select the **radio button** beside `my-app`, then choose **View push commands**. Select the **macOS / Linux** tab.
+
+   Read the four commands in the dialog. They log Docker in to ECR, build the image, add its ECR tag, and push it. Prepare the Dockerfile in the next step, then run these four commands one at a time in the order shown below.
+
+   **Use your own registry address:** Copy the commands from your dialog. In the examples below, replace `YOUR_AWS_ACCOUNT_ID` with the 12-digit account ID in that dialog. If you chose another Region, replace `ap-southeast-1` everywhere with that Region.
+
+   - Screenshot as `bonus_ecr_push_commands.png`, showing all four commands in the `my-app` push dialog and your Ubuntu terminal prompt beside the browser.
+
+5. Create a separate directory for the bonus image:
+
+   ```bash
+   mkdir -p ~/DevOps/Labs/Lab08/bonus-ecr
+   ```
+
+   ```bash
+   cd ~/DevOps/Labs/Lab08/bonus-ecr
+   ```
+
+   Create a file named exactly `Dockerfile` with this simple code:
+
+   ```dockerfile
+   FROM ubuntu
+   CMD ["echo", "Hello from my-app"]
+   ```
+
+   The image will print `Hello from my-app` when run. Keep this terminal in `bonus-ecr` for the next steps so that Docker can find the Dockerfile.
+
+   - Screenshot as `bonus_dockerfile.png`, showing the complete Dockerfile and your Ubuntu terminal prompt.
+
+6. Run **command 1** from the push dialog to log Docker in to your registry:
+
+   ```bash
+   aws ecr get-login-password --region ap-southeast-1 | docker login --username AWS --password-stdin YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com
+   ```
+
+   The AWS CLI obtains an ECR login token and passes it directly to Docker through `--password-stdin`. Successful authentication displays `Login Succeeded`.
+
+   - Screenshot as `bonus_ecr_login.png`, showing the login command and `Login Succeeded`. Keep all earlier credential-entry output out of the screenshot.
+
+7. Run **command 2** from the push dialog to build the image from your Dockerfile:
+
+   ```bash
+   docker build -t my-app .
+   ```
+
+   The final `.` is the current build directory. Docker uses the tag `latest` when no tag is supplied, so this creates the local image `my-app:latest`.
+
+   - Screenshot as `bonus_image_build.png`, showing the build command and its successful result.
+
+8. Run **command 3** from the push dialog to tag the local image with its ECR destination:
+
+   ```bash
+   docker tag my-app:latest YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/my-app:latest
+   ```
+
+   This adds an ECR name to the local image. It does not upload the image yet.
+
+   Run **command 4** to upload it:
+
+   ```bash
+   docker push YOUR_AWS_ACCOUNT_ID.dkr.ecr.ap-southeast-1.amazonaws.com/my-app:latest
+   ```
+
+   Wait for the push to finish. The output includes the uploaded image's digest.
+
+   - Screenshot as `bonus_image_push.png`, showing both commands in **one screenshot**, with the successful push and image digest.
+
+9. Return to the ECR console, close the push-command dialog, and open the **my-app** repository. Choose **Images** and refresh the list.
+
+   Confirm that the repository contains an image tagged **latest**. In ECR, `my-app` is the repository name and `latest` is its image tag; together they identify `my-app:latest`.
+
+   - Screenshot as `bonus_ecr_image.png`, showing the `my-app` repository name and the published image tagged `latest`, with the browser address bar and your Ubuntu terminal prompt beside it.
+
+**Screenshot Required (Bonus Task):**
+
+- `bonus_aws_cli_version.png`
+- `bonus_ecr_repository.png`
+- `bonus_ecr_push_commands.png`
+- `bonus_dockerfile.png`
+- `bonus_ecr_login.png`
+- `bonus_image_build.png`
+- `bonus_image_push.png`
+- `bonus_ecr_image.png`
+
+---
+
 ## Task 4
 
 Continue
@@ -374,6 +538,7 @@ Continue
 - You used `ENV PAGE_TITLE` and `RUN echo` to generate the HTML title and a fixed heading while building `my-ubuntu:1.1`, and served the page on the fixed port `3000`.
 - You published port `3000` and viewed the running container's webpage in a browser.
 - You replaced `CMD` with `ls -l` and appended `goodbye` to an `ENTRYPOINT` command.
+- If you completed the bonus task, you installed the AWS CLI and published `my-app:latest` to your private ECR repository.
 
 ## Final Submission Checklist
 
@@ -385,11 +550,12 @@ Continue
 - [ ] `my-ubuntu-web` is running and the webpage is visible on port `3000`.
 - [ ] Task 3 shows the default `CMD`, its replacement by `ls -l`, and both `ENTRYPOINT` runs.
 - [ ] All fourteen screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
+- [ ] If I completed the bonus task, `bonus-ecr/Dockerfile` and all eight bonus screenshots are saved, including ECR evidence of `my-app:latest`.
 - [ ] My complete `DevOps/Labs/Lab08` directory is visible on GitHub.
 
 ## Submission
 
-Save your files and screenshots for Tasks 1–3 now. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
+Save your files and screenshots for Tasks 1–3 now. Include the bonus task files and screenshots if you complete it. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
 
 ## Official References
 
@@ -399,3 +565,10 @@ Save your files and screenshots for Tasks 1–3 now. Submit the URL of your own 
 - [Docker: Port publishing and mapping](https://docs.docker.com/engine/network/port-publishing/)
 - [Python: Simple HTTP server](https://docs.python.org/3/library/http.server.html)
 - [Python: Public logo image used by ADD](https://www.python.org/static/community_logos/python-logo.png)
+- [AWS: Install AWS CLI v2 on Linux](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [AWS: Configure the AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/configure/)
+- [AWS: Search for services in the console](https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/unified-search-regular.html)
+- [AWS: Create a private ECR repository](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-create.html)
+- [AWS: IAM permissions for pushing images](https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-push-iam.html)
+- [AWS: Push a Docker image to ECR](https://docs.aws.amazon.com/AmazonECR/latest/userguide/docker-push-ecr-image.html)
+- [AWS: View images in a private ECR repository](https://docs.aws.amazon.com/AmazonECR/latest/userguide/repository-info.html)
