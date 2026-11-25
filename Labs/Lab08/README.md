@@ -5,7 +5,7 @@
 **Submission directory:** `Labs/Lab08`  
 **Screenshot directory:** `Labs/Lab08/screenshots`
 
-Write two Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`.
+Write Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`. Finally, compare how `CMD` and `ENTRYPOINT` handle arguments passed to `docker run`.
 
 ```text
 DevOps/
@@ -17,8 +17,13 @@ DevOps/
         │   └── myfile
         ├── task2/
         │   └── Dockerfile
+        ├── task3/
+        │   ├── cmd/
+        │   │   └── Dockerfile
+        │   └── entrypoint/
+        │       └── Dockerfile
         └── screenshots/
-            └── (your eight required screenshots)
+            └── (your fourteen required screenshots)
 ```
 
 The instructor supplies this README. Create the task files and screenshots yourself.
@@ -31,6 +36,7 @@ By the end of this lab, you will be able to:
 - Build and run an image, then read a container's logs.
 - Use `ENV` and `EXPOSE` and publish a container port with `-p`.
 - Keep a container running by starting a web server as its main application.
+- Compare `CMD` and `ENTRYPOINT` by running images with and without extra arguments.
 
 ## Prerequisites
 
@@ -47,7 +53,8 @@ By the end of this lab, you will be able to:
 - [Getting Started](#getting-started)
 - [Task 1: Build an Ubuntu Image that Prints a File](#task-1-build-an-ubuntu-image-that-prints-a-file)
 - [Task 2: Serve an HTML Page on Port 3000](#task-2-serve-an-html-page-on-port-3000)
-- [Task 3](#task-3)
+- [Task 3: Compare CMD and ENTRYPOINT](#task-3-compare-cmd-and-entrypoint)
+- [Task 4](#task-4)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -81,7 +88,7 @@ Read these rules before starting.
 
 ### Required Screenshot Filenames
 
-Lab 8 requires these 8 guided-task screenshots. Save them inside `Labs/Lab08/screenshots/` using the exact filenames below:
+Lab 8 requires these 14 guided-task screenshots. Save them inside `Labs/Lab08/screenshots/` using the exact filenames below:
 
 ```text
 task1_dockerfile.png
@@ -92,17 +99,23 @@ task2_web_files.png
 task2_image_build.png
 task2_container_running.png
 task2_webpage.png
+task3_cmd_dockerfile.png
+task3_cmd_build.png
+task3_cmd_run.png
+task3_entrypoint_dockerfile.png
+task3_entrypoint_build.png
+task3_entrypoint_run.png
 ```
 
 ---
 
 ## Getting Started
 
-In your existing `DevOps` repository, create the two task directories and the screenshot directory:
+In your existing `DevOps` repository, create the task directories and the screenshot directory:
 
 ```bash
 cd ~/DevOps
-mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
+mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/task3/cmd Labs/Lab08/task3/entrypoint Labs/Lab08/screenshots
 ```
 
 ---
@@ -239,7 +252,116 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
 ---
 
-## Task 3
+## Task 3: Compare CMD and ENTRYPOINT
+
+1. Create the first Dockerfile in the `task3/cmd` directory:
+
+   ```bash
+   cd ~/DevOps/Labs/Lab08/task3/cmd
+   ```
+
+   Create a file named exactly `Dockerfile` with this code:
+
+   ```dockerfile
+   FROM ubuntu
+   CMD ["echo", "Hello from CMD"]
+   ```
+
+   - Screenshot as `task3_cmd_dockerfile.png`, showing the complete Dockerfile and your Ubuntu terminal prompt.
+
+2. Build the image with the tag `my-image:cmd`:
+
+   ```bash
+   docker build -t my-image:cmd .
+   ```
+
+   - Screenshot as `task3_cmd_build.png`, showing the build command and its successful result.
+
+3. Run the image with its default command:
+
+   ```bash
+   docker run my-image:cmd
+   ```
+
+   Expected output:
+
+   ```text
+   Hello from CMD
+   ```
+
+   Run it again with a command after the image name:
+
+   ```bash
+   docker run my-image:cmd ls -l
+   ```
+
+   `ls -l` replaces the Dockerfile's `CMD`. This container lists the files and directories in its working directory instead of printing `Hello from CMD`. Each container exits after its command finishes.
+
+   - Screenshot as `task3_cmd_run.png`. Show both run commands in **one screenshot**, including `Hello from CMD` from the first run and the directory listing from the second run.
+
+4. Create the second Dockerfile in the `task3/entrypoint` directory:
+
+   ```bash
+   cd ~/DevOps/Labs/Lab08/task3/entrypoint
+   ```
+
+   Create a file named exactly `Dockerfile` with this code:
+
+   ```dockerfile
+   FROM ubuntu
+   ENTRYPOINT ["echo", "Hello from ENTRYPOINT"]
+   ```
+
+   - Screenshot as `task3_entrypoint_dockerfile.png`, showing the complete Dockerfile and your Ubuntu terminal prompt.
+
+5. Build the image with the tag `my-image:entrypoint`:
+
+   ```bash
+   docker build -t my-image:entrypoint .
+   ```
+
+   - Screenshot as `task3_entrypoint_build.png`, showing the build command and its successful result.
+
+6. Run the image with its entrypoint:
+
+   ```bash
+   docker run my-image:entrypoint
+   ```
+
+   Expected output:
+
+   ```text
+   Hello from ENTRYPOINT
+   ```
+
+   Run it again with `goodbye` after the image name:
+
+   ```bash
+   docker run my-image:entrypoint goodbye
+   ```
+
+   Expected output:
+
+   ```text
+   Hello from ENTRYPOINT goodbye
+   ```
+
+   With this square-bracket `ENTRYPOINT`, Docker appends `goodbye` to the existing command. The container runs `echo` with both `Hello from ENTRYPOINT` and `goodbye` as its arguments, then exits.
+
+   - Screenshot as `task3_entrypoint_run.png`. Show both run commands and their outputs in **one screenshot**.
+
+**Screenshot Required:**
+
+- `task3_cmd_dockerfile.png`
+- `task3_cmd_build.png`
+- `task3_cmd_run.png`
+- `task3_entrypoint_dockerfile.png`
+- `task3_entrypoint_build.png`
+- `task3_entrypoint_run.png`
+
+---
+
+## Task 4
 
 Continue
 
@@ -251,24 +373,28 @@ Continue
 - You downloaded a public image during the build and viewed the container logs by container name.
 - You used `ENV PAGE_TITLE` and `RUN echo` to generate the HTML title and a fixed heading while building `my-ubuntu:1.1`, and served the page on the fixed port `3000`.
 - You published port `3000` and viewed the running container's webpage in a browser.
+- You replaced `CMD` with `ls -l` and appended `goodbye` to an `ENTRYPOINT` command.
 
 ## Final Submission Checklist
 
 - [ ] Task 1 contains my `Dockerfile` and `myfile`.
 - [ ] Task 2 contains my `Dockerfile` with `ENV PAGE_TITLE` and `RUN echo` to generate `index.html` inside the image.
-- [ ] Both Docker images built successfully with the required tags.
+- [ ] Task 3 contains separate `cmd/Dockerfile` and `entrypoint/Dockerfile` files.
+- [ ] All four Docker images built successfully with the required tags.
 - [ ] The first container printed both lines and its logs show the same output.
 - [ ] `my-ubuntu-web` is running and the webpage is visible on port `3000`.
-- [ ] All eight screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
+- [ ] Task 3 shows the default `CMD`, its replacement by `ls -l`, and both `ENTRYPOINT` runs.
+- [ ] All fourteen screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
 - [ ] My complete `DevOps/Labs/Lab08` directory is visible on GitHub.
 
 ## Submission
 
-Save your Task 1 and Task 2 files and screenshots now. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
+Save your files and screenshots for Tasks 1–3 now. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
 
 ## Official References
 
 - [Docker: Dockerfile reference](https://docs.docker.com/reference/dockerfile/)
+- [Docker: How CMD and ENTRYPOINT interact](https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact)
 - [Docker: Container logs](https://docs.docker.com/reference/cli/docker/container/logs/)
 - [Docker: Port publishing and mapping](https://docs.docker.com/engine/network/port-publishing/)
 - [Python: Simple HTTP server](https://docs.python.org/3/library/http.server.html)
