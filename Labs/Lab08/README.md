@@ -198,7 +198,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    FROM ubuntu
    LABEL maintainer="you@gmail.com"
    RUN apt-get update && apt-get install -y python3
-   ENV PAGE_TITLE="Hello from Lab 8"
+   ENV PAGE_TITLE="Hello from DevOps"
    COPY index.html /app/
    WORKDIR /app
    RUN sed -i "s/PAGE_TITLE/$PAGE_TITLE/g" index.html
@@ -206,7 +206,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    CMD ["python3", "-m", "http.server", "3000", "--bind", "0.0.0.0"]
    ```
 
-   **ENV situation:** The webpage title must come from an environment variable. `ENV PAGE_TITLE="Hello from Lab 8"` provides the value. During the build, `RUN sed` replaces the `PAGE_TITLE` placeholders in the HTML title and heading with that value. Keep `ENV PAGE_TITLE` before this `RUN` instruction. To change the title, edit the `ENV` value and rebuild the image.
+   **ENV situation:** The webpage title must come from an environment variable. `ENV PAGE_TITLE="Hello from DevOps"` provides the value. During the build, `RUN sed` replaces the `PAGE_TITLE` placeholders in the HTML title and heading with that value. Keep `ENV PAGE_TITLE` before this `RUN` instruction. To change the title, edit the `ENV` value and rebuild the image.
 
    `EXPOSE 3000` records the container port. The square-bracket `CMD` starts Python's web server on the fixed port `3000`, serving the current working directory. The server keeps running, so the container stays running.
 
@@ -231,7 +231,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
    - Screenshot as `task2_container_running.png`, showing both commands and the `my-ubuntu-web` container with an `Up` status and the `3000` port mapping.
 
-4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that both the browser tab title and the page heading show **Hello from Lab 8**.
+4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that both the browser tab title and the page heading show **Hello from DevOps**.
 
    - Screenshot as `task2_webpage.png`, showing the browser tab title, the page heading, the address bar with port `3000`, and your Ubuntu terminal prompt beside the browser.
 
