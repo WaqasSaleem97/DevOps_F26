@@ -12,6 +12,8 @@ DevOps/
 └── Labs/
     └── Lab08/
         ├── README.md
+        ├── assets/
+        │   └── (instructor reference images)
         ├── task1/
         │   ├── Dockerfile
         │   └── myfile
@@ -28,7 +30,7 @@ DevOps/
             └── (your fourteen guided-task screenshots and bonus evidence)
 ```
 
-The instructor supplies this README. Create the task files and screenshots yourself. Create `bonus-ecr/` if you complete the bonus task.
+The instructor supplies this README and the reference images in `assets/`. Create the task files and screenshots yourself. Create `bonus-ecr/` if you complete the bonus task.
 
 ## Lab Objective
 
@@ -382,6 +384,8 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/task3/cmd Labs/Lab08/task3
 
 Install the AWS CLI, create a private Amazon Elastic Container Registry (ECR) repository, and publish a simple image as `my-app:latest`.
 
+The reference screenshots below show the instructor's example. Use your own AWS account and capture your own required screenshots.
+
 **Before you start:** Use a 64-bit `x86_64` Ubuntu server for the installer below. Have an AWS account and an IAM identity with permission to create and view an ECR repository, authenticate Docker, and push images. Use the same AWS account and Region in the CLI and console. This example uses `ap-southeast-1`.
 
 1. Install the AWS CLI on your Ubuntu server. If AWS CLI v2 is already installed, skip the installation commands and run `aws --version` below. If `curl` or `unzip` is missing, install them first:
@@ -433,13 +437,23 @@ Install the AWS CLI, create a private Amazon Elastic Container Registry (ECR) re
 
 3. In the [AWS Management Console](https://console.aws.amazon.com/), press **Alt+S**, type **ECR**, and select **Elastic Container Registry** from the search results. If the shortcut is intercepted by your browser, click the console search box.
 
+   ![Search for ECR and select Elastic Container Registry](assets/ecr-search.png)
+
    Select **ap-southeast-1 (Singapore)** in the Region selector. On the ECR welcome page, choose **Create** under **Create a repository**. If you are already on the repository list, choose **Private registry → Repositories → Create repository**.
 
+   ![Choose Create on the Amazon ECR welcome page](assets/ecr-create-repository.png)
+
    Set **Repository name** to `my-app`, choose **Mutable** for image tags and **AES-256** for encryption, then choose **Create**.
+
+   ![Create a private repository named my-app with Mutable tags and AES-256 encryption](assets/ecr-repository-settings.png)
+
+   ![The private repository my-app has been created and selected](assets/ecr-repository-created.png)
 
    - Screenshot as `bonus_ecr_repository.png`, showing that the private repository `my-app` was created, its repository URI and Region, with your Ubuntu terminal prompt beside the browser.
 
 4. In the private repository list, select the **radio button** beside `my-app`, then choose **View push commands**. Select the **macOS / Linux** tab.
+
+   ![The macOS and Linux push commands for the my-app repository](assets/ecr-push-commands.png)
 
    Read the four commands in the dialog. They log Docker in to ECR, build the image, add its ECR tag, and push it. Prepare the Dockerfile in the next step, then run these four commands one at a time in the order shown below.
 
