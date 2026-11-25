@@ -5,7 +5,7 @@
 **Submission directory:** `Labs/Lab08`  
 **Screenshot directory:** `Labs/Lab08/screenshots`
 
-Write Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`. Finally, compare how `CMD` and `ENTRYPOINT` handle arguments passed to `docker run`. The bonus task publishes a Docker image to AWS ECR.
+Write Dockerfiles using Ubuntu. First, build an image that prints a text file. Then build an image that serves a small HTML page on port `3000`. Compare how `CMD` and `ENTRYPOINT` handle arguments passed to `docker run`, then connect containers using a Docker network. The bonus task publishes a Docker image to AWS ECR.
 
 ```text
 DevOps/
@@ -41,6 +41,14 @@ DevOps/
             ├── task3_entrypoint_dockerfile.png
             ├── task3_entrypoint_build.png
             ├── task3_entrypoint_run.png
+            ├── task4_network_setup.png
+            ├── task4_alpine_ping.png
+            ├── task4_alpine_http.png
+            ├── task4_ubuntu_packages.png
+            ├── task4_ubuntu_http.png
+            ├── task4_ubuntu_ping.png
+            ├── task4_network_inspect.png
+            ├── task4_network_cleanup.png
             ├── bonus_aws_cli_version.png
             ├── bonus_ecr_repository.png
             ├── bonus_ecr_login.png
@@ -60,6 +68,7 @@ By the end of this lab, you will be able to:
 - Use `ENV` and `EXPOSE` and publish a container port with `-p`.
 - Keep a container running by starting a web server as its main application.
 - Compare `CMD` and `ENTRYPOINT` by running images with and without extra arguments.
+- Create a Docker network, test container communication by name, reconnect a container and clean up the network.
 - In the bonus task, install the AWS CLI and push a Docker image to a private ECR repository.
 
 ## Prerequisites
@@ -79,7 +88,8 @@ By the end of this lab, you will be able to:
 - [Task 2: Serve an HTML Page on Port 3000](#task-2-serve-an-html-page-on-port-3000)
 - [Task 3: Compare CMD and ENTRYPOINT](#task-3-compare-cmd-and-entrypoint)
 - [Bonus Task: Publish a Docker Image to AWS ECR](#bonus-task-publish-a-docker-image-to-aws-ecr)
-- [Task 4](#task-4)
+- [Task 4: Connect Containers with a Docker Network](#task-4-connect-containers-with-a-docker-network)
+- [Task 5](#task-5)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -113,7 +123,7 @@ Read these rules before starting.
 
 ### Required Screenshot Filenames
 
-Lab 8 requires these 14 guided-task screenshots. Save them inside `Labs/Lab08/screenshots/` using the exact filenames below:
+Lab 8 requires these 22 guided-task screenshots. Save them inside `Labs/Lab08/screenshots/` using the exact filenames below:
 
 ```text
 task1_dockerfile.png
@@ -130,6 +140,14 @@ task3_cmd_run.png
 task3_entrypoint_dockerfile.png
 task3_entrypoint_build.png
 task3_entrypoint_run.png
+task4_network_setup.png
+task4_alpine_ping.png
+task4_alpine_http.png
+task4_ubuntu_packages.png
+task4_ubuntu_http.png
+task4_ubuntu_ping.png
+task4_network_inspect.png
+task4_network_cleanup.png
 ```
 
 If you complete the bonus task, also save these 6 bonus screenshots in the same directory:
@@ -550,7 +568,138 @@ The reference screenshots below show the instructor's example. Use your own AWS 
 
 ---
 
-## Task 4
+## Task 4: Connect Containers with a Docker Network
+
+Create a network named `app-net` and use the container name `nginx` to communicate between containers.
+
+1. On your Ubuntu host, create the network:
+
+   ```bash
+   docker network create app-net
+   ```
+
+   Start NGINX on this network:
+
+   ```bash
+   docker run -d --name nginx --network app-net nginx:alpine
+   ```
+
+   Both commands print an ID. Docker creates a bridge network by default. Containers on this user-defined network can find each other by name.
+
+   - Screenshot as `task4_network_setup.png`, showing both commands and their successful results in **one screenshot**.
+
+2. Use a temporary Alpine container to ping NGINX by its container name:
+
+   ```bash
+   docker run --rm --network app-net alpine ping -c 3 nginx
+   ```
+
+   `-c 3` sends three ping requests. `--rm` removes this temporary container when the command finishes.
+
+   - Screenshot as `task4_alpine_ping.png`, showing the command, the resolved address for `nginx`, the three replies and the ping summary.
+
+3. Use another temporary Alpine container to request the NGINX webpage:
+
+   ```bash
+   docker run --rm --network app-net alpine wget -qO- http://nginx
+   ```
+
+   `wget -qO-` prints the HTML response in the terminal. Find `Welcome to nginx!` in that response. These containers communicate directly over `app-net`, so no host port mapping is needed.
+
+   - Screenshot as `task4_alpine_http.png`, showing the command and the returned NGINX HTML. Capture this output separately from the ping output.
+
+4. Start an interactive Ubuntu container on the same network:
+
+   ```bash
+   docker run -it --network app-net --name ubuntu-app-net ubuntu /bin/bash
+   ```
+
+   `-it` opens an interactive terminal so you can type commands inside the container. You are now at the container's root shell. Keep a second Ubuntu host terminal with your registered GitHub username and `ubuntu` hostname visible beside it for the container screenshots.
+
+   Inside the Ubuntu container, update the package index and install the two tools:
+
+   ```bash
+   apt update && apt install -y iputils-ping curl
+   ```
+
+   Wait for installation to finish and for the container prompt to return.
+
+   - Screenshot as `task4_ubuntu_packages.png`, showing the final successful installation output for `iputils-ping` and `curl`, the returned container prompt and your host terminal prompt beside it. The package output is long, so use a separate screenshot for its completion.
+
+5. Still inside the Ubuntu container, request the NGINX webpage:
+
+   ```bash
+   curl http://nginx
+   ```
+
+   - Screenshot as `task4_ubuntu_http.png`, showing the command and the NGINX HTML containing `Welcome to nginx!`, with your host terminal prompt beside the container terminal.
+
+6. Test the connection from Ubuntu using ping:
+
+   ```bash
+   ping nginx
+   ```
+
+   After at least three replies, press **Ctrl+C** to stop ping and display its summary. Stay in the Ubuntu container shell.
+
+   - Screenshot as `task4_ubuntu_ping.png`, showing the command, successful replies and the summary after **Ctrl+C**, with your host terminal prompt beside the container terminal.
+
+7. Detach from the Ubuntu container by pressing **Ctrl+P**, then **Ctrl+Q**. This returns you to the host terminal while leaving `ubuntu-app-net` running.
+
+   On the host, inspect the network:
+
+   ```bash
+   docker network inspect app-net
+   ```
+
+   Read the network name, bridge driver and `Containers` entries for `nginx` and `ubuntu-app-net`. The two temporary Alpine containers have already been removed.
+
+   - Screenshot as `task4_network_inspect.png`, showing the inspect command and the relevant network details, including the two named container entries. This JSON output is long, so capture it separately and keep the text readable.
+
+8. On the host, disconnect NGINX from the network:
+
+   ```bash
+   docker network disconnect app-net nginx
+   ```
+
+   Reconnect it:
+
+   ```bash
+   docker network connect app-net nginx
+   ```
+
+   Successful disconnect and connect commands normally return to the prompt without output. Now remove the two containers created in this task:
+
+   ```bash
+   docker rm -f nginx
+   ```
+
+   ```bash
+   docker rm -f ubuntu-app-net
+   ```
+
+   Remove the network after removing its containers:
+
+   ```bash
+   docker network rm app-net
+   ```
+
+   - Screenshot as `task4_network_cleanup.png`, showing **all five commands in one screenshot**: disconnect, connect, both container removals and network removal. Include the returned container names, network name and host terminal prompt.
+
+**Screenshot Required:**
+
+- `task4_network_setup.png`
+- `task4_alpine_ping.png`
+- `task4_alpine_http.png`
+- `task4_ubuntu_packages.png`
+- `task4_ubuntu_http.png`
+- `task4_ubuntu_ping.png`
+- `task4_network_inspect.png`
+- `task4_network_cleanup.png`
+
+---
+
+## Task 5
 
 Continue
 
@@ -563,6 +712,7 @@ Continue
 - You used `ENV PAGE_TITLE` and `RUN echo` to generate the HTML title and a fixed heading while building `my-ubuntu:1.1`, and served the page on the fixed port `3000`.
 - You published port `3000` and viewed the running container's webpage in a browser.
 - You replaced `CMD` with `ls -l` and appended `goodbye` to an `ENTRYPOINT` command.
+- You used `app-net` to access NGINX by container name from Alpine and Ubuntu, inspected and reconnected the network, then removed the task's containers and network.
 - If you completed the bonus task, you installed the AWS CLI and published `my-app:latest` to your private ECR repository.
 
 ## Final Submission Checklist
@@ -574,13 +724,14 @@ Continue
 - [ ] The first container printed both lines and its logs show the same output.
 - [ ] `my-ubuntu-web` is running and the webpage is visible on port `3000`.
 - [ ] Task 3 shows the default `CMD`, its replacement by `ls -l`, and both `ENTRYPOINT` runs.
-- [ ] All fourteen screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
+- [ ] Task 4 shows successful ping and HTTP requests to `nginx` from Alpine and Ubuntu, plus network inspection and cleanup.
+- [ ] All 22 guided-task screenshots use the exact filenames in `Labs/Lab08/screenshots/`.
 - [ ] If I completed the bonus task, `bonus-ecr/Dockerfile` and all six bonus screenshots are saved, including ECR evidence of `my-app:latest`.
 - [ ] My complete `DevOps/Labs/Lab08` directory is visible on GitHub.
 
 ## Submission
 
-Save your files and screenshots for Tasks 1–3 now. Include the bonus task files and screenshots if you complete it. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
+Save your files and screenshots for Tasks 1–4 now. Include the bonus task files and screenshots if you complete it. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
 
 ## Official References
 
@@ -588,6 +739,9 @@ Save your files and screenshots for Tasks 1–3 now. Include the bonus task file
 - [Docker: How CMD and ENTRYPOINT interact](https://docs.docker.com/reference/dockerfile/#understand-how-cmd-and-entrypoint-interact)
 - [Docker: Container logs](https://docs.docker.com/reference/cli/docker/container/logs/)
 - [Docker: Port publishing and mapping](https://docs.docker.com/engine/network/port-publishing/)
+- [Docker: Bridge networks and container name resolution](https://docs.docker.com/engine/network/drivers/bridge/)
+- [Docker: Run interactive containers](https://docs.docker.com/reference/cli/docker/container/run/)
+- [Docker: Inspect a network](https://docs.docker.com/reference/cli/docker/network/inspect/)
 - [Python: Simple HTTP server](https://docs.python.org/3/library/http.server.html)
 - [Python: Public logo image used by ADD](https://www.python.org/static/community_logos/python-logo.png)
 - [AWS: Install AWS CLI v2 on Linux](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
