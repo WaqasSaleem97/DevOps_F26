@@ -191,14 +191,14 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    FROM ubuntu
    LABEL maintainer="you@gmail.com"
    RUN apt-get update && apt-get install -y python3
-   ENV PAGE_TITLE="Hello from DevOps"
+   ENV PAGE_TITLE="DevOps"
    WORKDIR /app
    RUN echo "<title>$PAGE_TITLE</title><h1>I am a DevOps engineer</h1>" > index.html
    EXPOSE 3000
    CMD ["python3", "-m", "http.server", "3000", "--bind", "0.0.0.0"]
    ```
 
-   **ENV situation:** The webpage title must come from an environment variable. `ENV PAGE_TITLE="Hello from DevOps"` provides the value. During the build, `RUN echo` creates a one-line `index.html` with that value in the browser tab title and the fixed heading `I am a DevOps engineer`. Keep `ENV PAGE_TITLE` before this `RUN` instruction. To change the title, edit the `ENV` value and rebuild the image.
+   **ENV situation:** The webpage title must come from an environment variable. `ENV PAGE_TITLE="DevOps"` provides the value. During the build, `RUN echo` creates a one-line `index.html` with that value in the browser tab title and the fixed heading `I am a DevOps engineer`. Keep `ENV PAGE_TITLE` before this `RUN` instruction. To change the title, edit the `ENV` value and rebuild the image.
 
    `EXPOSE 3000` records the container port. The square-bracket `CMD` starts Python's web server on the fixed port `3000`, serving the current working directory. The server keeps running, so the container stays running.
 
@@ -216,6 +216,9 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
    ```bash
    docker run -d --name my-ubuntu-web -p 3000:3000 my-ubuntu:1.1
+   ```
+
+   ```bash
    docker ps
    ```
 
@@ -223,7 +226,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
    - Screenshot as `task2_container_running.png`, showing both commands and the `my-ubuntu-web` container with an `Up` status and the `3000` port mapping.
 
-4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that the browser tab title shows **Hello from DevOps** and the page heading shows **I am a DevOps engineer**.
+4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that the browser tab title shows **DevOps** and the page heading shows **I am a DevOps engineer**.
 
    - Screenshot as `task2_webpage.png`, showing the browser tab title, the page heading, the address bar with port `3000`, and your Ubuntu terminal prompt beside the browser.
 
