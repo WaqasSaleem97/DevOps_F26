@@ -27,7 +27,26 @@ DevOps/
         ├── bonus-ecr/
         │   └── Dockerfile
         └── screenshots/
-            └── (your fourteen guided-task screenshots and bonus evidence)
+            ├── task1_dockerfile.png
+            ├── task1_image_build.png
+            ├── task1_image_run.png
+            ├── task1_container_logs.png
+            ├── task2_web_files.png
+            ├── task2_image_build.png
+            ├── task2_container_running.png
+            ├── task2_webpage.png
+            ├── task3_cmd_dockerfile.png
+            ├── task3_cmd_build.png
+            ├── task3_cmd_run.png
+            ├── task3_entrypoint_dockerfile.png
+            ├── task3_entrypoint_build.png
+            ├── task3_entrypoint_run.png
+            ├── bonus_aws_cli_version.png
+            ├── bonus_ecr_repository.png
+            ├── bonus_ecr_login.png
+            ├── bonus_image_build.png
+            ├── bonus_image_push.png
+            └── bonus_ecr_image.png
 ```
 
 The instructor supplies this README and the reference images in `assets/`. Create the task files and screenshots yourself. Create `bonus-ecr/` if you complete the bonus task.
