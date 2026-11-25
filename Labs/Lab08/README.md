@@ -201,10 +201,10 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    WORKDIR /app
    ENV PORT=3000
    EXPOSE $PORT
-   CMD python3 -m http.server $PORT --bind 0.0.0.0
+   CMD ["sh", "-c", "exec python3 -m http.server \"$PORT\" --bind 0.0.0.0"]
    ```
 
-   `ENV PORT=3000` sets the port variable and `EXPOSE $PORT` records the container's intended port. `CMD` reads `$PORT` and starts Python's simple web server, serving the current `/app` directory. The server keeps running, so the container stays running.
+   `ENV PORT=3000` sets the port variable and `EXPOSE $PORT` records the container's intended port. The square-bracket `CMD` uses `sh -c` to expand `$PORT`. `exec` starts Python's web server as the container's main process, serving the current `/app` directory. The server keeps running, so the container stays running.
 
    - Screenshot as `task2_web_files.png`, showing the one-line HTML file, the complete Dockerfile and your Ubuntu terminal prompt. Place the two files side by side in your editor if needed.
 
