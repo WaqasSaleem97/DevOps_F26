@@ -443,6 +443,8 @@ The reference screenshots below show the instructor's example. Use your own AWS 
 
    Set **Repository name** to `my-app`, choose **Mutable** for image tags and **AES-256** for encryption, then choose **Create**.
 
+   ![The private repository my-app has been created, with the account ID hidden](assets/ecr-repository-created.png)
+
    - Screenshot as `bonus_ecr_repository.png`, showing that the private repository `my-app` was created, its repository URI and Region, with your Ubuntu terminal prompt beside the browser.
 
 4. In the private repository list, select the **radio button** beside `my-app`, then choose **View push commands**. Select the **macOS / Linux** tab.
