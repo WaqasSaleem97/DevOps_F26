@@ -47,6 +47,7 @@ By the end of this lab, you will be able to:
 - [Getting Started](#getting-started)
 - [Task 1: Build an Ubuntu Image that Prints a File](#task-1-build-an-ubuntu-image-that-prints-a-file)
 - [Task 2: Serve an HTML Page on Port 3000](#task-2-serve-an-html-page-on-port-3000)
+- [Task 3](#task-3)
 - [Summary](#summary)
 - [Final Submission Checklist](#final-submission-checklist)
 - [Submission](#submission)
@@ -235,6 +236,12 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
 ---
 
+## Task 3
+
+Continue
+
+---
+
 ## Summary
 
 - You built `my-ubuntu:1.0` and ran its default command to print a file.
@@ -254,7 +261,7 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
 ## Submission
 
-Submit the URL of your own `DevOps/Labs/Lab08` directory after completing both tasks and pushing your task files and required screenshots.
+Save your Task 1 and Task 2 files and screenshots now. Submit the URL of your own `DevOps/Labs/Lab08` directory after all Lab 8 tasks are published and completed.
 
 ## Official References
 
