@@ -185,10 +185,11 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    cd ~/DevOps/Labs/Lab08/task2
    ```
 
-   Create `index.html` containing just this one line:
+   Create `index.html` containing these two lines. `PAGE_TITLE` is a placeholder that will be replaced during the image build:
 
    ```html
-   <h1>Hello from Lab 8</h1>
+   <title>PAGE_TITLE</title>
+   <h1>PAGE_TITLE</h1>
    ```
 
    Create `Dockerfile` in the same directory:
@@ -197,18 +198,19 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
    FROM ubuntu
    LABEL maintainer="you@gmail.com"
    RUN apt-get update && apt-get install -y python3
-   ENV APP_HOME=/app
-   WORKDIR $APP_HOME
-   COPY index.html .
+   ENV PAGE_TITLE="Hello from Lab 8"
+   COPY index.html /app/
+   WORKDIR /app
+   RUN sed -i "s/PAGE_TITLE/$PAGE_TITLE/g" index.html
    EXPOSE 3000
    CMD ["python3", "-m", "http.server", "3000", "--bind", "0.0.0.0"]
    ```
 
-   **ENV situation:** The webpage's location must be configured in one place. `ENV APP_HOME=/app` supplies that directory to `WORKDIR $APP_HOME`, and `COPY index.html .` copies the page into it. Keep the `ENV` line before `WORKDIR`, because that instruction depends on its value. Changing `APP_HOME` and rebuilding places and serves the page from the new directory.
+   **ENV situation:** The webpage title must come from an environment variable. `ENV PAGE_TITLE="Hello from Lab 8"` provides the value. During the build, `RUN sed` replaces the `PAGE_TITLE` placeholders in the HTML title and heading with that value. Keep `ENV PAGE_TITLE` before this `RUN` instruction. To change the title, edit the `ENV` value and rebuild the image.
 
    `EXPOSE 3000` records the container port. The square-bracket `CMD` starts Python's web server on the fixed port `3000`, serving the current working directory. The server keeps running, so the container stays running.
 
-   - Screenshot as `task2_web_files.png`, showing the one-line HTML file, the complete Dockerfile and your Ubuntu terminal prompt. Place the two files side by side in your editor if needed.
+   - Screenshot as `task2_web_files.png`, showing the two-line HTML template, the complete Dockerfile and your Ubuntu terminal prompt. Place the two files side by side in your editor if needed.
 
 2. Build the second image:
 
@@ -229,9 +231,9 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
    - Screenshot as `task2_container_running.png`, showing both commands and the `my-ubuntu-web` container with an `Up` status and the `3000` port mapping.
 
-4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that the page shows **Hello from Lab 8**.
+4. In your browser, open `http://<server-ip>:3000`. Replace `<server-ip>` with the IP address of your Ubuntu server. Confirm that both the browser tab title and the page heading show **Hello from Lab 8**.
 
-   - Screenshot as `task2_webpage.png`, showing the page, the address bar with port `3000`, and your Ubuntu terminal prompt beside the browser.
+   - Screenshot as `task2_webpage.png`, showing the browser tab title, the page heading, the address bar with port `3000`, and your Ubuntu terminal prompt beside the browser.
 
 **Screenshot Required:**
 
@@ -246,13 +248,13 @@ mkdir -p Labs/Lab08/task1 Labs/Lab08/task2 Labs/Lab08/screenshots
 
 - You built `my-ubuntu:1.0` and ran its default command to print a file.
 - You downloaded a public image during the build and viewed the container logs by container name.
-- You used `APP_HOME` to set the webpage directory and built `my-ubuntu:1.1` with a one-line HTML page and a web server on the fixed port `3000`.
+- You used `ENV PAGE_TITLE` to set the HTML title and heading while building `my-ubuntu:1.1`, and served the page on the fixed port `3000`.
 - You published port `3000` and viewed the running container's webpage in a browser.
 
 ## Final Submission Checklist
 
 - [ ] Task 1 contains my `Dockerfile` and `myfile`.
-- [ ] Task 2 contains my `Dockerfile` and one-line `index.html`.
+- [ ] Task 2 contains my `Dockerfile` with `ENV PAGE_TITLE` and the two-line `index.html` template.
 - [ ] Both Docker images built successfully with the required tags.
 - [ ] The first container printed both lines and its logs show the same output.
 - [ ] `my-ubuntu-web` is running and the webpage is visible on port `3000`.
